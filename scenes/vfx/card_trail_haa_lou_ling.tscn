@@ -1,0 +1,176 @@
+[gd_scene load_steps=20 format=3 uid="uid://dnq8plv8q75pl"]
+
+[ext_resource type="Script" path="res://src/Core/Nodes/Vfx/NCardTrailVfx.cs" id="1_vfx"]
+[ext_resource type="Script" path="res://src/Core/Nodes/Vfx/NCardTrail.cs" id="2_trail"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_jade_outer.png" id="3_outer"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_warm_core.png" id="4_inner"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_steam.png" id="5_steam_line"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_brush_particle.png" id="6_brush"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_sparkle.png" id="7_sparkle"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/trail_steam_particle.png" id="8_steam"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/small_card_silhouette.png" id="9_card"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_additive"]
+blend_mode = 1
+
+[sub_resource type="Curve" id="Curve_outer_width"]
+_data = [Vector2(0, 0.08), 0.0, 0.0, 0, 0, Vector2(0.72, 0.55), -2.05, -2.05, 0, 0, Vector2(0.91, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.6), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_inner_width"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.78, 0.52), -2.7, -2.7, 0, 0, Vector2(0.91, 0.86), 0.0, 0.0, 0, 0, Vector2(1, 0.62), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_steam_width"]
+_data = [Vector2(0, 0.02), 0.0, 0.0, 0, 0, Vector2(0.66, 0.34), -1.35, -1.35, 0, 0, Vector2(0.93, 0.66), 0.0, 0.0, 0, 0, Vector2(1, 0.28), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Gradient" id="Gradient_trail_fade"]
+offsets = PackedFloat32Array(0, 0.18, 0.62, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.55, 0.85, 0.72, 0.24, 1, 1, 1, 0.82, 1, 1, 1, 0)
+
+[sub_resource type="Gradient" id="Gradient_inner_fade"]
+offsets = PackedFloat32Array(0.12, 0.56, 0.86, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.85, 0.78, 0.45, 0.34, 1, 1, 1, 0.75, 1, 1, 1, 0)
+
+[sub_resource type="Gradient" id="Gradient_steam_fade"]
+offsets = PackedFloat32Array(0, 0.32, 0.78, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0.88, 1, 0.92, 0.22, 0.98, 1, 0.9, 0.34, 1, 1, 1, 0)
+
+[sub_resource type="Gradient" id="Gradient_big_sparks"]
+offsets = PackedFloat32Array(0, 0.45, 0.76, 1)
+colors = PackedColorArray(0.54, 1, 0.78, 1, 0.98, 0.76, 0.34, 0.62, 0.1, 0.55, 0.45, 0.34, 0.04, 0.18, 0.16, 0)
+
+[sub_resource type="Gradient" id="Gradient_little_sparks"]
+offsets = PackedFloat32Array(0, 0.22, 1)
+colors = PackedColorArray(0.94, 1, 0.86, 1, 0.62, 1, 0.78, 0.78, 0.62, 1, 0.78, 0)
+
+[sub_resource type="Gradient" id="Gradient_steam_particles"]
+offsets = PackedFloat32Array(0, 0.24, 0.72, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0.82, 1, 0.88, 0.28, 0.96, 1, 0.9, 0.16, 1, 1, 1, 0)
+
+[node name="CardTrailHaaLouLing" type="Node2D"]
+show_behind_parent = true
+script = ExtResource("1_vfx")
+
+[node name="Trails" type="Node2D" parent="."]
+
+[node name="OuterTrail" type="Line2D" parent="Trails"]
+modulate = Color(0.16, 0.66, 0.56, 0.78)
+material = SubResource("CanvasItemMaterial_additive")
+width = 104.0
+width_curve = SubResource("Curve_outer_width")
+default_color = Color(1, 1, 1, 0.78)
+gradient = SubResource("Gradient_trail_fade")
+texture = ExtResource("3_outer")
+texture_mode = 2
+joint_mode = 2
+script = ExtResource("2_trail")
+
+[node name="InnerTrail" type="Line2D" parent="Trails"]
+modulate = Color(0.92, 0.78, 0.36, 0.56)
+material = SubResource("CanvasItemMaterial_additive")
+width = 58.0
+width_curve = SubResource("Curve_inner_width")
+gradient = SubResource("Gradient_inner_fade")
+texture = ExtResource("4_inner")
+texture_mode = 2
+joint_mode = 2
+script = ExtResource("2_trail")
+
+[node name="SteamTrail" type="Line2D" parent="Trails"]
+modulate = Color(0.72, 1, 0.82, 0.34)
+material = SubResource("CanvasItemMaterial_additive")
+width = 78.0
+width_curve = SubResource("Curve_steam_width")
+gradient = SubResource("Gradient_steam_fade")
+texture = ExtResource("5_steam_line")
+texture_mode = 2
+joint_mode = 2
+script = ExtResource("2_trail")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="BigSparks" type="CPUParticles2D" parent="Sprites"]
+material = SubResource("CanvasItemMaterial_additive")
+amount = 58
+lifetime = 1.55
+randomness = 0.55
+lifetime_randomness = 0.95
+fract_delta = false
+texture = ExtResource("6_brush")
+emission_shape = 3
+emission_rect_extents = Vector2(28, 20)
+direction = Vector2(5, -4)
+spread = 72.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 18.0
+initial_velocity_max = 44.0
+angular_velocity_min = -42.0
+angular_velocity_max = 42.0
+damping_min = 1.2
+damping_max = 5.6
+angle_min = -180.0
+angle_max = 180.0
+scale_amount_min = 0.16
+scale_amount_max = 0.58
+color_ramp = SubResource("Gradient_big_sparks")
+
+[node name="LittleSparks" type="CPUParticles2D" parent="Sprites"]
+material = SubResource("CanvasItemMaterial_additive")
+amount = 72
+lifetime = 0.42
+explosiveness = 0.32
+randomness = 1.0
+lifetime_randomness = 1.0
+fract_delta = false
+texture = ExtResource("7_sparkle")
+emission_shape = 3
+emission_rect_extents = Vector2(22, 22)
+particle_flag_align_y = true
+direction = Vector2(0, -5)
+spread = 88.0
+gravity = Vector2(0, 1420)
+initial_velocity_max = 390.0
+angular_velocity_min = -80.0
+angular_velocity_max = 80.0
+angle_min = -180.0
+angle_max = 180.0
+scale_amount_min = 0.025
+scale_amount_max = 0.08
+color_ramp = SubResource("Gradient_little_sparks")
+
+[node name="SteamWisps" type="CPUParticles2D" parent="Sprites"]
+amount = 24
+lifetime = 1.35
+randomness = 0.75
+lifetime_randomness = 0.6
+fract_delta = false
+texture = ExtResource("8_steam")
+emission_shape = 3
+emission_rect_extents = Vector2(18, 18)
+direction = Vector2(-0.5, -1)
+spread = 55.0
+gravity = Vector2(24, -42)
+initial_velocity_min = 10.0
+initial_velocity_max = 34.0
+orbit_velocity_max = 0.03
+radial_accel_min = -4.0
+radial_accel_max = 3.0
+damping_min = 0.4
+damping_max = 2.0
+scale_amount_min = 0.18
+scale_amount_max = 0.55
+color_ramp = SubResource("Gradient_steam_particles")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprites"]
+modulate = Color(0.16, 0.66, 0.56, 0.72)
+material = SubResource("CanvasItemMaterial_additive")
+scale = Vector2(1.1, 1.05)
+texture = ExtResource("9_card")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprites"]
+modulate = Color(0.92, 0.72, 0.32, 0.46)
+material = SubResource("CanvasItemMaterial_additive")
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("9_card")

@@ -1,0 +1,124 @@
+[gd_scene load_steps=9 format=3 uid="uid://djca87fxxl341"]
+
+[ext_resource type="Texture2D" uid="uid://pf32g46bksd5" path="res://images/screens/char_select/haa_lou_ling/cg_elf_6.png" id="1_bg"]
+[ext_resource type="Script" uid="uid://catopqfn1wwcc" path="res://Scripts/UI/HaaLouLingCharacterSelectBg.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bh2qgkgyb1ojc" path="res://images/screens/char_select/haa_lou_ling/steam_puff.png" id="2_steam"]
+[ext_resource type="Texture2D" uid="uid://djrghb3emg6ia" path="res://images/screens/char_select/haa_lou_ling/particle_dot.png" id="3_dot"]
+[ext_resource type="Texture2D" uid="uid://biq1bhw4mm8j1" path="res://images/screens/char_select/haa_lou_ling/cg_elf_6_1_face_overlay.png" id="4_shy"]
+
+[sub_resource type="Gradient" id="Gradient_steam"]
+offsets = PackedFloat32Array(0, 0.22, 0.72, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0.96, 1, 0.92, 0.24, 0.95, 0.98, 0.9, 0.14, 1, 1, 1, 0)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_additive"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_dust"]
+offsets = PackedFloat32Array(0, 0.24, 0.78, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0.91, 1, 0.78, 0.54, 1, 0.96, 0.72, 0.28, 1, 1, 1, 0)
+
+[node name="HaaLouLingBg" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -523.0
+offset_right = 1600.0
+offset_bottom = 677.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(1280, 600)
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="BaseCg" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -541.546
+offset_right = 2016.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("1_bg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShyCg" type="TextureRect" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -541.546
+offset_right = 2016.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("4_shy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SteamParticles" type="CPUParticles2D" parent="."]
+position = Vector2(875, 603)
+amount = 360
+texture = ExtResource("2_steam")
+lifetime = 6.8
+preprocess = 6.8
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(175, 30)
+direction = Vector2(0.04, -1)
+spread = 42.0
+gravity = Vector2(12, -28)
+initial_velocity_min = 22.0
+initial_velocity_max = 68.0
+orbit_velocity_max = 0.018
+radial_accel_min = -6.0
+radial_accel_max = 8.0
+scale_amount_min = 0.32
+scale_amount_max = 0.92
+color = Color(1, 1, 1, 0.88)
+color_ramp = SubResource("Gradient_steam")
+
+[node name="WindowDust" type="CPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_additive")
+position = Vector2(559, 547)
+amount = 20
+texture = ExtResource("3_dot")
+lifetime = 8.0
+preprocess = 8.0
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(600, 390)
+direction = Vector2(0.04, -1)
+spread = 180.0
+gravity = Vector2(4, -12)
+initial_velocity_min = 4.0
+initial_velocity_max = 24.0
+orbit_velocity_max = 0.028
+radial_accel_min = -2.0
+radial_accel_max = 2.0
+scale_amount_min = 0.16
+scale_amount_max = 0.46
+color = Color(1, 0.98, 0.76, 0.95)
+color_ramp = SubResource("Gradient_dust")
+
+[node name="KitchenDust" type="CPUParticles2D" parent="."]
+position = Vector2(856, 430)
+amount = 24
+texture = ExtResource("3_dot")
+lifetime = 9.5
+preprocess = 9.5
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(430, 260)
+direction = Vector2(0.12, -1)
+spread = 110.0
+gravity = Vector2(3, -8)
+initial_velocity_min = 3.0
+initial_velocity_max = 18.0
+orbit_velocity_max = 0.018
+radial_accel_min = -1.0
+radial_accel_max = 1.5
+scale_amount_min = 0.12
+scale_amount_max = 0.34
+color = Color(0.9, 1, 0.78, 0.82)
+color_ramp = SubResource("Gradient_dust")

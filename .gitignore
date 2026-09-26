@@ -1,0 +1,15 @@
+# Ignore every root entry by default.
+/*
+
+# Keep the ignore rules themselves under version control.
+!/.gitignore
+
+# Keep only the selected project content directories.
+!/images/
+!/scenes/
+!/Scripts/
+!/Yog-Sothoth's Yard/
+
+# Ignore Godot-generated sidecar files.
+*.import
+*.uid

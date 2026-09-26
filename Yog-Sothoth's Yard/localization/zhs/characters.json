@@ -1,0 +1,17 @@
+{
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.aromaPrinciple": "[sine][blue]刀鸣必有恶……但恶究竟是什么呢？[/blue][/sine]",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.banter.alive.endTurnPing": "我会守住这里，老板。",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.banter.dead.endTurnPing": "唔……这次大意了……",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.cardsModifierDescription": "霞露零的卡牌现在会出现在奖励和商店中。",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.cardsModifierTitle": "霞露零卡牌",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.description": "占位文本",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.eventDeathPrevention": "我还不能倒下……食材还没备好呢。",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.goldMonologue": "这些金币……可以买很多食材。",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.possessiveAdjective": "她的",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.pronounObject": "她",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.pronounPossessive": "她的",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.pronounSubject": "她",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.title": "霞露零",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.titleObject": "霞露零",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.unlockText": ""
+}

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnn4d3w1iqlmw"]
+
+[ext_resource type="Texture2D" uid="uid://f7usdnj7bb06" path="res://images/characters/haa_lou_ling/rest/rest.png" id="1_rest"]
+
+[node name="HaaLouLingRestSite" type="Sprite2D"]
+texture = ExtResource("1_rest")

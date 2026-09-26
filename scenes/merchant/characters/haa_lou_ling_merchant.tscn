@@ -1,0 +1,843 @@
+[gd_scene load_steps=163 format=3]
+
+[ext_resource type="Script" path="res://src/Core/Nodes/Screens/Shops/NMerchantCharacter.cs" id="1_visuals"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_001.png" id="2_idle_001"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_002.png" id="3_idle_002"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_003.png" id="4_idle_003"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_004.png" id="5_idle_004"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_005.png" id="6_idle_005"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_006.png" id="7_idle_006"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_007.png" id="8_idle_007"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_008.png" id="9_idle_008"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_009.png" id="10_idle_009"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_010.png" id="11_idle_010"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_011.png" id="12_idle_011"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_012.png" id="13_idle_012"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_013.png" id="14_idle_013"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_014.png" id="15_idle_014"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_015.png" id="16_idle_015"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_016.png" id="17_idle_016"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_017.png" id="18_idle_017"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_018.png" id="19_idle_018"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_019.png" id="20_idle_019"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_020.png" id="21_idle_020"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_021.png" id="22_idle_021"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_022.png" id="23_idle_022"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_023.png" id="24_idle_023"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_024.png" id="25_idle_024"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_025.png" id="26_idle_025"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_026.png" id="27_idle_026"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_027.png" id="28_idle_027"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_028.png" id="29_idle_028"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_029.png" id="30_idle_029"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_030.png" id="31_idle_030"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_031.png" id="32_idle_031"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_032.png" id="33_idle_032"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_033.png" id="34_idle_033"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_034.png" id="35_idle_034"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_035.png" id="36_idle_035"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_036.png" id="37_idle_036"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_037.png" id="38_idle_037"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_038.png" id="39_idle_038"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_039.png" id="40_idle_039"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_040.png" id="41_idle_040"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_041.png" id="42_idle_041"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_042.png" id="43_idle_042"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_043.png" id="44_idle_043"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_044.png" id="45_idle_044"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_045.png" id="46_idle_045"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_046.png" id="47_idle_046"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_047.png" id="48_idle_047"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_048.png" id="49_idle_048"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_049.png" id="50_idle_049"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_050.png" id="51_idle_050"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_051.png" id="52_idle_051"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_052.png" id="53_idle_052"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_053.png" id="54_idle_053"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_054.png" id="55_idle_054"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_055.png" id="56_idle_055"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_056.png" id="57_idle_056"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_057.png" id="58_idle_057"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_058.png" id="59_idle_058"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_059.png" id="60_idle_059"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_060.png" id="61_idle_060"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_061.png" id="62_idle_061"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_062.png" id="63_idle_062"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_063.png" id="64_idle_063"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_064.png" id="65_idle_064"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_065.png" id="66_idle_065"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_066.png" id="67_idle_066"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_067.png" id="68_idle_067"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_068.png" id="69_idle_068"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_069.png" id="70_idle_069"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_070.png" id="71_idle_070"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_071.png" id="72_idle_071"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_072.png" id="73_idle_072"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_073.png" id="74_idle_073"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_074.png" id="75_idle_074"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_075.png" id="76_idle_075"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_076.png" id="77_idle_076"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_077.png" id="78_idle_077"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_078.png" id="79_idle_078"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_079.png" id="80_idle_079"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_080.png" id="81_idle_080"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_081.png" id="82_idle_081"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_082.png" id="83_idle_082"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_083.png" id="84_idle_083"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_084.png" id="85_idle_084"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_085.png" id="86_idle_085"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_086.png" id="87_idle_086"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_087.png" id="88_idle_087"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_088.png" id="89_idle_088"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_089.png" id="90_idle_089"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_090.png" id="91_idle_090"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_091.png" id="92_idle_091"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_092.png" id="93_idle_092"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_093.png" id="94_idle_093"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_094.png" id="95_idle_094"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_095.png" id="96_idle_095"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_096.png" id="97_idle_096"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_097.png" id="98_idle_097"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_098.png" id="99_idle_098"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_099.png" id="100_idle_099"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_100.png" id="101_idle_100"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_101.png" id="102_idle_101"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_102.png" id="103_idle_102"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_103.png" id="104_idle_103"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_104.png" id="105_idle_104"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_105.png" id="106_idle_105"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_106.png" id="107_idle_106"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_107.png" id="108_idle_107"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_108.png" id="109_idle_108"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_109.png" id="110_idle_109"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_110.png" id="111_idle_110"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_111.png" id="112_idle_111"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_112.png" id="113_idle_112"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_113.png" id="114_idle_113"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_114.png" id="115_idle_114"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_115.png" id="116_idle_115"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_116.png" id="117_idle_116"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_117.png" id="118_idle_117"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_118.png" id="119_idle_118"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_119.png" id="120_idle_119"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_120.png" id="121_idle_120"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_121.png" id="122_idle_121"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_122.png" id="123_idle_122"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_123.png" id="124_idle_123"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_124.png" id="125_idle_124"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_125.png" id="126_idle_125"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_126.png" id="127_idle_126"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_127.png" id="128_idle_127"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_128.png" id="129_idle_128"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_129.png" id="130_idle_129"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_130.png" id="131_idle_130"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_131.png" id="132_idle_131"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_132.png" id="133_idle_132"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_133.png" id="134_idle_133"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_134.png" id="135_idle_134"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_135.png" id="136_idle_135"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_136.png" id="137_idle_136"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_137.png" id="138_idle_137"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_138.png" id="139_idle_138"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_139.png" id="140_idle_139"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_140.png" id="141_idle_140"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_141.png" id="142_idle_141"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_142.png" id="143_idle_142"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_143.png" id="144_idle_143"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_144.png" id="145_idle_144"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_145.png" id="146_idle_145"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_146.png" id="147_idle_146"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_147.png" id="148_idle_147"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_148.png" id="149_idle_148"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_149.png" id="150_idle_149"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_150.png" id="151_idle_150"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_151.png" id="152_idle_151"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_152.png" id="153_idle_152"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_153.png" id="154_idle_153"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_154.png" id="155_idle_154"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_155.png" id="156_idle_155"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_156.png" id="157_idle_156"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_157.png" id="158_idle_157"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_158.png" id="159_idle_158"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_159.png" id="160_idle_159"]
+[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_160.png" id="161_idle_160"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle"]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("2_idle_001")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("3_idle_002")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("4_idle_003")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("5_idle_004")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("6_idle_005")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("7_idle_006")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("8_idle_007")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("9_idle_008")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("10_idle_009")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("11_idle_010")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("12_idle_011")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("13_idle_012")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("14_idle_013")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("15_idle_014")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("16_idle_015")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("17_idle_016")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("18_idle_017")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("19_idle_018")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("20_idle_019")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("21_idle_020")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("22_idle_021")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("23_idle_022")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("24_idle_023")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("25_idle_024")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("26_idle_025")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("27_idle_026")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("28_idle_027")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("29_idle_028")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("30_idle_029")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("31_idle_030")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("32_idle_031")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("33_idle_032")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("34_idle_033")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("35_idle_034")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("36_idle_035")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("37_idle_036")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("38_idle_037")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("39_idle_038")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("40_idle_039")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("41_idle_040")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("42_idle_041")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("43_idle_042")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("44_idle_043")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("45_idle_044")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("46_idle_045")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("47_idle_046")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("48_idle_047")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("49_idle_048")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("50_idle_049")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("51_idle_050")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("52_idle_051")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("53_idle_052")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("54_idle_053")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("55_idle_054")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("56_idle_055")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("57_idle_056")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("58_idle_057")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("59_idle_058")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("60_idle_059")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("61_idle_060")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("62_idle_061")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("63_idle_062")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("64_idle_063")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("65_idle_064")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("66_idle_065")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("67_idle_066")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("68_idle_067")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("69_idle_068")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("70_idle_069")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("71_idle_070")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("72_idle_071")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("73_idle_072")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("74_idle_073")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("75_idle_074")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("76_idle_075")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("77_idle_076")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("78_idle_077")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("79_idle_078")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("80_idle_079")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("81_idle_080")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("82_idle_081")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("83_idle_082")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("84_idle_083")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("85_idle_084")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("86_idle_085")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("87_idle_086")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("88_idle_087")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("89_idle_088")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("90_idle_089")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("91_idle_090")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("92_idle_091")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("93_idle_092")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("94_idle_093")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("95_idle_094")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("96_idle_095")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("97_idle_096")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("98_idle_097")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("99_idle_098")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("100_idle_099")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("101_idle_100")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("102_idle_101")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("103_idle_102")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("104_idle_103")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("105_idle_104")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("106_idle_105")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("107_idle_106")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("108_idle_107")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("109_idle_108")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("110_idle_109")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("111_idle_110")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("112_idle_111")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("113_idle_112")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("114_idle_113")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("115_idle_114")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("116_idle_115")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("117_idle_116")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("118_idle_117")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("119_idle_118")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("120_idle_119")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("121_idle_120")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("122_idle_121")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("123_idle_122")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("124_idle_123")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("125_idle_124")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("126_idle_125")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("127_idle_126")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("128_idle_127")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("129_idle_128")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("130_idle_129")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("131_idle_130")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("132_idle_131")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("133_idle_132")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("134_idle_133")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("135_idle_134")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("136_idle_135")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("137_idle_136")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("138_idle_137")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("139_idle_138")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("140_idle_139")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("141_idle_140")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("142_idle_141")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("143_idle_142")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("144_idle_143")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("145_idle_144")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("146_idle_145")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("147_idle_146")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("148_idle_147")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("149_idle_148")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("150_idle_149")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("151_idle_150")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("152_idle_151")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("153_idle_152")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("154_idle_153")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("155_idle_154")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("156_idle_155")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("157_idle_156")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("158_idle_157")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("159_idle_158")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("160_idle_159")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("161_idle_160")
+}
+],
+"loop": true,
+"name": &"relaxed_loop",
+"speed": 60.0
+}]
+[node name="HaaLouLingMerchant" type="Node2D"]
+script = ExtResource("1_visuals")
+metadata/_edit_group_ = true
+
+[node name="Visuals" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(17, -139)
+scale = Vector2(0.28, 0.28)
+sprite_frames = SubResource("SpriteFrames_idle")
+autoplay = "relaxed_loop"
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -132.0
+offset_top = -272.0
+offset_right = 132.0
+mouse_filter = 2
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -322)
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -166)
+
+[node name="TalkPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(58, -282)
