@@ -1,0 +1,35 @@
+[gd_resource type="SpineSkeletonDataResource" load_steps=8 format=3]
+
+[ext_resource type="SpineAtlasResource" path="res://scenes/creature_visuals/haa_lou_ling/zhanlingshi.spatlas" id="1_atlas"]
+[ext_resource type="SpineSkeletonFileResource" path="res://scenes/creature_visuals/haa_lou_ling/haa_lou_ling.spskel" id="2_skeleton"]
+
+[sub_resource type="SpineAnimationMix" id="Mix_hit"]
+from = "idle_loop"
+to = "hurt"
+mix = 0.03
+
+[sub_resource type="SpineAnimationMix" id="Mix_recover"]
+from = "hurt"
+to = "idle_loop"
+mix = 0.1
+
+[sub_resource type="SpineAnimationMix" id="Mix_hit_again"]
+from = "hurt"
+to = "hurt"
+mix = 0.03
+
+[sub_resource type="SpineAnimationMix" id="Mix_sleep"]
+from = "idle_loop"
+to = "die"
+mix = 0.216667
+
+[sub_resource type="SpineAnimationMix" id="Mix_hit_sleep"]
+from = "hurt"
+to = "die"
+mix = 0.216667
+
+[resource]
+atlas_res = ExtResource("1_atlas")
+skeleton_file_res = ExtResource("2_skeleton")
+default_mix = 0.1
+animation_mixes = [SubResource("Mix_hit"), SubResource("Mix_recover"), SubResource("Mix_hit_again"), SubResource("Mix_sleep"), SubResource("Mix_hit_sleep")]

@@ -1,17 +1,17 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/Core/Nodes/Combat/NCreatureVisuals.cs" id="1_visuals"]
-[ext_resource type="Texture2D" path="res://images/characters/haa_lou_ling/combat/idle_sequence/idle_001.png" id="2_idle_001"]
+[ext_resource type="SpineSkeletonDataResource" path="res://scenes/creature_visuals/haa_lou_ling/haa_lou_ling_skel_data.tres" id="2_spine"]
 
 [node name="HaaLouLing" type="Node2D"]
-script = ExtResource("1_visuals")
 metadata/_edit_group_ = true
 
-[node name="Visuals" type="Sprite2D" parent="."]
+[node name="Visuals" type="SpineSprite" parent="."]
+skeleton_data_res = ExtResource("2_spine")
+preview_skin = "default"
+preview_animation = "idle_loop"
 unique_name_in_owner = true
-position = Vector2(17, -139)
-scale = Vector2(0.28, 0.28)
-texture = ExtResource("2_idle_001")
+position = Vector2(21.2, -0.5)
+scale = Vector2(-0.48, 0.48)
 
 [node name="Bounds" type="Control" parent="."]
 unique_name_in_owner = true

@@ -1,4 +1,6 @@
 using Godot;
+using MegaCrit.Sts2.Core.Animation;
+using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -44,6 +46,10 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             Vfx: new(
                 TrailPath: "res://scenes/vfx/card_trail_haa_lou_ling.tscn"
             ),
+            Spine: new(
+                // 场景已绑定骨骼；再次替换会清空动画轨道。空串同时阻止继承占位角色的路径。
+                CombatSkeletonDataPath: ""
+            ),
             Audio: new(
                 // 攻击音效
                 // AttackSfx: null,
@@ -60,8 +66,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 ArmRockTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_rock.png",
                 ArmPaperTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_paper.png",
                 ArmScissorsTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_scissors.png"
-            ),
-            VisualCues: HaaLouLingCombatVisualCues.Set
+            )
         ));
 
     public override float AttackAnimDelay => 0f;
@@ -76,22 +81,18 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             new(typeof(FindFood), 1)
     ];
 
-    protected override ModAnimStateMachine? SetupCustomCombatAnimationStateMachine(Node visualsRoot, CharacterModel character) =>
-        ModAnimStateMachines.StandardCue(
-            visualsRoot,
-            character,
-            HaaLouLingCombatVisualCues.Idle,
-            HaaLouLingCombatVisualCues.Dead,
-            false,
-            HaaLouLingCombatVisualCues.Hit,
-            false,
-            HaaLouLingCombatVisualCues.Attack,
-            false,
-            HaaLouLingCombatVisualCues.Cast,
-            false,
-            HaaLouLingCombatVisualCues.Relaxed,
-            true,
-            HaaLouLingCombatVisualCues.Set);
+    protected override CreatureAnimator? SetupCustomCreatureAnimator(MegaSprite controller)
+    {
+        var animator = ModAnimStateMachines.Standard(
+            controller,
+            idleName: "idle_loop",
+            deadName: "die",
+            hitName: "hurt");
+
+        // 攻击、施法和强化暂时沿用待机，后续再接入对应的新动作。
+        animator.AddAnyState("PowerUp", new AnimState("idle_loop", true));
+        return animator;
+    }
 
     protected override IEnumerable<Type> StartingRelicTypes => [
         typeof(Anchor)
