@@ -235,3 +235,15 @@ zs
   orig: 60, 120
   offset: 0, 0
   index: -1
+
+attack_blade.svg
+size: 256,48
+filter: Linear,Linear
+repeat: none
+attack_blade
+  rotate: false
+  xy: 0, 0
+  size: 256, 48
+  orig: 256, 48
+  offset: 0, 0
+  index: -1

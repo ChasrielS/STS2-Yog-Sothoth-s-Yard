@@ -69,7 +69,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             )
         ));
 
-    public override float AttackAnimDelay => 0f;
+    public override float AttackAnimDelay => 0.29f;
     public override float CastAnimDelay => 0f;
 
     protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
@@ -87,9 +87,10 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             controller,
             idleName: "idle_loop",
             deadName: "die",
-            hitName: "hurt");
+            hitName: "hurt",
+            attackName: "attack");
 
-        // 攻击、施法和强化暂时沿用待机，后续再接入对应的新动作。
+        // 施法和强化暂时沿用待机，后续再接入对应的新动作。
         animator.AddAnyState("PowerUp", new AnimState("idle_loop", true));
         return animator;
     }
