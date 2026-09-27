@@ -69,7 +69,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             )
         ));
 
-    public override float AttackAnimDelay => 0.29f;
+    public override float AttackAnimDelay => 0.15f;
     public override float CastAnimDelay => 0f;
 
     protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
