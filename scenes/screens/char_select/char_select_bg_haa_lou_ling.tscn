@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://djca87fxxl341"]
+[gd_scene load_steps=8 format=3 uid="uid://djca87fxxl341"]
 
-[ext_resource type="Texture2D" uid="uid://pf32g46bksd5" path="res://images/screens/char_select/haa_lou_ling/cg_elf_6.png" id="1_bg"]
+[ext_resource type="SpineSkeletonDataResource" path="res://scenes/screens/char_select/haa_lou_ling/haa_lou_ling_char_select_skel_data.tres" id="1_bg"]
 [ext_resource type="Script" uid="uid://catopqfn1wwcc" path="res://Scripts/UI/HaaLouLingCharacterSelectBg.cs" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bh2qgkgyb1ojc" path="res://images/screens/char_select/haa_lou_ling/steam_puff.png" id="2_steam"]
 [ext_resource type="Texture2D" uid="uid://djrghb3emg6ia" path="res://images/screens/char_select/haa_lou_ling/particle_dot.png" id="3_dot"]
-[ext_resource type="Texture2D" uid="uid://biq1bhw4mm8j1" path="res://images/screens/char_select/haa_lou_ling/cg_elf_6_1_face_overlay.png" id="4_shy"]
 
 [sub_resource type="Gradient" id="Gradient_steam"]
 offsets = PackedFloat32Array(0, 0.22, 0.72, 1)
@@ -31,30 +30,15 @@ offset_bottom = 677.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(1280, 600)
-mouse_filter = 1
+mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="BaseCg" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -541.546
-offset_right = 2016.0
-offset_bottom = 1080.0
-mouse_filter = 2
-texture = ExtResource("1_bg")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="ShyCg" type="TextureRect" parent="."]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = -541.546
-offset_right = 2016.0
-offset_bottom = 1080.0
-mouse_filter = 2
-texture = ExtResource("4_shy")
-expand_mode = 1
-stretch_mode = 5
+[node name="BaseCg" type="SpineSprite" parent="."]
+skeleton_data_res = ExtResource("1_bg")
+preview_skin = "default"
+preview_animation = "idle_loop"
+position = Vector2(-541.546, 0)
+scale = Vector2(1.3251534, 1.3251534)
 
 [node name="SteamParticles" type="CPUParticles2D" parent="."]
 position = Vector2(875, 603)

@@ -1,0 +1,47 @@
+cg_elf_6_kitchen_background.png
+size: 1930,815
+filter: Linear,Linear
+repeat: none
+kitchen_background
+  rotate: false
+  xy: 0, 0
+  size: 1930, 815
+  orig: 1930, 815
+  offset: 0, 0
+  index: -1
+
+cg_elf_6_body.png
+size: 1930,815
+filter: Linear,Linear
+repeat: none
+body
+  rotate: false
+  xy: 0, 0
+  size: 1930, 815
+  orig: 1930, 815
+  offset: 0, 0
+  index: -1
+
+cg_elf_6_tail.png
+size: 1930,815
+filter: Linear,Linear
+repeat: none
+tail
+  rotate: false
+  xy: 0, 0
+  size: 1930, 815
+  orig: 1930, 815
+  offset: 0, 0
+  index: -1
+
+cg_elf_6_foreground.png
+size: 1930,815
+filter: Linear,Linear
+repeat: none
+foreground
+  rotate: false
+  xy: 0, 0
+  size: 1930, 815
+  orig: 1930, 815
+  offset: 0, 0
+  index: -1
