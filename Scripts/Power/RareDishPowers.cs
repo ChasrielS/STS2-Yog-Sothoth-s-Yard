@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -14,7 +15,7 @@ using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
 
-public abstract class RareDishPower : ModPowerTemplate
+public abstract class RareDishPower : DishPower
 {
     protected abstract string IconFileName { get; }
 
@@ -36,18 +37,10 @@ public sealed class YangWangXingKongPower : RareDishPower
 {
     protected override string IconFileName => "yang_wang_xing_kong";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
-        Flash();
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
         var targets = combatState.Players
             .Select(candidate => candidate.Creature)
             .Concat(combatState.Enemies)
@@ -55,7 +48,7 @@ public sealed class YangWangXingKongPower : RareDishPower
             .ToList();
         foreach (var target in targets)
         {
-            var poison = target.CurrentHp * AmountOnTurnStart / 100;
+            var poison = target.CurrentHp * amount / 100;
             if (poison <= 0)
             {
                 continue;
@@ -76,6 +69,17 @@ public sealed class YangWangXingKongPower : RareDishPower
 public sealed class ZhangYuWanZiPower : RareDishPower
 {
     protected override string IconFileName => "zhang_yu_wan_zi";
+    public override LocString Description
+    {
+        get
+        {
+            var description = base.Description;
+            var state = IsMutable ? HaaLouLingCookingService.GetState(Owner.Player!) : null;
+            description.Add("Progress", state?.OctopusBallIngredientProgress ?? 0);
+            description.Add("Charges", state?.BonusDishEffectCharges ?? 0);
+            return description;
+        }
+    }
 }
 
 [RegisterPower]
@@ -87,32 +91,49 @@ public sealed class BaoZaiFanPower : RareDishPower
 [RegisterPower]
 public sealed class ShengYanPower : RareDishPower
 {
+    private int _mangleTurn;
+    private int _appliedMangle;
     protected override string IconFileName => "sheng_yan";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
+    public override LocString Description
     {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
+        get
         {
-            return;
+            var text = base.Description;
+            text.Add("Mangle", IsMutable ? HaaLouLingCookingService.GetShengYanMangle(Owner.Player!) : 0);
+            return text;
         }
+    }
 
-        Flash();
+    protected override bool HasTurnStartEffect => true;
+
+    public override Task AfterRemoved(Creature oldOwner)
+    {
+        HaaLouLingCookingService.GetState(oldOwner.Player!).ShengYanManglePerTurn = 0;
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
         await HaaLouLingCookingService.ApplyPowerToEnemies<WeakPower>(
             choiceContext,
             player,
-            AmountOnTurnStart
+            amount
         );
         await HaaLouLingCookingService.ApplyPowerToEnemies<VulnerablePower>(
             choiceContext,
             player,
-            AmountOnTurnStart
+            amount
         );
 
-        var mangle = HaaLouLingCookingService.GetShengYanMangle(player);
+        if (_mangleTurn != player.PlayerCombatState!.TurnNumber)
+        {
+            _mangleTurn = player.PlayerCombatState.TurnNumber;
+            _appliedMangle = 0;
+        }
+        var totalMangle = HaaLouLingCookingService.GetShengYanMangle(player);
+        var mangle = totalMangle - _appliedMangle;
+        _appliedMangle = totalMangle;
         if (mangle > 0)
         {
             await HaaLouLingCookingService.ApplyPowerToEnemies<ManglePower>(
@@ -165,6 +186,7 @@ public sealed class KaiShuiBaiCaiPower : SingleRareDishPower
     {
         modifiedAmount = amount;
         if (target != Owner ||
+            canonicalPower is GuShenDeYiPiePower ||
             canonicalPower.GetTypeForAmount(amount) != PowerType.Debuff)
         {
             return false;
@@ -180,22 +202,14 @@ public sealed class ShenQianTangFenPower : RareDishPower
 {
     protected override string IconFileName => "shen_qian_tang_fen";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
-        Flash();
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
         await PowerCmd.Apply<PlatingPower>(
             choiceContext,
             Owner,
-            AmountOnTurnStart,
+            amount,
             Owner,
             null
         );

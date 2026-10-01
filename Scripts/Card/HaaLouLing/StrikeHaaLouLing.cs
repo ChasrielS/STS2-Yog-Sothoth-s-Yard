@@ -23,7 +23,7 @@ public class StrikeHaaLouLing : ModCardTemplate
     private const bool shouldShowInCardLibrary = true;
 
     public override CardAssetProfile AssetProfile => new(
-        PortraitPath: $""
+        PortraitPath: "res://images/packed/card_portraits/haa_lou_ling/da_ji.png"
     );
 
     protected override HashSet<CardTag> CanonicalTags => [

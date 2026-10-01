@@ -47,9 +47,8 @@ public static class HaaLouLingCookingRecipes
                 1,
                 "bai_zhan_ji",
                 Ingredients((chicken, 1)),
-                static (choiceContext, player, upgraded) => ApplyPower<BaiZhanJiPower>(
-                    choiceContext, player, 1),
-                upgradedCookingTurns: 0
+                static (choiceContext, player, upgraded) => HaaLouLingCookingService.AddSpecificIngredients<JiRou>(
+                    choiceContext, player, upgraded ? 2 : 1)
             ),
             Create<ChangFen>(
                 0,

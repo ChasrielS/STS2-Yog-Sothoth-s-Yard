@@ -23,7 +23,7 @@ public class FindFood : ModCardTemplate
     private const bool shouldShowInCardLibrary = true;
 
     public override CardAssetProfile AssetProfile => new(
-        PortraitPath: $""
+        PortraitPath: "res://images/packed/card_portraits/haa_lou_ling/xun_zhao_shi_cai.png"
     );
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [

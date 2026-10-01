@@ -23,7 +23,7 @@ public class DefendHaaLouLing : ModCardTemplate
     private const bool shouldShowInCardLibrary = true;
 
     public override CardAssetProfile AssetProfile => new(
-        PortraitPath: $""
+        PortraitPath: "res://images/packed/card_portraits/haa_lou_ling/fang_yu.png"
     );
 
     public override bool GainsBlock => true;

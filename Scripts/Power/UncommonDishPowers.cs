@@ -12,7 +12,7 @@ using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
 
-public abstract class UncommonDishPower : ModPowerTemplate
+public abstract class UncommonDishPower : DishPower
 {
     protected abstract string IconFileName { get; }
 
@@ -31,19 +31,11 @@ public abstract class SingleUncommonDishPower : UncommonDishPower
 
 public abstract class TurnStartBlockDishPower : UncommonDishPower
 {
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
-        Flash();
-        await CreatureCmd.GainBlock(Owner, AmountOnTurnStart, ValueProp.Unpowered, null);
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
+        await CreatureCmd.GainBlock(Owner, amount, ValueProp.Unpowered, null);
     }
 }
 
@@ -76,25 +68,17 @@ public sealed class ZhangYuNingMengZhiPower : UncommonDishPower
 {
     protected override string IconFileName => "zhang_yu_ning_meng_zhi";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
-        Flash();
-        await PlayerCmd.GainEnergy(AmountOnTurnStart, player);
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
+        await PlayerCmd.GainEnergy(amount, player);
         await HaaLouLingCookingService.AddRandomIngredients(
             choiceContext,
             player,
-            AmountOnTurnStart
+            amount
         );
-        await CardPileCmd.Draw(choiceContext, AmountOnTurnStart, player);
+        await CardPileCmd.Draw(choiceContext, amount, player);
     }
 }
 
@@ -103,17 +87,10 @@ public sealed class KouShuiJiPower : UncommonDishPower
 {
     protected override string IconFileName => "kou_shui_ji";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
         var chickenCount = HaaLouLingCookingService.CountIngredients<JiRou>(player);
         if (chickenCount <= 0)
         {
@@ -124,7 +101,7 @@ public sealed class KouShuiJiPower : UncommonDishPower
         await HaaLouLingCookingService.DamageAllEnemies(
             choiceContext,
             player,
-            chickenCount * AmountOnTurnStart
+            chickenCount * amount
         );
     }
 }
@@ -170,22 +147,14 @@ public sealed class HuoBaoYaoHuaPower : UncommonDishPower
 {
     protected override string IconFileName => "huo_bao_yao_hua";
 
-    public override async Task BeforeHandDraw(
-        Player player,
-        PlayerChoiceContext choiceContext,
-        ICombatState combatState
-    )
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0)
-        {
-            return;
-        }
+    protected override bool HasTurnStartEffect => true;
 
-        Flash();
+    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
+    {
         await PowerCmd.Apply<StrengthPower>(
             choiceContext,
             Owner,
-            AmountOnTurnStart,
+            amount,
             Owner,
             null
         );

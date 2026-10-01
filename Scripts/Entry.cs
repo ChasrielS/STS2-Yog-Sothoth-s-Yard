@@ -19,6 +19,8 @@ using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.RuntimeInput;
+using STS2RitsuLib.Scaffolding.Cards.HandOutline;
+using STS2RitsuLib.Combat.CardTargeting;
 using YogSothothsYard.Scripts.Patches;
 using YogSothothsYard.Scripts.Cooking;
 using YogSothothsYard.Scripts.UI;
@@ -37,6 +39,7 @@ public class Entry
     );
 
     public static PileType FoodPile;
+    public static TargetType OtherPlayerTarget;
 
     private const string FoodPileIconPath = "res://images/packed/combat_ui/food_pile.png";
     private const string FoodPileEmptyMessageKey = "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.empty";
@@ -49,12 +52,17 @@ public class Entry
     public static void Init()
     {
         var assembly = Assembly.GetExecutingAssembly();
+        OtherPlayerTarget = CustomTargetType.RegisterSingleTargetType(ModId, "other_player",
+            (creature, player) => creature.IsAlive && creature.IsPlayer && creature.Player != player);
         var registry = ModCardPileRegistry.For(ModId);
         RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
         Patcher.RegisterPatch<DishRecipeHoverTipLayoutPatch>();
+        Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();
         Patcher.PatchAll();
+        ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
+            ModCardHandOutlineRules.Fixed<HaaLouLingCard>(card => card.WantsGreenOutline, Godot.Colors.Green));
         NCookingQueueDisplay.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
@@ -104,6 +112,11 @@ public class Entry
 
             var cookingPower = ModelDb.Power<HaaLouLingCookingPower>().ToMutable();
             cookingPower.ApplyInternal(player.Creature, 1, silent: true);
+            if (!player.Creature.HasPower<DaoShiPower>())
+            {
+                var gauge = ModelDb.Power<DaoShiGaugePower>().ToMutable();
+                gauge.ApplyInternal(player.Creature, 1, silent: true);
+            }
         }
     }
 

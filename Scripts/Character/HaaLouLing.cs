@@ -75,11 +75,10 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
     protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
         RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
 
-    protected override IEnumerable<StartingDeckEntry> StartingDeckEntries => [
-        new(typeof(StrikeHaaLouLing), 4),
-        new(typeof(DefendHaaLouLing), 4),
-            new(typeof(FindFood), 1)
-    ];
+    protected override IEnumerable<CardModel> LocalStartingDeck =>
+        Enumerable.Repeat<CardModel>(ModelDb.Card<StrikeHaaLouLing>(), 4)
+            .Concat(Enumerable.Repeat<CardModel>(ModelDb.Card<DefendHaaLouLing>(), 4))
+            .Concat([ModelDb.Card<FindFood>(), ModelDb.Card<ZhanLingGuiYuan>()]);
 
     protected override CreatureAnimator? SetupCustomCreatureAnimator(MegaSprite controller)
     {
@@ -95,9 +94,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
         return animator;
     }
 
-    protected override IEnumerable<Type> StartingRelicTypes => [
-        typeof(Anchor)
-    ];
+    protected override IEnumerable<RelicModel> LocalStartingRelics => [ModelDb.Relic<ZhanLingTangDao>()];
 
     public override List<string> GetArchitectAttackVfx() => [
         "vfx/haa_lou_ling_strike_slash"

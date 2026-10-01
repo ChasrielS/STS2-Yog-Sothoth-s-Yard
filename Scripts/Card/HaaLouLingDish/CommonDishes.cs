@@ -15,8 +15,9 @@ public sealed class BaiZhanJi : HaaLouLingDishCard
     [
         HoverTipFactory.FromCard<JiRou>()
     ];
-    public BaiZhanJi() : base(CardType.Power, 1) { }
-    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new CardsVar(1));
+    public BaiZhanJi() : base(CardType.Skill, 1) { }
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]

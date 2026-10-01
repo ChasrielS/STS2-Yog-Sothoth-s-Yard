@@ -4,7 +4,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace YogSothothsYard.Scripts;
 
-public abstract class CommonDishPower : ModPowerTemplate
+public abstract class CommonDishPower : DishPower
 {
     protected abstract string IconFileName { get; }
 
