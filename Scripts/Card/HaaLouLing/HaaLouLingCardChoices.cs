@@ -18,23 +18,21 @@ public static class HaaLouLingCardChoices
         return prompt;
     }
 
-    public static async Task ChooseIngredients(PlayerChoiceContext context, CardModel source, int count, CardRarity? rarity = null)
+    public static async Task RetainFromHand(PlayerChoiceContext context, CardModel source, int count)
     {
-        var owner = source.Owner;
-        var choices = HaaLouLingCookingService.Ingredients(owner, rarity).Select(card => owner.Creature.CombatState!.CreateCard(card, owner)).ToList();
-        var selected = await CardSelectCmd.FromSimpleGrid(context, choices, owner,
-            new CardSelectorPrefs(Prompt(source), count));
-        await HaaLouLingCookingService.AddGeneratedIngredients(context, owner, selected);
+        var selected = await CardSelectCmd.FromHand(context, source.Owner, new CardSelectorPrefs(Prompt(source), count),
+            card => !card.Keywords.Contains(CardKeyword.Retain), source);
+        foreach (var card in selected) CardCmd.ApplyKeyword(card, CardKeyword.Retain);
     }
-    public static async Task<IEnumerable<CardModel>> SelectOwnedIngredients(PlayerChoiceContext context, CardModel source, int maximum) =>
+    public static async Task<IEnumerable<CardModel>> SelectOwnedIngredients(PlayerChoiceContext context, CardModel source, int maximum, int minimum = 0) =>
         await CardSelectCmd.FromCombatPile(context, Entry.FoodPile.GetPile(source.Owner), source.Owner,
-            new CardSelectorPrefs(Prompt(source), 0, maximum));
+            new CardSelectorPrefs(Prompt(source), minimum, maximum));
 
-    public static async Task TransformIngredients(PlayerChoiceContext context, CardModel source, IEnumerable<CardModel> cards, bool sameRarity = false)
+    public static async Task TransformIngredients(PlayerChoiceContext context, CardModel source, IEnumerable<CardModel> cards)
     {
         foreach (var card in cards.ToList())
         {
-            var choices = HaaLouLingCookingService.Ingredients(source.Owner, sameRarity ? card.Rarity : null);
+            var choices = HaaLouLingCookingService.Ingredients(source.Owner);
             await CardPileCmd.RemoveFromCombat(card, false);
             await HaaLouLingCookingService.AddGeneratedIngredients(context, source.Owner,
                 CardFactory.GetForCombat(source.Owner, choices, 1, source.Owner.RunState.Rng.CombatCardGeneration));
@@ -50,26 +48,30 @@ public static class HaaLouLingCardChoices
     }
     public static async Task Retrieve(PlayerChoiceContext context, CardModel source, PileType pile, bool skillsOnly = false)
     {
-        var selected = await CardSelectCmd.FromCombatPile(context, pile.GetPile(source.Owner), source.Owner,
+        var selected = (await CardSelectCmd.FromCombatPile(context, pile.GetPile(source.Owner), source.Owner,
             new CardSelectorPrefs(Prompt(source), 1),
-            skillsOnly ? card => card.Type == CardType.Skill : null);
-        foreach (var card in selected) await CardPileCmd.Add(card, PileType.Hand);
+            skillsOnly ? card => card.Type == CardType.Skill : null)).FirstOrDefault();
+        if (selected != null) await CardPileCmd.Add(selected, PileType.Hand);
     }
-    public static async Task CookRareChoice(PlayerChoiceContext context, CardModel source)
+    public static async Task CookDishesChoice(PlayerChoiceContext context, CardModel source, int count, CardRarity? rarity = null)
     {
-        var recipes = HaaLouLingCookingRecipes.All.Select(recipe => recipe.CreatePreviewCard()).Where(card => card.Rarity == CardRarity.Rare);
-        var choices = CardFactory.GetDistinctForCombat(source.Owner, recipes, 3, source.Owner.RunState.Rng.CombatCardGeneration).ToList();
-        var selected = await CardSelectCmd.FromChooseACardScreen(context, choices, source.Owner, false);
-        if (selected != null) await HaaLouLingCookingService.StartWithoutIngredients(context, source.Owner, HaaLouLingCookingRecipes.Get(selected.Id)!);
+        var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.All
+            .Where(recipe => rarity == null || recipe.CreatePreviewCard().Rarity == rarity))
+            .Select(recipe => source.Owner.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), source.Owner)).ToList();
+        var selected = await CardSelectCmd.FromSimpleGrid(context, choices, source.Owner,
+            new CardSelectorPrefs(Prompt(source), count));
+        foreach (var card in selected)
+            await HaaLouLingCookingService.StartWithoutIngredients(context, source.Owner, HaaLouLingCookingRecipes.Get(card.Id)!);
     }
     public static async Task AddFormCards(PlayerChoiceContext context, CardModel source)
     {
         var pool = ModelDb.CardPool<HaaLouLingCardPool>().GetUnlockedCards(source.Owner.UnlockState, source.Owner.RunState.CardMultiplayerConstraint)
             .OfType<HaaLouLingCard>().Where(card => card.CanBeGeneratedInCombat).ToList();
-        foreach (var form in new[] { KnifeForm.Open, KnifeForm.Follow })
+        foreach (var form in new[] { KnifeForm.Open, KnifeForm.Follow, KnifeForm.Turn, KnifeForm.Finish })
         {
             var card = CardFactory.GetForCombat(source.Owner, pool.Where(card => card.Form == form), 1,
                 source.Owner.RunState.Rng.CombatCardGeneration).Single();
+            if (source.IsUpgraded) CardCmd.Upgrade(card);
             card.EnergyCost.SetThisTurn(0);
             var result = await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, source.Owner);
             CardCmd.PreviewCardPileAdd(result);

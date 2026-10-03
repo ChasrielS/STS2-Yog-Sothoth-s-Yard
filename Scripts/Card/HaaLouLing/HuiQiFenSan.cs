@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class HuiQiFenSan : HaaLouLingCard
 {
     public HuiQiFenSan() : base(1, CardType.Skill, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 20)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 30)];
     protected override bool UsesGuiYuan => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
@@ -20,6 +20,6 @@ public sealed class HuiQiFenSan : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Amount"].UpgradeValueBy(10);
+        DynamicVars["Amount"].UpgradeValueBy(20);
     }
 }

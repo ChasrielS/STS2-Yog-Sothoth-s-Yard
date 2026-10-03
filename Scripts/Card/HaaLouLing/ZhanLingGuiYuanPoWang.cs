@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -12,18 +13,24 @@ namespace YogSothothsYard.Scripts;
 public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 {
     public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(2), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)), new IntVar("ExtraHit", 4)];
+    private Creature? _highestHpTarget;
+    private Creature? HighestHpTarget => _highestHpTarget ?? CombatState?.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(2),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, target) =>
+            HaaLouLingCombatRules.KnifeForCard(card) * (target != null && target == ((ZhanLingGuiYuanPoWang)card).HighestHpTarget ? 3 : 1)),
+        new IntVar("ExtraHit", 4)];
     protected override bool UsesKnife => true;
+    protected override bool UsesGuiYuan => true;
     public override KnifeForm Form => KnifeForm.Finish;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var count = await FinishKnife(context);
-        await Attack(context, play, calculated: true);
-        var target = CombatState!.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
-        if (target != null && count > 0)
-            await DamageCmd.Attack(count * DynamicVars["ExtraHit"].BaseValue).FromCard(this, play).Targeting(target)
-                .WithHitVfxNode(HaaLouLingStrikeSlashVfx.Create).Execute(context);
+        _highestHpTarget = CombatState!.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
+        await FinishKnife(context);
+        var attack = await Attack(context, play, calculated: true);
+        _highestHpTarget = null;
+        foreach (var results in attack.Results.SelectMany(hit => hit).GroupBy(result => result.Receiver))
+            await HaaLouLingCombatRules.GiveGuiYuan(context, results.Key, (int)results.Sum(result => result.TotalDamage), Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

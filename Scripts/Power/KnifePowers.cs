@@ -5,11 +5,13 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Keywords;
 using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
@@ -17,6 +19,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterPower]
 public sealed class DaoShiPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/dao_shi_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/dao_shi_power.png";
     public override LocString Description
     {
         get
@@ -31,51 +35,29 @@ public sealed class DaoShiPower : HaaLouLingPower
     public override async Task AfterPowerAmountChanged(PlayerChoiceContext context, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
         if (power != this || amount <= 0) return;
-        if (Owner.GetPower<DaoShiGaugePower>() is { } gauge) await PowerCmd.Remove(gauge);
         var cry = Owner.GetPower<DaoMingPower>();
         if (cry == null) return;
         cry.FlashEffect();
         for (var i = 0; i < (int)amount; i++)
             await HaaLouLingCookingService.DamageRandomEnemy(context, Owner.Player!, cry.Amount);
     }
-    public override Task AfterRemoved(Creature oldOwner)
-    {
-        if (CombatManager.Instance.IsInProgress && oldOwner.IsAlive && !oldOwner.HasPower<DaoShiGaugePower>())
-            ModelDb.Power<DaoShiGaugePower>().ToMutable().ApplyInternal(oldOwner, 1, silent: true);
-        return Task.CompletedTask;
-    }
-}
-
-[RegisterPower]
-public sealed class DaoShiGaugePower : HaaLouLingPower
-{
-    public override PowerStackType StackType => PowerStackType.Counter;
-    public override int DisplayAmount => 0;
-    public override LocString Title => new("powers", "YOG_SOTHOTH_S_YARD_POWER_DAO_SHI_POWER.title");
-    public override LocString Description
-    {
-        get
-        {
-            var text = new LocString("powers", "YOG_SOTHOTH_S_YARD_POWER_DAO_SHI_POWER.description");
-            text.Add("Amount", 0);
-            text.Add("Maximum", IsMutable ? HaaLouLingCombatRules.KnifeLimit(Owner.Player!) : 3);
-            return text;
-        }
-    }
 }
 
 [RegisterPower]
 public sealed class DaoFaJingJinPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/dao_fa_jing_jin_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/dao_fa_jing_jin_power.png";
     public override Task AfterPowerAmountChanged(PlayerChoiceContext context, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
         if (power == this) ClampKnife();
         return Task.CompletedTask;
     }
-    public override Task AfterRemoved(Creature oldOwner)
+    public override async Task AfterRemoved(Creature oldOwner)
     {
+        if (oldOwner.GetPower<LiangShouJueHuoPower>() is { } linked)
+            await linked.Synchronize(new ThrowingPlayerChoiceContext());
         ClampKnife();
-        return Task.CompletedTask;
     }
     private void ClampKnife()
     {
@@ -85,27 +67,34 @@ public sealed class DaoFaJingJinPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class DaoMingPower : HaaLouLingPower;
+public sealed class DaoMingPower : HaaLouLingPower
+{
+    public override string? CustomIconPath => "res://images/powers/dao_ming_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/dao_ming_power.png";
+}
 
 [RegisterPower]
-public sealed class ZhuanShiPower : HaaLouLingPower
+public sealed class ChenLianPower : HaaLouLingPower
 {
-    private int _triggeredOnTurn;
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
+    public override string? CustomIconPath => "res://images/powers/chen_lian_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/chen_lian_power.png";
+    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
     {
-        if (play.Player.Creature != Owner || play.Card is not HaaLouLingCard { Form: KnifeForm.Turn } ||
-            _triggeredOnTurn == play.Player.PlayerCombatState!.TurnNumber) return;
-        _triggeredOnTurn = play.Player.PlayerCombatState.TurnNumber;
-        await HaaLouLingCombatRules.GainKnife(context, play.Player, Amount, play.Card);
+        if (player.Creature != Owner || AmountOnTurnStart <= 0) return;
+        Flash();
+        await HaaLouLingCombatRules.GainKnife(context, player, AmountOnTurnStart);
     }
 }
 
 [RegisterPower]
-public sealed class ShouDaoPower : HaaLouLingPower
+public sealed class WuXieKeJiPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/wu_xie_ke_ji_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/wu_xie_ke_ji_power.png";
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => new[] { HaaLouLingKeywords.KeywordId("DaoShu") }.ToHoverTips();
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     {
-        if (play.Player.Creature == Owner && play.Card is HaaLouLingCard { Form: KnifeForm.Finish })
+        if (play.Player.Creature == Owner && play.Card is HaaLouLingCard { Form: not KnifeForm.None })
             await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
 }
@@ -113,6 +102,8 @@ public sealed class ShouDaoPower : HaaLouLingPower
 [RegisterPower]
 public sealed class ChongZhengJiaShiPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/chong_zheng_jia_shi_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/chong_zheng_jia_shi_power.png";
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     {
         if (play.Player.Creature == Owner && play.Card is HaaLouLingCard { Form: KnifeForm.Finish })
@@ -121,8 +112,10 @@ public sealed class ChongZhengJiaShiPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class XuShiHuShenPower : HaaLouLingPower
+public sealed class ChiDaoErLiPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/chi_dao_er_li_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/chi_dao_er_li_power.png";
     public override async Task BeforeSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
     {
         if (participants.Contains(Owner))
@@ -139,29 +132,59 @@ public abstract class ThisTurnHaaLouLingPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class CangFengPower : ThisTurnHaaLouLingPower;
+public sealed class CangFengPower : ThisTurnHaaLouLingPower
+{
+    public override string? CustomIconPath => "res://images/powers/cang_feng_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/cang_feng_power.png";
+}
 
 [RegisterPower]
 public sealed class GuiYuanJuePower : HaaLouLingPower
 {
-    public override decimal ModifyPowerAmountGivenAdditive(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource) =>
-        giver == Owner && target?.Side == CombatSide.Enemy && power is GuiYuanBasePower && amount > 0 ? Amount : 0;
+    public override string? CustomIconPath => "res://images/powers/gui_yuan_jue_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/gui_yuan_jue_power.png";
+    private int _givenThisTurn;
+
+    public override Task BeforeSideTurnStart(PlayerChoiceContext context, CombatSide side, IReadOnlyList<Creature> participants, ICombatState state)
+    {
+        if (participants.Contains(Owner)) _givenThisTurn = 0;
+        return Task.CompletedTask;
+    }
+
+    public override Task BeforePowerAmountChanged(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource)
+    {
+        if (applier == Owner && power is GuiYuanBasePower && amount > 0) _givenThisTurn++;
+        return Task.CompletedTask;
+    }
+
+    public override decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource) =>
+        giver == Owner && power is GuiYuanBasePower && amount > 0 && _givenThisTurn <= Amount ? 2 : 1;
+
+    public override Task AfterModifyingPowerAmountGiven(PowerModel power)
+    {
+        Flash();
+        return Task.CompletedTask;
+    }
 }
 
-[RegisterPower]
-public sealed class ZhouFuDaoFengPower : HaaLouLingPower
+public abstract class ZhouRenBasePower : HaaLouLingPower
 {
-    public override PowerStackType StackType => PowerStackType.Single;
+    public override string? CustomIconPath => "res://images/powers/zhou_ren_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/zhou_ren_power.png";
+    protected virtual int ExtraGuiYuan => 0;
     public override async Task AfterDamageGiven(PlayerChoiceContext context, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource)
     {
         if (dealer == Owner && target.Side == CombatSide.Enemy && cardSource?.Type == CardType.Attack && result.TotalDamage > 0)
-            await HaaLouLingCombatRules.GiveGuiYuan(context, target, HaaLouLingCombatRules.KnifeForCard(cardSource), Owner, cardSource);
+            await HaaLouLingCombatRules.GiveGuiYuan(context, target,
+                (HaaLouLingCombatRules.KnifeForCard(cardSource) + ExtraGuiYuan) * Amount, Owner, cardSource);
     }
 }
 
 [RegisterPower]
-public sealed class DaoShiJinDePower : HaaLouLingPower
+public sealed class WuFaHuoDeDaoShiPower : HaaLouLingPower
 {
+    public override string? CustomIconPath => "res://images/powers/wu_fa_huo_de_dao_shi_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/wu_fa_huo_de_dao_shi_power.png";
     public override PowerType Type => PowerType.Debuff;
     public override async Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
     {
@@ -169,23 +192,37 @@ public sealed class DaoShiJinDePower : HaaLouLingPower
     }
 }
 
-public abstract class ZaoHuoYangFengBasePower : HaaLouLingPower
+public abstract class TiQianBeiCaiBasePower : HaaLouLingPower
 {
-    protected virtual int ExtraKnife => 0;
-    public override async Task BeforeHandDrawLate(Player player, PlayerChoiceContext context, ICombatState combatState)
+    public override string? CustomIconPath => "res://images/powers/ti_qian_bei_cai_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/ti_qian_bei_cai_power.png";
+    protected virtual int Ingredients => 3;
+    protected virtual int Cards => 2;
+    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
     {
         if (player.Creature != Owner || AmountOnTurnStart <= 0) return;
-        await HaaLouLingCombatRules.GainKnife(context, player,
-            HaaLouLingCookingService.GetState(player).CompletedAtTurnStart + ExtraKnife);
+        Flash();
+        await HaaLouLingCookingService.AddRandomIngredients(context, player, Ingredients);
+        await CardPileCmd.Draw(context, Cards, player);
         await PowerCmd.Decrement(this);
     }
 }
 
 [RegisterPower]
-public sealed class ZaoHuoYangFengPower : ZaoHuoYangFengBasePower;
+public sealed class TiQianBeiCaiPower : TiQianBeiCaiBasePower;
 
 [RegisterPower]
-public sealed class ZaoHuoYangFengPlusPower : ZaoHuoYangFengBasePower
+public sealed class TiQianBeiCaiPlusPower : TiQianBeiCaiBasePower
 {
-    protected override int ExtraKnife => 1;
+    protected override int Ingredients => 4;
+    protected override int Cards => 3;
+}
+
+[RegisterPower]
+public sealed class ZhouRenPower : ZhouRenBasePower;
+
+[RegisterPower]
+public sealed class ZhouRenPlusPower : ZhouRenBasePower
+{
+    protected override int ExtraGuiYuan => 1;
 }

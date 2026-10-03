@@ -15,25 +15,22 @@ public sealed class StartCookingDishAction : GameAction
 
     public Player Player { get; }
     public ModelId DishModelId { get; }
-    public bool IsUpgraded { get; }
 
-    public StartCookingDishAction(Player player, ModelId dishModelId, bool isUpgraded)
+    public StartCookingDishAction(Player player, ModelId dishModelId)
     {
         Player = player;
         DishModelId = dishModelId;
-        IsUpgraded = isUpgraded;
     }
 
     protected override async Task ExecuteAction()
     {
         var choiceContext = new GameActionPlayerChoiceContext(this);
-        await HaaLouLingCookingService.StartCooking(choiceContext, Player, DishModelId, IsUpgraded);
+        await HaaLouLingCookingService.StartCooking(choiceContext, Player, DishModelId);
     }
 
     public override INetAction ToNetAction() =>
         new NetStartCookingDishAction
         {
-            DishModelId = DishModelId,
-            IsUpgraded = IsUpgraded
+            DishModelId = DishModelId
         };
 }

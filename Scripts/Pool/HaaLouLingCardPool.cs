@@ -1,10 +1,11 @@
 using Godot;
+using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Utils;
 
 namespace YogSothothsYard.Scripts;
 
-public sealed class HaaLouLingCardPool : TypeListCardPoolModel
+public sealed class HaaLouLingCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardPool
 {
     public override string Title => "haa_lou_ling";
     public override string EnergyColorName => "haa_lou_ling";

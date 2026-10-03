@@ -7,6 +7,6 @@
 [node name="SpineSprite" type="SpineSprite" parent="."]
 skeleton_data_res = ExtResource("1_spine")
 preview_skin = "default"
-preview_animation = "relaxed_loop"
+preview_animation = "idle_loop"
 position = Vector2(35.586, -0.839)
 scale = Vector2(-0.805714, 0.805714)

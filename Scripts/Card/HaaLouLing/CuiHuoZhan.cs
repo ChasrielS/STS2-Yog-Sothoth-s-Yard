@@ -11,16 +11,17 @@ namespace YogSothothsYard.Scripts;
 public sealed class CuiHuoZhan : HaaLouLingCard
 {
     public CuiHuoZhan() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new IntVar("CookingAdvance", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Attack(context, play);
-        await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -1, left: true);
+        await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -DynamicVars["CookingAdvance"].IntValue, left: true);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(3);
+        DynamicVars.Damage.UpgradeValueBy(2);
+        DynamicVars["CookingAdvance"].UpgradeValueBy(1);
     }
 }

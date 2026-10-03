@@ -8,6 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class SuiShenCaiLan : HaaLouLingRelic
 {
+    protected override string ImageName => "sui_shen_cai_lan";
     public override RelicRarity Rarity => RelicRarity.Uncommon;
     public override async Task BeforeCombatStart()
     {

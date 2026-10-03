@@ -11,7 +11,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class CheXi : HaaLouLingCard
 {
     public CheXi() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

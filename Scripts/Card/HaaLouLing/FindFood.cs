@@ -16,7 +16,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public class FindFood : ModCardTemplate
 {
-    private const int energyCost = 1;
+    private const int energyCost = 0;
     private const CardType type = CardType.Skill;
     private const CardRarity rarity = CardRarity.Basic;
     private const TargetType targetType = TargetType.Self;
@@ -31,7 +31,7 @@ public class FindFood : ModCardTemplate
     ];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [
-        new CardsVar(2)
+        new CardsVar(3)
     ];
 
     public FindFood() : base(energyCost, type, rarity, targetType, shouldShowInCardLibrary)
@@ -62,6 +62,6 @@ public class FindFood : ModCardTemplate
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Cards.UpgradeValueBy(1);
+        DynamicVars.Cards.UpgradeValueBy(2);
     }
 }

@@ -12,7 +12,12 @@ namespace YogSothothsYard.Scripts;
 public static class HaaLouLingCombatRules
 {
     public static int Knife(Player player) => player.Creature.GetPowerAmount<DaoShiPower>();
-    public static int KnifeLimit(Player player) => 3 + player.Creature.GetPowerAmount<DaoFaJingJinPower>();
+    public static int KnifeLimit(Player player)
+    {
+        var limit = 3 + player.Creature.GetPowerAmount<DaoFaJingJinPower>();
+        return player.Creature.HasPower<LiangShouJueHuoPower>()
+            ? Math.Max(limit, HaaLouLingCookingState.DefaultCapacity + player.Creature.GetPowerAmount<GuoWanPiaoPenPower>()) : limit;
+    }
 
     public static int KnifeForCard(CardModel card)
     {
@@ -33,7 +38,6 @@ public static class HaaLouLingCombatRules
         var before = power.Amount;
         await PowerCmd.ModifyAmount(context, power, -Math.Min(amount, before), player.Creature, source);
         var spent = before - Knife(player);
-        HaaLouLingCookingService.GetState(player).KnifeSpentThisTurn += spent;
         return spent;
     }
 
@@ -59,7 +63,6 @@ public static class HaaLouLingCombatRules
             await PowerCmd.ModifyAmount(context, existing, amount, giver, source);
             return;
         }
-        amount = Math.Min(100, amount);
         if (enhanced) await PowerCmd.Apply<GuiYuanPlusPower>(context, target, amount, giver, source);
         else await PowerCmd.Apply<GuiYuanPower>(context, target, amount, giver, source);
     }

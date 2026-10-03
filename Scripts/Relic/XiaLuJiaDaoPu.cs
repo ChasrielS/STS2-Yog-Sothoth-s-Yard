@@ -8,6 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class XiaLuJiaDaoPu : HaaLouLingRelic
 {
+    protected override string ImageName => "xia_lu_jia_dao_pu";
     public override RelicRarity Rarity => RelicRarity.Rare;
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     {

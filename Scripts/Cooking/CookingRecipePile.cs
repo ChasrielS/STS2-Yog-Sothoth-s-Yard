@@ -25,7 +25,6 @@ public sealed class CookingRecipePile : CardPile
             if (upgradeNextDish)
             {
                 previewCard.UpgradeInternal();
-                previewCard.FinalizeUpgradeInternal();
             }
 
             previewCard.Owner = player;
@@ -37,4 +36,20 @@ public sealed class CookingRecipePile : CardPile
 
     public bool TryGetRecipe(CardModel card, out CookingDishDefinition recipe) =>
         _recipesByCard.TryGetValue(card, out recipe!);
+
+    public void RefreshUpgrades()
+    {
+        var upgraded = HaaLouLingCookingService.HasPendingDishUpgrade(Player);
+        var changed = false;
+        foreach (var card in Cards.Where(card => card.IsUpgraded != upgraded))
+        {
+            if (upgraded)
+            {
+                card.UpgradeInternal();
+            }
+            else card.DowngradeInternal();
+            changed = true;
+        }
+        if (changed) InvokeContentsChanged();
+    }
 }

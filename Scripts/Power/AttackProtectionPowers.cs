@@ -25,6 +25,8 @@ public abstract class EnemyTurnProtectionPower : HaaLouLingPower
 [RegisterPower]
 public sealed class MianYiPower : EnemyTurnProtectionPower
 {
+    public override string? CustomIconPath => "res://images/powers/mian_yi_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/mian_yi_power.png";
     public override PowerStackType StackType => PowerStackType.Single;
     public override decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay) =>
         IsEnemyAttack(target, props, dealer) ? 0 : decimal.MaxValue;
@@ -33,6 +35,8 @@ public sealed class MianYiPower : EnemyTurnProtectionPower
 [RegisterPower]
 public sealed class YuanYangFengHuanPower : EnemyTurnProtectionPower
 {
+    public override string? CustomIconPath => "res://images/powers/yuan_yang_feng_huan_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/yuan_yang_feng_huan_power.png";
     private static readonly FieldInfo BaseDamage = typeof(AttackCommand).GetField("_damagePerHit", BindingFlags.Instance | BindingFlags.NonPublic)!;
     private decimal _baseDamage;
 

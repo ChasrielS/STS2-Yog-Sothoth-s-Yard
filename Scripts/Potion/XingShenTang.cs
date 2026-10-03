@@ -9,6 +9,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterPotion(typeof(HaaLouLingPotionPool))]
 public sealed class XingShenTang : HaaLouLingPotion
 {
+    protected override string ImageName => "xing_shen_tang";
     public override PotionRarity Rarity => PotionRarity.Common;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];

@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class GuaiRouChengDui : HaaLouLingCard
 {
     public GuaiRouChengDui() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(10)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(8)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
@@ -19,6 +19,6 @@ public sealed class GuaiRouChengDui : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Cards.UpgradeValueBy(5);
+        DynamicVars.Cards.UpgradeValueBy(4);
     }
 }

@@ -123,14 +123,13 @@ public sealed class MaYiShangShu : HaaLouLingDishCard
 public sealed class SuShiLengPan : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "su_shi_leng_pan";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 1));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
         HoverTipFactory.FromCard<QiGuaiDeRou>(),
         HoverTipFactory.FromCard<LaJiao>()
     ];
     public SuShiLengPan() : base(CardType.Skill, 1) { }
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]
@@ -143,7 +142,7 @@ public sealed class ChaoHeFen : HaaLouLingDishCard
         HoverTipFactory.FromCard<Mi>(),
         HoverTipFactory.FromCard<QiGuaiDeRou>()
     ];
-    public ChaoHeFen() : base(CardType.Skill, 1) { }
+    public ChaoHeFen() : base(CardType.Skill, 0) { }
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
 }
 

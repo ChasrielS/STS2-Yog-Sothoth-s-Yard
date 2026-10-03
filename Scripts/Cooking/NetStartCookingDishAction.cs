@@ -11,20 +11,17 @@ namespace YogSothothsYard.Scripts.Cooking;
 public struct NetStartCookingDishAction : INetAction, IPacketSerializable
 {
     public ModelId DishModelId;
-    public bool IsUpgraded;
 
     public GameAction ToGameAction(Player player) =>
-        new StartCookingDishAction(player, DishModelId, IsUpgraded);
+        new StartCookingDishAction(player, DishModelId);
 
     public void Serialize(PacketWriter writer)
     {
         writer.WriteModelEntry(DishModelId);
-        writer.WriteBool(IsUpgraded);
     }
 
     public void Deserialize(PacketReader reader)
     {
         DishModelId = reader.ReadModelIdAssumingType<CardModel>();
-        IsUpgraded = reader.ReadBool();
     }
 }

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.HoverTips;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Scaffolding.Content;
+using System.Text.RegularExpressions;
 
 namespace YogSothothsYard.Scripts;
 
@@ -18,7 +19,9 @@ public abstract class HaaLouLingCard : ModCardTemplate
     protected int Knife => Owner?.PlayerCombatState == null ? 0 : HaaLouLingCombatRules.Knife(Owner);
     protected virtual bool UsesKnife => false;
     protected virtual bool UsesGuiYuan => false;
-    public override CardAssetProfile AssetProfile => new(PortraitPath: CardModel.MissingPortraitPath);
+    protected virtual bool UsesKnifeForms => false;
+    public override CardAssetProfile AssetProfile => new(
+        PortraitPath: $"res://images/packed/card_portraits/haa_lou_ling/{Regex.Replace(GetType().Name, "(?<=[a-z])(?=[A-Z])", "_").ToLowerInvariant()}.png");
     protected HaaLouLingCard(int cost, CardType type, CardRarity rarity, TargetType target)
         : base(cost, type, rarity, target == TargetType.AnyAlly ? Entry.OtherPlayerTarget : target, true) { }
     protected override bool IsPlayable => !IsMutable || Owner?.PlayerCombatState == null || TargetType != Entry.OtherPlayerTarget ||
@@ -39,6 +42,7 @@ public abstract class HaaLouLingCard : ModCardTemplate
         {
             if (UsesKnife) yield return HaaLouLingKeywords.KeywordId("DaoShi");
             if (UsesGuiYuan) yield return HaaLouLingKeywords.KeywordId("GuiYuan");
+            if (UsesKnifeForms) yield return HaaLouLingKeywords.KeywordId("DaoShu");
         }
     }
     protected async Task<AttackCommand> Attack(PlayerChoiceContext context, CardPlay play, int hits = 1, bool random = false, bool calculated = false)

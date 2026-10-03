@@ -11,17 +11,18 @@ namespace YogSothothsYard.Scripts;
 public sealed class HuZao : HaaLouLingCard
 {
     public HuZao() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move), new CardsVar(1)];
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, 1, CardRarity.Common);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, CardRarity.Common);
     }
 
     protected override void OnUpgrade()
     {
         DynamicVars.Block.UpgradeValueBy(3);
+        DynamicVars.Cards.UpgradeValueBy(1);
     }
 }

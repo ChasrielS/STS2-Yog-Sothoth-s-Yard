@@ -21,12 +21,17 @@ public abstract class UncommonDishPower : DishPower
     public override string? CustomIconPath => $"res://images/powers/{IconFileName}_power_icon.png";
     public override string? CustomBigIconPath => $"res://images/powers/{IconFileName}_power.png";
 
-    public void FlashEffect() => Flash();
 }
 
 public abstract class SingleUncommonDishPower : UncommonDishPower
 {
     public override PowerStackType StackType => PowerStackType.Single;
+}
+
+[RegisterPower]
+public sealed class SuanLaSaoZiTiJinPower : UncommonDishPower
+{
+    protected override string IconFileName => "suan_la_sao_zi_ti_jin";
 }
 
 public abstract class TurnStartBlockDishPower : UncommonDishPower

@@ -8,13 +8,13 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class YiDaoBaiWei : HaaLouLingCard
 {
-    public YiDaoBaiWei() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public YiDaoBaiWei() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Finish;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var count = await FinishKnife(context);
-        await HaaLouLingCookingService.RandomDishEffects(context, Owner, count, uncommonOnly: IsUpgraded);
+        await HaaLouLingCookingService.RandomDishEffects(context, Owner, count * 2, uncommonOnly: IsUpgraded);
     }
 }

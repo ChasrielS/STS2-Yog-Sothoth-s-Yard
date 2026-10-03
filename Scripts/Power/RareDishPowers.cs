@@ -24,7 +24,6 @@ public abstract class RareDishPower : DishPower
     public override string? CustomIconPath => $"res://images/powers/{IconFileName}_power_icon.png";
     public override string? CustomBigIconPath => $"res://images/powers/{IconFileName}_power.png";
 
-    public void FlashEffect() => Flash();
 }
 
 public abstract class SingleRareDishPower : RareDishPower
@@ -54,12 +53,11 @@ public sealed class YangWangXingKongPower : RareDishPower
                 continue;
             }
 
-            await PowerCmd.Apply<PoisonPower>(
+            await HaaLouLingCookingService.ApplyDishPoison(
                 choiceContext,
                 target,
                 poison,
-                Owner,
-                null
+                Owner
             );
         }
     }
@@ -76,7 +74,6 @@ public sealed class ZhangYuWanZiPower : RareDishPower
             var description = base.Description;
             var state = IsMutable ? HaaLouLingCookingService.GetState(Owner.Player!) : null;
             description.Add("Progress", state?.OctopusBallIngredientProgress ?? 0);
-            description.Add("Charges", state?.BonusDishEffectCharges ?? 0);
             return description;
         }
     }
@@ -206,18 +203,12 @@ public sealed class ShenQianTangFenPower : RareDishPower
 
     protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
     {
-        await PowerCmd.Apply<PlatingPower>(
-            choiceContext,
-            Owner,
-            amount,
-            Owner,
-            null
-        );
+        await HaaLouLingCookingService.ApplyDishPlating(choiceContext, player, amount);
     }
 }
 
 [RegisterPower]
-public sealed class PenCaiPower : RareDishPower
+public sealed class PenCaiPower : SingleRareDishPower
 {
     protected override string IconFileName => "pen_cai";
 }

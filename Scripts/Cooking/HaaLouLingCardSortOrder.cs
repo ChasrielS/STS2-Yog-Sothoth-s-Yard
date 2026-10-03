@@ -53,7 +53,7 @@ public static class HaaLouLingCardSortOrder
     private static int GetDishSystemRank(CardModel card) => card switch
     {
         // 强化
-        ChangFen or ChaoHeFen or TingZaiZhou or MoYuBao => 0,
+        ChangFen or ChaoHeFen or SuShiLengPan or SuanLaSaoZiTiJin or TingZaiZhou or MoYuBao => 0,
 
         // 数值
         ShengYuPian or DongPoZhouZi or MaLaYu or MeiCaiKouRou or HuiGuoRou or
@@ -61,8 +61,8 @@ public static class HaaLouLingCardSortOrder
         GanZhaXieTa or HuoBaoYaoHua or ShenQianTangFen => 1,
 
         // 效果
-        MaJiangFengWei or SuShiLengPan or BaBaoSuCai or NiangDouFu or
-        MaPoDouFu or XianHuaDouFu or SuanLaSaoZiTiJin or ShengYan or
+        MaJiangFengWei or BaBaoSuCai or NiangDouFu or
+        MaPoDouFu or XianHuaDouFu or ShengYan or
         KaiShuiBaiCai => 2,
 
         // 鸡肉

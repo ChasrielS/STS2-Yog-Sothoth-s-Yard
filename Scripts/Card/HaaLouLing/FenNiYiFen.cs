@@ -12,7 +12,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class FenNiYiFen : HaaLouLingCard
 {
-    public FenNiYiFen() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
+    public FenNiYiFen() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
 

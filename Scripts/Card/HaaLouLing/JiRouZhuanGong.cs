@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class JiRouZhuanGong : HaaLouLingCard
 {
-    public JiRouZhuanGong() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public JiRouZhuanGong() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

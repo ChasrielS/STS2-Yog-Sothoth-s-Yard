@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Entities.Characters;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -19,7 +20,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
 {
     public override Color NameColor => new(0.18f, 0.70f, 0.62f);
     public override Color EnergyLabelOutlineColor => new(0.03f, 0.33f, 0.29f);
-    public override Color MapDrawingColor => new(0.18f, 0.70f, 0.62f);
+    public override Color MapDrawingColor => new(0.24f, 0.70f, 0.36f);
     public override CharacterGender Gender => CharacterGender.Feminine;
 
     public override int StartingHp => 72;
@@ -66,7 +67,14 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 ArmRockTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_rock.png",
                 ArmPaperTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_paper.png",
                 ArmScissorsTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_scissors.png"
-            )
+            ),
+            VanillaRelicVisualOverrides: [
+                new(CharacterOwnedVanillaRelicModelId.YummyCookie, new(
+                    IconPath: "res://images/relics/mei_wei_bing_gan_icon.png",
+                    IconOutlinePath: "res://images/relics/mei_wei_bing_gan_icon_outline.png",
+                    BigIconPath: "res://images/relics/mei_wei_bing_gan.png"
+                ))
+            ]
         ));
 
     public override float AttackAnimDelay => 0.15f;
@@ -94,7 +102,22 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
         return animator;
     }
 
-    protected override IEnumerable<RelicModel> LocalStartingRelics => [ModelDb.Relic<ZhanLingTangDao>()];
+    protected override IEnumerable<RelicModel> LocalStartingRelics =>
+        [ModelDb.Relic<ZhanLingTangDao>(), ModelDb.Relic<LingHunShiQuSuiZhiQing>()];
+
+    protected override ModAnimStateMachine? SetupCustomMerchantAnimationStateMachine(Node merchantRoot, CharacterModel character)
+    {
+        var sprite = new MegaSprite(merchantRoot.GetChild(0).GetNode("SpineSprite"));
+        var machine = ModAnimStateMachineBuilder.Create()
+            .AddState("idle_loop", true).AsInitial().Done()
+            .AddAnyState("Relaxed", "idle_loop")
+            .AddAnyState("Idle", "idle_loop")
+            .BuildSpine(sprite);
+        merchantRoot.RunWhenSpineReady(sprite, _ => machine.SetTrigger("Relaxed"));
+        return machine;
+    }
+
+    protected override ModAnimStateMachine? SetupCustomRestSiteAnimationStateMachine(Node restSiteRoot, CharacterModel character) => null;
 
     public override List<string> GetArchitectAttackVfx() => [
         "vfx/haa_lou_ling_strike_slash"

@@ -149,7 +149,9 @@ public partial class NCookingQueueDisplay : Control
         }
 
         var combatRoom = NCombatRoom.Instance;
-        if (combatRoom == null || !ActiveScreenContext.Instance.IsCurrent(combatRoom))
+        var activeScreen = ActiveScreenContext.Instance.GetCurrentScreen();
+        var isPeeking = activeScreen is Node screen && screen.GetNodeOrNull<NPeekButton>("%PeekButton")?.IsPeeking == true;
+        if (combatRoom == null || activeScreen != combatRoom && !isPeeking)
         {
             Visible = false;
             return;
@@ -159,7 +161,11 @@ public partial class NCookingQueueDisplay : Control
         var creatureNode = combatRoom.GetCreatureNode(_player.Creature);
         if (creatureNode != null)
         {
-            GlobalPosition = creatureNode.GetTopOfHitbox() + new Vector2(-Size.X * 0.5f, -82f);
+            var visuals = creatureNode.Visuals;
+            var bounds = visuals.Bounds;
+            Scale = visuals.Scale.Abs();
+            GlobalPosition = bounds.GlobalPosition + new Vector2(bounds.Size.X * 0.5f, 0f) * Scale
+                + new Vector2(-Size.X * 0.5f, -82f) * Scale;
         }
 
         Rebuild(force: false);
@@ -178,8 +184,7 @@ public partial class NCookingQueueDisplay : Control
                 current,
                 slot.DishModelId,
                 slot.RemainingTurns,
-                slot.IsUpgraded,
-                slot.IsCopy
+                slot.IsUpgraded
             ));
 
         if (!force && _lastCapacity == state.Capacity && _lastSlotHash == hash)
@@ -266,7 +271,6 @@ public partial class NCookingQueueDisplay : Control
         if (slot.IsUpgraded)
         {
             card.UpgradeInternal();
-            card.FinalizeUpgradeInternal();
         }
 
         var description = card.GetDescriptionForPile(MegaCrit.Sts2.Core.Entities.Cards.PileType.None);

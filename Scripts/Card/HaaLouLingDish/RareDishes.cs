@@ -31,7 +31,7 @@ public sealed class ZhangYuWanZi : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "zhang_yu_wan_zi";
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        base.CanonicalVars.Append(new DynamicVar("Dishes", 1));
+        base.CanonicalVars.Append(new DynamicVar("Cards", 4));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
         HoverTipFactory.FromCard<YuRou>(),
@@ -40,8 +40,8 @@ public sealed class ZhangYuWanZi : HaaLouLingDishCard
         HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
     ];
 
-    public ZhangYuWanZi() : base(CardType.Power, 2, CardRarity.Rare) { }
-    protected override void OnUpgrade() => DynamicVars["Dishes"].UpgradeValueBy(1);
+    public ZhangYuWanZi() : base(CardType.Power, 3, CardRarity.Rare) { }
+    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]
@@ -156,7 +156,7 @@ public sealed class PenCai : HaaLouLingDishCard
         HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
     ];
 
-    public PenCai() : base(CardType.Power, 2, CardRarity.Rare) { }
+    public PenCai() : base(CardType.Power, 3, CardRarity.Rare) { }
     protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 

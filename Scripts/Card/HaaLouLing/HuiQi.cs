@@ -10,14 +10,14 @@ namespace YogSothothsYard.Scripts;
 public sealed class HuiQi : HaaLouLingCard
 {
     public HuiQi() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Turn;
-    protected override bool ShouldGlowRedInternal => Knife < 2;
+    protected override bool ShouldGlowRedInternal => Knife == 0;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        if (Knife >= DynamicVars["Amount"].IntValue) { await SpendKnife(context, 2); await PlayerCmd.GainEnergy(1, Owner); }
+        if (Knife > 0) { await SpendKnife(context, 1); await PlayerCmd.GainEnergy(1, Owner); }
     }
 
     protected override void OnUpgrade()

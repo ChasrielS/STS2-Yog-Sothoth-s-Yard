@@ -8,8 +8,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class GuiYuanJue : HaaLouLingCard
 {
-    public GuiYuanJue() : base(0, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
+    public GuiYuanJue() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesGuiYuan => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

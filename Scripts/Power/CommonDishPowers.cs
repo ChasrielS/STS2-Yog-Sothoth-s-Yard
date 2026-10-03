@@ -13,7 +13,6 @@ public abstract class CommonDishPower : DishPower
     public override string? CustomIconPath => $"res://images/powers/{IconFileName}_power_icon.png";
     public override string? CustomBigIconPath => $"res://images/powers/{IconFileName}_power.png";
 
-    public void FlashEffect() => Flash();
 }
 
 [RegisterPower]
@@ -26,6 +25,12 @@ public sealed class ChangFenPower : CommonDishPower
 public sealed class ChaoHeFenPower : CommonDishPower
 {
     protected override string IconFileName => "chao_he_fen";
+}
+
+[RegisterPower]
+public sealed class SuShiLengPanPower : CommonDishPower
+{
+    protected override string IconFileName => "su_shi_leng_pan";
 }
 
 [RegisterPower]

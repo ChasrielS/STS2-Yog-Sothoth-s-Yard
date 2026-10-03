@@ -8,7 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ZaoHuoChangMing : HaaLouLingCard
 {
-    public ZaoHuoChangMing() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
+    public ZaoHuoChangMing() : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -18,6 +18,6 @@ public sealed class ZaoHuoChangMing : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Amount"].UpgradeValueBy(1);
+        EnergyCost.UpgradeBy(-1);
     }
 }

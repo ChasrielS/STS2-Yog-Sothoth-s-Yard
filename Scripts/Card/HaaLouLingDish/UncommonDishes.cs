@@ -41,10 +41,9 @@ public sealed class BaBaoSuCai : HaaLouLingDishCard
 public sealed class NiangDouFu : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "niang_dou_fu";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 2));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<DouFu>(), HoverTipFactory.FromCard<QiGuaiDeRou>()];
     public NiangDouFu() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]
@@ -80,9 +79,9 @@ public sealed class YanJuJi : HaaLouLingDishCard
 public sealed class ZhangYuNingMengZhi : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "zhang_yu_ning_meng_zhi";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Threshold", 8));
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat([new DynamicVar("Threshold", 8), new EnergyVar(1)]);
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<Tang>()];
-    public ZhangYuNingMengZhi() : base(CardType.Power, 0, CardRarity.Uncommon) { }
+    public ZhangYuNingMengZhi() : base(CardType.Skill, 0, CardRarity.Uncommon) { }
     protected override void OnUpgrade() => DynamicVars["Threshold"].UpgradeValueBy(-4);
 }
 
@@ -118,9 +117,8 @@ public sealed class ShuiZhuRouPian : HaaLouLingDishCard
 public sealed class MaPoDouFu : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "ma_po_dou_fu";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 2));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<DouFu>(), HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<HuaJiao>()];
-    public MaPoDouFu() : base(CardType.Skill, 2, CardRarity.Uncommon) { }
+    public MaPoDouFu() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
     protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
@@ -128,7 +126,7 @@ public sealed class MaPoDouFu : HaaLouLingDishCard
 public sealed class XianHuaDouFu : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "xian_hua_dou_fu";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 2));
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 1));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<DouFu>(), HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<JiRou>()];
     public XianHuaDouFu() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
@@ -178,10 +176,9 @@ public sealed class JiDiZhou : HaaLouLingDishCard
 public sealed class SuanLaSaoZiTiJin : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "suan_la_sao_zi_ti_jin";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 2));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ZhuRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<LaJiao>()];
     public SuanLaSaoZiTiJin() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]

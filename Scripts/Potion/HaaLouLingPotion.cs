@@ -6,9 +6,11 @@ namespace YogSothothsYard.Scripts;
 
 public abstract class HaaLouLingPotion : ModPotionTemplate
 {
+    protected abstract string ImageName { get; }
+    public string BigImagePath => $"res://images/potions/{ImageName}.png";
     public override PotionUsage Usage => PotionUsage.CombatOnly;
     public override TargetType TargetType => TargetType.Self;
     public override PotionAssetProfile AssetProfile => new(
-        ImagePath: "res://images/packed/combat_ui/food_pile.png",
-        OutlinePath: "res://images/packed/combat_ui/food_pile.png");
+        ImagePath: $"res://images/potions/{ImageName}_icon.png",
+        OutlinePath: $"res://images/potions/{ImageName}_outline.png");
 }

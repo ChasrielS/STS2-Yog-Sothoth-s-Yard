@@ -1,5 +1,4 @@
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -9,13 +8,13 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class ZhanLingTangDaoChangMing : HaaLouLingRelic
 {
+    protected override string ImageName => "zhan_ling_tang_dao_chang_ming";
     public override RelicRarity Rarity => RelicRarity.Starter;
-    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState state)
+    public override async Task BeforeCombatStart()
     {
-        if (player == Owner && player.PlayerCombatState!.TurnNumber <= 3)
-        {
-            Flash();
-            await HaaLouLingCombatRules.GainKnife(context, Owner, 1);
-        }
+        Flash();
+        var context = new ThrowingPlayerChoiceContext();
+        await PowerCmd.Apply<DaoFaJingJinPower>(context, Owner.Creature, 2, Owner.Creature, null);
+        await HaaLouLingCombatRules.GainKnife(context, Owner, 5);
     }
 }

@@ -11,6 +11,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterPotion(typeof(HaaLouLingPotionPool))]
 public sealed class GaoTangJingHua : HaaLouLingPotion
 {
+    protected override string ImageName => "gao_tang_jing_hua";
     public override PotionRarity Rarity => PotionRarity.Uncommon;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 3)];
     protected override Task OnUse(PlayerChoiceContext context, Creature? target) =>

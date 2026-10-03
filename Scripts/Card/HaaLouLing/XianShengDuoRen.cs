@@ -13,13 +13,13 @@ public sealed class XianShengDuoRen : HaaLouLingCard
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Open;
-    public override bool WantsGreenOutline => Knife <= 1;
+    public override bool WantsGreenOutline => Knife == 0;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var eligible = Knife <= 1;
+        var eligible = Knife == 0;
         await Attack(context, play);
-        if (eligible) await GainKnife(context, 1);
+        if (eligible) await GainKnife(context, 2);
     }
 
     protected override void OnUpgrade()

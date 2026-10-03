@@ -4,8 +4,9 @@ namespace YogSothothsYard.Scripts;
 
 public abstract class HaaLouLingRelic : ModRelicTemplate
 {
+    protected abstract string ImageName { get; }
     public override RelicAssetProfile AssetProfile => new(
-        IconPath: "res://images/packed/combat_ui/food_pile.png",
-        IconOutlinePath: "res://images/packed/combat_ui/food_pile.png",
-        BigIconPath: "res://images/packed/combat_ui/food_pile.png");
+        IconPath: $"res://images/relics/{ImageName}_icon.png",
+        IconOutlinePath: $"res://images/relics/{ImageName}_outline.png",
+        BigIconPath: $"res://images/relics/{ImageName}.png");
 }

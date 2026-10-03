@@ -2,6 +2,8 @@ using Godot;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Screens;
@@ -76,10 +78,39 @@ public static class HaaLouLingPileScreen
             NCardGrid.SignalName.HolderPressed,
             Callable.From<NCardHolder>(holder => OnRecipePressed(recipePile, holder))
         );
+        grid.Connect(NCardGrid.SignalName.HolderAltPressed, Callable.From<NCardHolder>(holder =>
+        {
+            var cards = recipePile.Cards.ToList();
+            NGame.Instance!.GetInspectCardScreen().Open(cards, cards.IndexOf(holder.CardModel!));
+        }));
+
+        void OnPowerChanged(PowerModel power)
+        {
+            if (power is ChangFenPower or ChaoHeFenPower or MoYuBaoPower) recipePile.RefreshUpgrades();
+        }
+        void OnPowerIncreased(PowerModel power, int amount, bool silent) => OnPowerChanged(power);
+        void OnPowerDecreased(PowerModel power, bool silent) => OnPowerChanged(power);
+        var creature = recipePile.Player.Creature;
+        creature.PowerApplied += OnPowerChanged;
+        creature.PowerRemoved += OnPowerChanged;
+        creature.PowerIncreased += OnPowerIncreased;
+        creature.PowerDecreased += OnPowerDecreased;
+        screen.TreeExiting += () =>
+        {
+            creature.PowerApplied -= OnPowerChanged;
+            creature.PowerRemoved -= OnPowerChanged;
+            creature.PowerIncreased -= OnPowerIncreased;
+            creature.PowerDecreased -= OnPowerDecreased;
+        };
     }
 
     private static void OnRecipePressed(CookingRecipePile recipePile, NCardHolder holder)
     {
+        if (!HaaLouLingCookingService.CanCookNow(recipePile.Player))
+        {
+            Entry.ShowCannotCookMessage(recipePile.Player);
+            return;
+        }
         var card = holder.CardModel;
         if (card == null || !recipePile.TryGetRecipe(card, out var recipe))
         {
@@ -87,7 +118,7 @@ public static class HaaLouLingPileScreen
         }
 
         RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(
-            new StartCookingDishAction(recipePile.Player, recipe.DishModelId, card.IsUpgraded)
+            new StartCookingDishAction(recipePile.Player, recipe.DishModelId)
         );
         NCapstoneContainer.Instance?.Close();
     }

@@ -8,10 +8,11 @@ namespace YogSothothsYard.Scripts;
 [RegisterTouchOfOrobasRefinement(typeof(ZhanLingTangDaoChangMing))]
 public sealed class ZhanLingTangDao : HaaLouLingRelic
 {
+    protected override string ImageName => "zhan_ling_tang_dao";
     public override RelicRarity Rarity => RelicRarity.Starter;
     public override async Task BeforeCombatStart()
     {
         Flash();
-        await HaaLouLingCombatRules.GainKnife(new ThrowingPlayerChoiceContext(), Owner, 1);
+        await HaaLouLingCombatRules.GainKnife(new ThrowingPlayerChoiceContext(), Owner, 3);
     }
 }

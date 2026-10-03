@@ -1,7 +1,7 @@
 {
-    "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.title":"食材（查看F，烹饪C）",
-    "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.description":"左键查看你拥有的食材。\n右键选择食材进行烹饪。",
-    "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.empty":"我[red]没有[/red]食材。",
-    "YOG_SOTHOTH_S_YARD_COOKING_TURNS.title":"烹饪回合",
-    "YOG_SOTHOTH_S_YARD_COOKING_TURNS.description":"下第{CookingTurns}回合开始时获得效果。"
+  "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.title": "食材（查看F，烹饪C）",
+  "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.description": "左键查看你拥有的食材。\n右键选择食材进行烹饪。",
+  "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.empty": "我[red]没有[/red]食材。",
+  "YOG_SOTHOTH_S_YARD_COOKING_TURNS.title": "{CookingTurns:choose(0):立刻完成|烹饪回合}",
+  "YOG_SOTHOTH_S_YARD_COOKING_TURNS.description": "{CookingTurns:choose(0):立刻获得效果。|下第{CookingTurns}回合开始时获得效果。}"
 }

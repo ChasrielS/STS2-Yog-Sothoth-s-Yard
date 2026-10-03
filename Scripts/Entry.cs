@@ -60,10 +60,16 @@ public class Entry
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
         Patcher.RegisterPatch<DishRecipeHoverTipLayoutPatch>();
         Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();
+        Patcher.RegisterPatch<DaoShiPersistencePatch>();
+        Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
-            ModCardHandOutlineRules.Fixed<HaaLouLingCard>(card => card.WantsGreenOutline, Godot.Colors.Green));
+            ModCardHandOutlineRules.Switch<HaaLouLingCard>(card => card.WantsGreenOutline
+                ? Godot.Colors.Green
+                : null));
         NCookingQueueDisplay.Register();
+        NFoodPileMotion.Register();
+        NDishEffectChoicePrompt.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
             replayCurrentState: false
@@ -114,8 +120,10 @@ public class Entry
             cookingPower.ApplyInternal(player.Creature, 1, silent: true);
             if (!player.Creature.HasPower<DaoShiPower>())
             {
-                var gauge = ModelDb.Power<DaoShiGaugePower>().ToMutable();
-                gauge.ApplyInternal(player.Creature, 1, silent: true);
+                var knife = ModelDb.Power<DaoShiPower>().ToMutable();
+                // 原版不允许以零层添加能力，先静默绑定，再保留真实的零层计数。
+                knife.ApplyInternal(player.Creature, 1, silent: true);
+                knife.SetAmount(0, silent: true);
             }
         }
     }

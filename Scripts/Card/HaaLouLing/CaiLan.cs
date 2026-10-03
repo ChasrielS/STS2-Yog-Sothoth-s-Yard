@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class CaiLan : HaaLouLingCard
 {
     public CaiLan() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

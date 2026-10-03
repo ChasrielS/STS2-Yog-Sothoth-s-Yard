@@ -12,12 +12,14 @@ public sealed class ZhanLingGuiYuan : HaaLouLingCard
     public ZhanLingGuiYuan() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(8), new ExtraDamageVar(4), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesKnife => true;
+    protected override bool UsesGuiYuan => true;
     public override KnifeForm Form => KnifeForm.Finish;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await FinishKnife(context);
-        await Attack(context, play, calculated: true);
+        var attack = await Attack(context, play, calculated: true);
+        await GiveGuiYuan(context, play, (int)attack.Results.SelectMany(hit => hit).Sum(result => result.TotalDamage));
     }
 
     protected override void OnUpgrade()

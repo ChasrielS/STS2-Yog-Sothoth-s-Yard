@@ -11,13 +11,14 @@ public sealed class KaiYan : HaaLouLingCard
 {
     public KaiYan() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 0)];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Innate]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Retain]);
     protected override bool HasEnergyCostX => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var count = ResolveEnergyXValue() + DynamicVars["Amount"].IntValue;
         if (EnergyCost.CapturedXValue == HaaLouLingCookingService.GetState(Owner).Capacity) await Apply<GuoWanPiaoPenPower>(context, 1);
-        await HaaLouLingCookingService.CookRandomDishes(context, Owner, ResolveEnergyXValue() + DynamicVars["Amount"].IntValue, rare: false);
+        await HaaLouLingCookingService.CookRandomDishes(context, Owner, count, rare: false, uncommonOnly: true);
     }
 
     protected override void OnUpgrade()

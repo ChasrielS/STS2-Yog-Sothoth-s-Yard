@@ -8,6 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class TangDaoJiuQiao : HaaLouLingRelic
 {
+    protected override string ImageName => "tang_dao_jiu_qiao";
     public override RelicRarity Rarity => RelicRarity.Rare;
     public override async Task BeforeCombatStart()
     {

@@ -9,8 +9,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class LianHuanZhan : HaaLouLingCard
 {
-    public LianHuanZhan() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];
+    public LianHuanZhan() : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Follow;
     public override bool WantsGreenOutline => Knife > 0;
@@ -24,6 +24,6 @@ public sealed class LianHuanZhan : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(2);
+        DynamicVars.Damage.UpgradeValueBy(4);
     }
 }

@@ -9,6 +9,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class TongBingChaoShao : HaaLouLingRelic
 {
+    protected override string ImageName => "tong_bing_chao_shao";
     public override RelicRarity Rarity => RelicRarity.Uncommon;
     [SavedProperty]
     public int Progress { get; set; }

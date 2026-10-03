@@ -6,5 +6,6 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class DaNuoGuiMian : HaaLouLingRelic
 {
+    protected override string ImageName => "da_nuo_gui_mian";
     public override RelicRarity Rarity => RelicRarity.Shop;
 }

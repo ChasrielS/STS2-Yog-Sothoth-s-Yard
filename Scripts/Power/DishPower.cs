@@ -10,6 +10,7 @@ namespace YogSothothsYard.Scripts;
 
 public abstract class DishPower : ModPowerTemplate
 {
+    public void FlashEffect() => Flash();
     protected virtual bool HasTurnStartEffect => false;
     private int _lastTurn;
     private int _triggeredAmount;

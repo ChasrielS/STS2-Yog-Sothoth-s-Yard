@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class HuShenFuLu : HaaLouLingCard
 {
     public HuShenFuLu() : base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move), new IntVar("Amount", 5)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move), new IntVar("Amount", 10)];
     protected override bool UsesGuiYuan => true;
     public override bool GainsBlock => true;
 
@@ -22,6 +22,6 @@ public sealed class HuShenFuLu : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(2); DynamicVars["Amount"].UpgradeValueBy(3);
+        DynamicVars.Block.UpgradeValueBy(2); DynamicVars["Amount"].UpgradeValueBy(5);
     }
 }

@@ -21,7 +21,7 @@ public sealed class JiaDao : HaaLouLingCard
     {
         var eligible = Knife == 0;
         await Block(play);
-        if (eligible) await GainKnife(context, 1);
+        if (eligible) await GainKnife(context, 2);
     }
 
     protected override void OnUpgrade()

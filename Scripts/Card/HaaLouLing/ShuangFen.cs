@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -17,6 +18,7 @@ public sealed class ShuangFen : HaaLouLingCard
         var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, DynamicVars.Cards.IntValue);
         var copies = selected.Select(card => card.CreateClone()).ToList();
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, copies);
+        await CardPileCmd.Draw(context, 1, Owner);
     }
 
     protected override void OnUpgrade()

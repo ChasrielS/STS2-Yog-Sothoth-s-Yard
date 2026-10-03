@@ -7,6 +7,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterRelic(typeof(HaaLouLingRelicPool))]
 public sealed class JiuShiZhenLingFu : HaaLouLingRelic
 {
+    protected override string ImageName => "jiu_shi_zhen_ling_fu";
     public override RelicRarity Rarity => RelicRarity.Common;
     public override async Task BeforeCombatStart()
     {

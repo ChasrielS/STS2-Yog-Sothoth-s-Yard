@@ -87,7 +87,7 @@ public static class HaaLouLingCookingRecipes
                 Ingredients((leafyVegetable, 1)),
                 static (choiceContext, player, upgraded) =>
                     HaaLouLingCookingService.ModifyRandomCounterPower(
-                        choiceContext, player, PowerType.Debuff, upgraded ? 2 : 1)
+                        choiceContext, player, PowerType.Buff, upgraded ? 2 : 1)
             ),
             Create<BoBoJi>(
                 1,
@@ -114,12 +114,12 @@ public static class HaaLouLingCookingRecipes
                 1,
                 "su_shi_leng_pan",
                 Ingredients((strangeMeat, 1), (chili, 1)),
-                static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ModifyRandomCounterPower(
-                        choiceContext, player, PowerType.Buff, upgraded ? 2 : 1)
+                static (choiceContext, player, upgraded) => ApplyPower<SuShiLengPanPower>(
+                    choiceContext, player, 1),
+                upgradedCookingTurns: 0
             ),
             Create<ChaoHeFen>(
-                1,
+                0,
                 "chao_he_fen",
                 Ingredients((rice, 1), (strangeMeat, 1)),
                 static (choiceContext, player, upgraded) => ApplyPower<ChaoHeFenPower>(
@@ -158,7 +158,7 @@ public static class HaaLouLingCookingRecipes
                 1,
                 "chao_zhou_dong_hong_xie",
                 Ingredients((crab, 1)),
-                static (choiceContext, player, upgraded) => ApplyPower<PlatingPower>(
+                static (choiceContext, player, upgraded) => HaaLouLingCookingService.ApplyDishPlating(
                     choiceContext, player, 3),
                 upgradedCookingTurns: 0
             ),
@@ -175,15 +175,16 @@ public static class HaaLouLingCookingRecipes
                 Ingredients((leafyVegetable, 1), (bambooShoot, 1)),
                 static (choiceContext, player, upgraded) =>
                     HaaLouLingCookingService.ModifyRandomCounterPower(
-                        choiceContext, player, PowerType.Debuff, upgraded ? 3 : 2)
+                        choiceContext, player, PowerType.Buff, upgraded ? 3 : 2)
             ),
             Create<NiangDouFu>(
                 1,
                 "niang_dou_fu",
                 Ingredients((tofu, 1), (strangeMeat, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.IncreaseRandomEnemyDebuff(
-                        choiceContext, player, upgraded ? 3 : 2)
+                    HaaLouLingCookingService.IncreaseCounterPowers(
+                        choiceContext, [player.Creature], PowerType.Buff, 1, player.Creature),
+                upgradedCookingTurns: 0
             ),
             Create<KaoRuZhu>(
                 1,
@@ -237,21 +238,23 @@ public static class HaaLouLingCookingRecipes
                         choiceContext, player, upgraded)
             ),
             Create<MaPoDouFu>(
-                2,
+                1,
                 "ma_po_dou_fu",
                 Ingredients((tofu, 1), (strangeMeat, 1), (sichuanPepper, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.IncreaseRandomPlayerBuff(
-                        choiceContext, player, 2),
-                upgradedCookingTurns: 1
+                    HaaLouLingCookingService.IncreaseCounterPowers(
+                        choiceContext, player.Creature.CombatState!.Players.Where(other => other.Creature.IsAlive)
+                            .Select(other => other.Creature), PowerType.Buff, 1, player.Creature),
+                upgradedCookingTurns: 0
             ),
             Create<XianHuaDouFu>(
                 1,
                 "xian_hua_dou_fu",
                 Ingredients((tofu, 1), (strangeMeat, 1), (chicken, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.IncreaseTwoRandomEnemyDebuffs(
-                        choiceContext, player, upgraded ? 3 : 2)
+                    HaaLouLingCookingService.IncreaseCounterPowers(
+                        choiceContext, player.Creature.CombatState!.Enemies.Where(enemy => enemy.IsAlive),
+                        PowerType.Debuff, upgraded ? 2 : 1, player.Creature)
             ),
             Create<LuoShiFen>(
                 2,
@@ -271,7 +274,7 @@ public static class HaaLouLingCookingRecipes
                 1,
                 "gan_zha_xie_ta",
                 Ingredients((crab, 1), (strangeMeat, 1), (shrimp, 1)),
-                static (choiceContext, player, upgraded) => ApplyPower<PlatingPower>(
+                static (choiceContext, player, upgraded) => HaaLouLingCookingService.ApplyDishPlating(
                     choiceContext, player, upgraded ? 7 : 5)
             ),
             Create<JiDiZhou>(
@@ -285,9 +288,9 @@ public static class HaaLouLingCookingRecipes
                 1,
                 "suan_la_sao_zi_ti_jin",
                 Ingredients((pork, 1), (greenPepper, 1), (chili, 1)),
-                static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ModifyRandomCounterPower(
-                        choiceContext, player, PowerType.Buff, upgraded ? 3 : 2)
+                static (choiceContext, player, upgraded) => ApplyPower<SuanLaSaoZiTiJinPower>(
+                    choiceContext, player, 1),
+                upgradedCookingTurns: 0
             ),
             Create<ShaoLaShuangPin>(
                 1,
@@ -346,14 +349,15 @@ public static class HaaLouLingCookingRecipes
                         upgraded ? 15 : 10)
             ),
             Create<ZhangYuWanZi>(
-                2,
+                3,
                 "zhang_yu_wan_zi",
                 Ingredients((fish, 1), (snailMeat, 1), (ancientPheromone, 1)),
                 static (choiceContext, player, upgraded) =>
                     ApplyPower<ZhangYuWanZiPower>(
                         choiceContext,
                         player,
-                        upgraded ? 2 : 1)
+                        4),
+                upgradedCookingTurns: 2
             ),
             Create<BaoZaiFan>(
                 2,
@@ -421,7 +425,7 @@ public static class HaaLouLingCookingRecipes
                         upgraded ? 3 : 2)
             ),
             Create<PenCai>(
-                2,
+                3,
                 "pen_cai",
                 Ingredients(
                     (chicken, 1),
@@ -431,7 +435,7 @@ public static class HaaLouLingCookingRecipes
                     (ancientPheromone, 1)),
                 static (choiceContext, player, upgraded) =>
                     ApplyPower<PenCaiPower>(choiceContext, player, 1),
-                upgradedCookingTurns: 1
+                upgradedCookingTurns: 2
             ),
             Create<MaLaHuoGuo>(
                 3,

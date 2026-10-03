@@ -8,7 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class CangFeng : HaaLouLingCard
 {
-    public CangFeng() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public CangFeng() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnife => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
