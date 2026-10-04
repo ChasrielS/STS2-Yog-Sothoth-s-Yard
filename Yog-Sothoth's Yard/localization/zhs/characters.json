@@ -4,7 +4,7 @@
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.banter.dead.endTurnPing": "……",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.cardsModifierDescription": "霞露零的卡牌现在会出现在奖励和商店中。",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.cardsModifierTitle": "霞露零卡牌",
-  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.description": "来自庭院的厨师兼斩灵师，为寻找失踪的老板来到尖塔。",
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.description": "来自庭院的厨师兼斩灵师，\n为寻找失踪的老板来到尖塔。",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.eventDeathPrevention": "还没找到老板……大家也还需要我！",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.goldMonologue": "[sine]可以买些药和食材……找到老板后，先给他煲碗热汤。[/sine]",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.possessiveAdjective": "她的",
@@ -13,5 +13,5 @@
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.pronounSubject": "她",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.title": "霞露零",
   "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.titleObject": "霞露零",
-  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.unlockText": ""
+  "YOG_SOTHOTH_S_YARD_CHARACTER_HAA_LOU_LING.unlockText": "用[red]{Prerequisite}[/red]进行一局游戏来解锁这个角色。"
 }

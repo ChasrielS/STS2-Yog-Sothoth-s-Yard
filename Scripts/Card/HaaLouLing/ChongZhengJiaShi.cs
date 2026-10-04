@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -11,6 +12,8 @@ public sealed class ChongZhengJiaShi : HaaLouLingCard
     public ChongZhengJiaShi() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnife => true;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(HaaLouLingKeywords.HeShi)]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

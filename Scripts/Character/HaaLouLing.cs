@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Data.Models;
@@ -16,6 +17,7 @@ using STS2RitsuLib.Scaffolding.Visuals.StateMachine;
 namespace YogSothothsYard.Scripts;
 
 [RegisterCharacter]
+[RequireEpoch(typeof(XunRenQiChengEpoch))]
 public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLouLingRelicPool, HaaLouLingPotionPool>
 {
     public override Color NameColor => new(0.18f, 0.70f, 0.62f);
@@ -23,8 +25,9 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
     public override Color MapDrawingColor => new(0.24f, 0.70f, 0.36f);
     public override CharacterGender Gender => CharacterGender.Feminine;
 
-    public override int StartingHp => 72;
+    public override int StartingHp => 75;
     public override int StartingGold => 99;
+    protected override Type? UnlocksAfterRunAsType => typeof(Ironclad);
 
     public override CharacterAssetProfile AssetProfile => CharacterAssetProfiles.Merge(
         CharacterAssetProfiles.Ironclad(),
@@ -40,8 +43,8 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 IconPath: "res://scenes/ui/character_icons/haa_lou_ling_icon.tscn",
                 CharacterSelectBgPath: "res://scenes/screens/char_select/char_select_bg_haa_lou_ling.tscn",
                 CharacterSelectIconPath: "res://images/packed/character_select/char_select_haa_lou_ling.png",
-                CharacterSelectLockedIconPath: "res://images/packed/character_select/char_select_haa_lou_ling.png",
-                CharacterSelectTransitionPath: "res://materials/transitions/silent_transition_mat.tres",
+                CharacterSelectLockedIconPath: "res://images/packed/character_select/char_select_haa_lou_ling_locked.png",
+                CharacterSelectTransitionPath: "res://materials/transitions/haa_lou_ling_transition_mat.tres",
                 MapMarkerPath: "res://images/ui/top_panel/character_icon_haa_lou_ling.png"
             ),
             Vfx: new(
@@ -51,17 +54,10 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 // 场景已绑定骨骼；再次替换会清空动画轨道。空串同时阻止继承占位角色的路径。
                 CombatSkeletonDataPath: ""
             ),
-            Audio: new(
-                // 攻击音效
-                // AttackSfx: null,
-                // 施法音效
-                // CastSfx: null,
-                // 死亡音效
-                // DeathSfx: null,
-                // 角色选择音效
-                // CharacterSelectSfx: null,
-                CharacterTransitionSfx: "event:/sfx/ui/wipe_silent"
-            ),
+            Audio: CharacterAssetProfiles.Silent().Audio! with
+            {
+                CharacterTransitionSfx = Entry.HaaLouLingTransitionSfx
+            },
             Multiplayer: new(
                 ArmPointingTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_point.png",
                 ArmRockTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_rock.png",

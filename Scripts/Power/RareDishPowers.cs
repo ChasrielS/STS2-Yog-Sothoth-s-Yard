@@ -208,7 +208,7 @@ public sealed class ShenQianTangFenPower : RareDishPower
 }
 
 [RegisterPower]
-public sealed class PenCaiPower : SingleRareDishPower
+public sealed class PenCaiPower : RareDishPower
 {
     protected override string IconFileName => "pen_cai";
 }

@@ -12,7 +12,8 @@ public sealed class DaoBeiQiaoDa : HaaLouLingCard
 {
     public DaoBeiQiaoDa() : base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new CardsVar(1)];
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(CardKeyword.Retain)];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(CardKeyword.Retain)]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

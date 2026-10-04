@@ -96,7 +96,8 @@ public sealed class MaoXueWang : HaaLouLingDishCard
         HoverTipFactory.FromCard<DouFu>(),
         HoverTipFactory.FromCard<LaJiao>(),
         HoverTipFactory.FromCard<YuanGuXinXiSu>(),
-        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
+        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse),
+        HoverTipFactory.Static(StaticHoverTip.Block)
     ];
 
     public MaoXueWang() : base(CardType.Power, 3, CardRarity.Rare) { }

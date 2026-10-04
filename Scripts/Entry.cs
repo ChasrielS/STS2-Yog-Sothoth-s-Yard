@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
@@ -14,11 +15,13 @@ using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Nodes.Screens.Capstones;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using STS2RitsuLib;
+using STS2RitsuLib.Audio;
 using STS2RitsuLib.CardPiles;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.RuntimeInput;
+using STS2RitsuLib.Unlocks;
 using STS2RitsuLib.Scaffolding.Cards.HandOutline;
 using STS2RitsuLib.Combat.CardTargeting;
 using YogSothothsYard.Scripts.Patches;
@@ -31,6 +34,7 @@ namespace YogSothothsYard.Scripts;
 public class Entry
 {
     public const string ModId = "Yog-Sothoth's Yard";
+    public const string HaaLouLingTransitionSfx = "event:/yog_sothoths_yard/sfx/character_transition";
     public static readonly Logger Logger = RitsuLibFramework.CreateLogger(ModId);
     public static readonly ModPatcher Patcher = RitsuLibFramework.CreatePatcher(
         ModId,
@@ -56,7 +60,16 @@ public class Entry
             (creature, player) => creature.IsAlive && creature.IsPlayer && creature.Player != player);
         var registry = ModCardPileRegistry.For(ModId);
         RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
+        VirtualFmodEventRegistry.RegisterOneShots(new Dictionary<string, string>
+        {
+            [HaaLouLingTransitionSfx] = "res://audio/sfx/haa_lou_ling/character_transition.wav"
+        }, busPath: FmodStudioRouting.SfxBus);
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+        ModUnlockRegistry.For(ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
+            XunRenQiChengEpoch.EpochId,
+            "用铁甲战士结束一局普通游戏后获得寻人启程",
+            context => context.CharacterId == ModelDb.Character<Ironclad>().Id
+        ));
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
         Patcher.RegisterPatch<DishRecipeHoverTipLayoutPatch>();
         Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();

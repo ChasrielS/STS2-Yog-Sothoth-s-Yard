@@ -83,7 +83,8 @@ public static class HaaLouLingCookingService
         if (player.Creature.GetPower<PenCaiPower>() is { Amount: > 0 } feast && generated.Count > 0)
         {
             feast.FlashEffect();
-            generated.AddRange(generated.Select(card => card.CreateClone()).ToList());
+            for (var i = 0; i < feast.Amount; i++)
+                generated.AddRange(generated.Select(card => card.CreateClone()).ToList());
         }
         var results = await CardPileCmd.AddGeneratedCardsToCombat(generated, Entry.FoodPile, player);
         var gained = results.Where(result => result.success).ToList();
@@ -260,7 +261,10 @@ public static class HaaLouLingCookingService
         var recipients = shares.Select(share => share.Recipient).ToList();
         foreach (var share in shares) await PowerCmd.Decrement(share);
         await TriggerDishCompleted(choiceContext, player);
-        await GainDishEffect(choiceContext, player, recipe, isUpgraded);
+        var card = (HaaLouLingDishCard)player.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), player);
+        card.IsCookingCompletion = true;
+        if (isUpgraded) card.UpgradeInternal();
+        await CardCmd.AutoPlay(choiceContext, card, card.TargetType == TargetType.Self ? player.Creature : null);
         foreach (var recipient in recipients)
             if (recipient?.Creature.IsAlive == true) await GainDishEffect(choiceContext, recipient, recipe, isUpgraded);
         if (UsesAncientPheromone(recipe)) HaaLouLingCombatRules.GainAncientGlimpse(player);
@@ -732,7 +736,10 @@ public static class HaaLouLingCookingService
         GetState(player).DishesCooked++;
         var turns = recipe.GetCookingTurns(upgraded);
         if (turns <= 0) await CompleteDish(context, player, recipe, upgraded);
-        else GetState(player).Slots.Add(new CookingSlot { DishModelId = recipe.DishModelId, RemainingTurns = turns, IsUpgraded = upgraded });
+        else
+        {
+            GetState(player).Slots.Add(new CookingSlot { DishModelId = recipe.DishModelId, RemainingTurns = turns, IsUpgraded = upgraded });
+        }
         NCookingQueueDisplay.EnsureFor(player);
         NCookingQueueDisplay.RefreshFor(player);
     }

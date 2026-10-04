@@ -16,7 +16,8 @@ public sealed class YiZhanYiWu : HaaLouLingCard
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Finish;
     public override bool CanBeGeneratedInCombat => false;
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Fatal)];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat([HoverTipFactory.Static(StaticHoverTip.Fatal)]);
     private int _increasedDamage;
 
     [SavedProperty]

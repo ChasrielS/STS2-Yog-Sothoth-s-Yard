@@ -1,0 +1,8 @@
+{
+  "STORY_YOG_SOTHOTHS_YARD": "犹格索托斯的庭院",
+  "YOG_SOTHOTHS_YARD_XUN_REN_QI_CHENG_EPOCH.title": "寻人启程",
+  "YOG_SOTHOTHS_YARD_XUN_REN_QI_CHENG_EPOCH.description": "饭菜已经摆上桌，[gold]旅社的主人[/gold]却不见了踪影。\n\n四人找遍旅社，只找到一段[sine][purple]破碎的求救讯息[/purple][/sine]。耶芙娜辨认出炼金术的痕迹，小叶子算出了位置，特莉波卡划开通路。霞露零带上食物，将唐刀系在腰间。\n\n穿过裂隙，一座陌生的[gold]高塔[/gold]出现在眼前。\n\n[b]“找到他，我们一起回家。”[/b]",
+  "YOG_SOTHOTHS_YARD_XUN_REN_QI_CHENG_EPOCH.unlockInfo": "{IsRevealed:已经|}用[red]铁甲战士[/red]进行[blue]一局[/blue]普通游戏{IsRevealed:|来揭示这个历史节点}。",
+  "YOG_SOTHOTHS_YARD_XUN_REN_QI_CHENG_EPOCH.unlock": "[sine]“老板，等着我们。”[/sine]\n\n[green]霞露零[/green]与同伴踏入了[gold]尖塔[/gold]。",
+  "YOG_SOTHOTHS_YARD_XUN_REN_QI_CHENG_EPOCH.unlockText": "解锁角色：[green]霞露零[/green]。"
+}

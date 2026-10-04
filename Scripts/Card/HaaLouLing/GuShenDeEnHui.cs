@@ -13,7 +13,8 @@ public sealed class GuShenDeEnHui : HaaLouLingCard
     public GuShenDeEnHui() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<YuanGuXinXiSu>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat([HoverTipFactory.FromCard<YuanGuXinXiSu>()]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

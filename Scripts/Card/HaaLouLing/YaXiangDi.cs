@@ -11,7 +11,8 @@ public sealed class YaXiangDi : HaaLouLingCard
 {
     public YaXiangDi() : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(CardKeyword.Retain)];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(CardKeyword.Retain)]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         await Apply<YaXiangDiPower>(context, DynamicVars["Amount"].IntValue);

@@ -9,6 +9,9 @@
 !/scenes/
 !/Scripts/
 !/Yog-Sothoth's Yard/
+!/shaders
+!/audio
+!/materials
 
 # Ignore Godot-generated sidecar files.
 *.import
