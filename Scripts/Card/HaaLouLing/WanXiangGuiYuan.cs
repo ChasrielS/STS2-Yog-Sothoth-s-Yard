@@ -10,19 +10,21 @@ namespace YogSothothsYard.Scripts;
 public sealed class WanXiangGuiYuan : HaaLouLingCard
 {
     public WanXiangGuiYuan() : base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new IntVar("Amount", 0)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new IntVar("GuiYuan", 6), new IntVar("Amount", 0)];
     protected override bool UsesGuiYuan => true;
     protected override bool HasEnergyCostX => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var count = ResolveEnergyXValue() + DynamicVars["Amount"].IntValue;
+        var count = ResolveEnergyXValue();
         await Attack(context, play, count);
-        for (var i = 0; i < count; i++) await GiveGuiYuan(context, play, 6);
+        for (var i = 0; i < count + DynamicVars["Amount"].IntValue; i++) await GiveGuiYuan(context, play, DynamicVars["GuiYuan"].IntValue);
     }
 
     protected override void OnUpgrade()
     {
+        DynamicVars.Damage.UpgradeValueBy(2);
+        DynamicVars["GuiYuan"].UpgradeValueBy(2);
         DynamicVars["Amount"].UpgradeValueBy(1);
     }
 }

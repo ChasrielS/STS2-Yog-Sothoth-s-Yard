@@ -1,9 +1,12 @@
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -32,6 +35,17 @@ public abstract class SingleUncommonDishPower : UncommonDishPower
 public sealed class SuanLaSaoZiTiJinPower : UncommonDishPower
 {
     protected override string IconFileName => "suan_la_sao_zi_ti_jin";
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.Static(StaticHoverTip.ReplayDynamic, new DynamicVar("Times", 1))];
+}
+
+[RegisterPower]
+public sealed class TingZaiZhouPower : UncommonDishPower
+{
+    protected override string IconFileName => "ting_zai_zhou";
+
+    public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants) =>
+        side == CombatSide.Player && participants.Contains(Owner) ? PowerCmd.Decrement(this) : Task.CompletedTask;
 }
 
 public abstract class TurnStartBlockDishPower : UncommonDishPower

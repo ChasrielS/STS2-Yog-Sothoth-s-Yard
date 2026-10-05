@@ -38,6 +38,8 @@ public static class HaaLouLingCombatRules
         var before = power.Amount;
         await PowerCmd.ModifyAmount(context, power, -Math.Min(amount, before), player.Creature, source);
         var spent = before - Knife(player);
+        if (spent > 0 && player.GetRelic<XiaLuJiaDaoPu>() is { } manual)
+            await manual.KnifeSpent(context, spent, source);
         return spent;
     }
 

@@ -28,6 +28,7 @@ public sealed class CookingRecipePile : CardPile
             }
 
             previewCard.Owner = player;
+            previewCard.BaseReplayCount = HaaLouLingCookingService.PendingDishReplayCount(player, recipe);
             SaveManager.Instance.MarkCardAsSeen(previewCard);
             _recipesByCard[previewCard] = recipe;
             AddInternal(previewCard, silent: true);
@@ -37,18 +38,24 @@ public sealed class CookingRecipePile : CardPile
     public bool TryGetRecipe(CardModel card, out CookingDishDefinition recipe) =>
         _recipesByCard.TryGetValue(card, out recipe!);
 
-    public void RefreshUpgrades()
+    public void RefreshCookingEffects()
     {
         var upgraded = HaaLouLingCookingService.HasPendingDishUpgrade(Player);
         var changed = false;
-        foreach (var card in Cards.Where(card => card.IsUpgraded != upgraded))
+        foreach (var card in Cards)
         {
-            if (upgraded)
+            if (card.IsUpgraded != upgraded)
             {
-                card.UpgradeInternal();
+                if (upgraded) card.UpgradeInternal();
+                else card.DowngradeInternal();
+                changed = true;
             }
-            else card.DowngradeInternal();
-            changed = true;
+            var replays = HaaLouLingCookingService.PendingDishReplayCount(Player, _recipesByCard[card]);
+            if (card.BaseReplayCount != replays)
+            {
+                card.BaseReplayCount = replays;
+                changed = true;
+            }
         }
         if (changed) InvokeContentsChanged();
     }

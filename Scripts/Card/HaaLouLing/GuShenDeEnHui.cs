@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -19,6 +20,7 @@ public sealed class GuShenDeEnHui : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await HaaLouLingCookingService.AddSpecificIngredients<YuanGuXinXiSu>(context, Owner, DynamicVars.Cards.IntValue);
+        await CardPileCmd.Draw(context, 1, Owner);
     }
 
     protected override void OnUpgrade()

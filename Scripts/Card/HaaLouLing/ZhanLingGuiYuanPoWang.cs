@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -15,13 +16,18 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
     public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies) { }
     private Creature? _highestHpTarget;
     private Creature? HighestHpTarget => _highestHpTarget ?? CombatState?.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(2),
-        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, target) =>
-            HaaLouLingCombatRules.KnifeForCard(card) * (target != null && target == ((ZhanLingGuiYuanPoWang)card).HighestHpTarget ? 3 : 1)),
-        new IntVar("ExtraHit", 4)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new ExtraDamageVar(5),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)),
+        new IntVar("ExtraHit", 6)];
     protected override bool UsesKnife => true;
     protected override bool UsesGuiYuan => true;
     public override KnifeForm Form => KnifeForm.Finish;
+
+    public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props,
+        Creature? dealer, CardModel? cardSource, CardPlay? cardPlay) =>
+        cardSource == this && target != null && target == HighestHpTarget
+            ? HaaLouLingCombatRules.KnifeForCard(this) * DynamicVars["ExtraHit"].BaseValue
+            : 0m;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
@@ -35,6 +41,8 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.ExtraDamage.UpgradeValueBy(1); DynamicVars["ExtraHit"].UpgradeValueBy(2);
+        DynamicVars.CalculationBase.UpgradeValueBy(3);
+        DynamicVars.ExtraDamage.UpgradeValueBy(2);
+        DynamicVars["ExtraHit"].UpgradeValueBy(2);
     }
 }

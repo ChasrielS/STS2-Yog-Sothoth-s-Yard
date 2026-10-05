@@ -1,4 +1,6 @@
+using System.Globalization;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using YogSothothsYard.Scripts.Card.HaaLouLingDish;
 
@@ -6,6 +8,16 @@ namespace YogSothothsYard.Scripts.Cooking;
 
 public static class HaaLouLingCardSortOrder
 {
+    public static int CompareIngredientsByQuantity(CardModel first, CardModel second,
+        IReadOnlyDictionary<ModelId, int> quantities)
+    {
+        var rarity = GetRarityRank(first.Rarity).CompareTo(GetRarityRank(second.Rarity));
+        if (rarity != 0) return rarity;
+        var quantity = quantities[second.Id].CompareTo(quantities[first.Id]);
+        return quantity != 0 ? quantity : string.Compare(first.Title, second.Title,
+            LocManager.Instance.CultureInfo, CompareOptions.None);
+    }
+
     public static List<CardModel> SortIngredients(IEnumerable<CardModel> cards) =>
         cards
             .OrderBy(card => GetRarityRank(card.Rarity))

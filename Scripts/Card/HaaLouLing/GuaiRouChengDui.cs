@@ -11,7 +11,8 @@ namespace YogSothothsYard.Scripts;
 public sealed class GuaiRouChengDui : HaaLouLingCard
 {
     public GuaiRouChengDui() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(8)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(9)];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromCard<QiGuaiDeRou>()]);
 

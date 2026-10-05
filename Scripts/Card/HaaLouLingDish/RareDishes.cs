@@ -192,7 +192,8 @@ public sealed class MoYuBao : HaaLouLingDishCard
         HoverTipFactory.FromCard<LuoRou>(),
         HoverTipFactory.FromCard<XiaRou>(),
         HoverTipFactory.FromCard<YuanGuXinXiSu>(),
-        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
+        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse),
+        HoverTipFactory.Static(StaticHoverTip.ReplayDynamic, new DynamicVar("Times", 1))
     ];
 
     public MoYuBao() : base(CardType.Power, 3, CardRarity.Rare) { }

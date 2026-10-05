@@ -19,11 +19,7 @@ public sealed class YiShenDuE : HaaLouLingCard
         var amount = HaaLouLingCombatRules.GuiYuan(play.Target);
         await Attack(context, play, calculated: true);
         await HaaLouLingCombatRules.GiveGuiYuan(context, Owner.Creature, amount, Owner.Creature, this);
-        await HaaLouLingCombatRules.RemoveGuiYuan(play.Target!);
+        if (!IsUpgraded) await HaaLouLingCombatRules.RemoveGuiYuan(play.Target!);
     }
 
-    protected override void OnUpgrade()
-    {
-        AddKeyword(CardKeyword.Retain);
-    }
 }

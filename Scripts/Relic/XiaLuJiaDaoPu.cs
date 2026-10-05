@@ -1,6 +1,7 @@
-using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace YogSothothsYard.Scripts;
@@ -9,13 +10,22 @@ namespace YogSothothsYard.Scripts;
 public sealed class XiaLuJiaDaoPu : HaaLouLingRelic
 {
     protected override string ImageName => "xia_lu_jia_dao_pu";
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override RelicRarity Rarity => RelicRarity.Rare;
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
+    [SavedProperty]
+    public int Progress { get; set; }
+    public override bool ShowCounter => true;
+    public override int DisplayAmount => Progress;
+
+    public async Task KnifeSpent(PlayerChoiceContext context, int count, CardModel source)
     {
-        if (play.Player == Owner && play.Card is HaaLouLingCard { Form: KnifeForm.Follow })
+        var total = Progress + count;
+        Progress = total % 3;
+        InvokeDisplayAmountChanged();
+        for (var i = 0; i < total / 3; i++)
         {
             Flash();
-            await HaaLouLingCombatRules.GainKnife(context, Owner, 1, play.Card);
+            await HaaLouLingCombatRules.GainKnife(context, Owner, 1, source);
         }
     }
 }

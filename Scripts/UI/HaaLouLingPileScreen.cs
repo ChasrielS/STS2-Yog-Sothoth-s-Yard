@@ -8,7 +8,6 @@ using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Nodes.Screens.Capstones;
-using MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary;
 using MegaCrit.Sts2.Core.Runs;
 using YogSothothsYard.Scripts.Cooking;
 using YogSothothsYard.Scripts.GameActions;
@@ -52,11 +51,7 @@ public static class HaaLouLingPileScreen
         }
 
         var grid = screen.GetNode<NCardGrid>("CardGrid");
-        grid.SetCards(
-            HaaLouLingCardSortOrder.SortIngredients(screen.Pile.Cards),
-            screen.Pile.Type,
-            [SortingOrders.Ascending]
-        );
+        grid.GetNode<Control>("ScrollContainer").AddChild(NIngredientCountDisplay.Create(grid, screen.Pile));
 
         var bottomLabel = screen.GetNode<MegaRichTextLabel>("%BottomLabel");
         bottomLabel.Visible = true;
@@ -86,7 +81,8 @@ public static class HaaLouLingPileScreen
 
         void OnPowerChanged(PowerModel power)
         {
-            if (power is ChangFenPower or ChaoHeFenPower or MoYuBaoPower) recipePile.RefreshUpgrades();
+            if (power is ChangFenPower or ChaoHeFenPower or TingZaiZhouPower or MoYuBaoPower or
+                SuShiLengPanPower or SuanLaSaoZiTiJinPower) recipePile.RefreshCookingEffects();
         }
         void OnPowerIncreased(PowerModel power, int amount, bool silent) => OnPowerChanged(power);
         void OnPowerDecreased(PowerModel power, bool silent) => OnPowerChanged(power);
@@ -95,12 +91,15 @@ public static class HaaLouLingPileScreen
         creature.PowerRemoved += OnPowerChanged;
         creature.PowerIncreased += OnPowerIncreased;
         creature.PowerDecreased += OnPowerDecreased;
+        var cookingState = HaaLouLingCookingService.GetState(recipePile.Player);
+        cookingState.RecipePreviewsChanged += recipePile.RefreshCookingEffects;
         screen.TreeExiting += () =>
         {
             creature.PowerApplied -= OnPowerChanged;
             creature.PowerRemoved -= OnPowerChanged;
             creature.PowerIncreased -= OnPowerIncreased;
             creature.PowerDecreased -= OnPowerDecreased;
+            cookingState.RecipePreviewsChanged -= recipePile.RefreshCookingEffects;
         };
     }
 

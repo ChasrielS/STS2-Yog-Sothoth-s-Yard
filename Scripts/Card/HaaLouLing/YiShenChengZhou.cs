@@ -9,8 +9,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class YiShenChengZhou : HaaLouLingCard
 {
-    public YiShenChengZhou() : base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(12, ValueProp.Move), new IntVar("Amount", 5)];
+    public YiShenChengZhou() : base(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new IntVar("Amount", 5)];
     protected override bool UsesGuiYuan => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

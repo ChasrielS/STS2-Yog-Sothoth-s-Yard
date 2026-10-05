@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ChongZhengJiaShi : HaaLouLingCard
 {
-    public ChongZhengJiaShi() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public ChongZhengJiaShi() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnife => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -22,6 +22,6 @@ public sealed class ChongZhengJiaShi : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        EnergyCost.UpgradeBy(-1);
+        DynamicVars["Amount"].UpgradeValueBy(1);
     }
 }

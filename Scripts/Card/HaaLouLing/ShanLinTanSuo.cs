@@ -20,6 +20,6 @@ public sealed class ShanLinTanSuo : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["UncommonFoods"].UpgradeValueBy(1); DynamicVars.Cards.UpgradeValueBy(2);
+        DynamicVars["UncommonFoods"].UpgradeValueBy(2); DynamicVars.Cards.UpgradeValueBy(2);
     }
 }

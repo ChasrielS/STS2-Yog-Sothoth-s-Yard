@@ -15,7 +15,7 @@ public sealed class DianDuZi : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var count = DynamicVars.Cards.IntValue;
-        var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, count, count);
+        var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, count, count, sortByQuantity: true);
         foreach (var card in selected) await CardPileCmd.RemoveFromCombat(card, false);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }

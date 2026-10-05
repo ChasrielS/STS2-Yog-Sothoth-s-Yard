@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
 using MegaCrit.Sts2.Core.Rooms;
 using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
 using YogSothothsYard.Scripts.Cooking;
+using YogSothothsYard.Scripts.Card.HaaLouLingDish;
 
 namespace YogSothothsYard.Scripts.UI;
 
@@ -125,10 +126,10 @@ public partial class NCookingQueueDisplay : Control
 
     private void OnCombatSetUp(CombatState state)
     {
-        var player = LocalContext.GetMe(state);
-        if (player?.Character is HaaLouLing && player.PlayerCombatState != null)
+        foreach (var player in state.Players.Where(player => player.Character is HaaLouLing && player.PlayerCombatState != null))
         {
-            Bind(player);
+            if (LocalContext.IsMe(player)) Bind(player);
+            else EnsureFor(player);
         }
     }
 
@@ -184,7 +185,8 @@ public partial class NCookingQueueDisplay : Control
                 current,
                 slot.DishModelId,
                 slot.RemainingTurns,
-                slot.IsUpgraded
+                slot.IsUpgraded,
+                slot.ReplayCount
             ));
 
         if (!force && _lastCapacity == state.Capacity && _lastSlotHash == hash)
@@ -267,19 +269,15 @@ public partial class NCookingQueueDisplay : Control
         CookingDishDefinition recipe
     )
     {
-        var card = recipe.CreatePreviewCard().ToMutable();
+        var card = (HaaLouLingDishCard)recipe.CreatePreviewCard().ToMutable();
+        card.IsCookingCompletion = true;
+        card.BaseReplayCount = slot.ReplayCount;
         if (slot.IsUpgraded)
         {
             card.UpgradeInternal();
         }
 
         var description = card.GetDescriptionForPile(MegaCrit.Sts2.Core.Entities.Cards.PileType.None);
-        var finalLineStart = description.LastIndexOf('\n');
-        if (finalLineStart >= 0)
-        {
-            description = description[..finalLineStart];
-        }
-
         var title = new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_COOKING_SLOT_HOVER.title");
         title.Add("DishTitle", card.Title);
 

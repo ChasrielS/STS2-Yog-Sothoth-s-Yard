@@ -3,12 +3,14 @@ using System.Reflection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens;
@@ -77,12 +79,11 @@ public class Entry
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
-            ModCardHandOutlineRules.Switch<HaaLouLingCard>(card => card.WantsGreenOutline
-                ? Godot.Colors.Green
-                : null));
+            ModCardHandOutlineRules.Switch<HaaLouLingCard>(ResolveHandOutline));
         NCookingQueueDisplay.Register();
         NFoodPileMotion.Register();
         NDishEffectChoicePrompt.Register();
+        NDishCookingChoiceOutline.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
             replayCurrentState: false
@@ -139,6 +140,19 @@ public class Entry
                 knife.SetAmount(0, silent: true);
             }
         }
+    }
+
+    private static Godot.Color? ResolveHandOutline(HaaLouLingCard card)
+    {
+        var isPlayPhase = card.Owner.PlayerCombatState?.Phase == PlayerTurnPhase.Play;
+        if (isPlayPhase && card.ShouldGlowRed) return NCardHighlight.red;
+
+        var selectionGlow = NPlayerHand.Instance?.SelectModeGoldGlowOverride;
+        if (selectionGlow != null)
+            return selectionGlow(card) ? NCardHighlight.gold : NCardHighlight.playableColor;
+
+        if (isPlayPhase && card.CanPlay() && card.ShouldGlowGold) return NCardHighlight.gold;
+        return card.WantsGreenOutline ? Godot.Colors.Green : NCardHighlight.playableColor;
     }
 
     private static void RegisterCookingHotkey()

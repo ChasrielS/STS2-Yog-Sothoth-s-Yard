@@ -126,7 +126,8 @@ public sealed class SuShiLengPan : HaaLouLingDishCard
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
         HoverTipFactory.FromCard<QiGuaiDeRou>(),
-        HoverTipFactory.FromCard<LaJiao>()
+        HoverTipFactory.FromCard<LaJiao>(),
+        HoverTipFactory.Static(StaticHoverTip.ReplayDynamic, new DynamicVar("Times", 1))
     ];
     public SuShiLengPan() : base(CardType.Skill, 1) { }
     protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
@@ -170,7 +171,7 @@ public sealed class SuanCaiYu : HaaLouLingDishCard
         HoverTipFactory.FromCard<YuRou>(),
         HoverTipFactory.FromCard<LvYeCai>()
     ];
-    public SuanCaiYu() : base(CardType.Skill, 1) { }
+    public SuanCaiYu() : base(CardType.Skill, 2) { }
     protected override void OnUpgrade() { }
 }
 

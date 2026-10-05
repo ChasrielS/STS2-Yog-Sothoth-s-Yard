@@ -9,6 +9,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class SuiShenCaiLan : HaaLouLingRelic
 {
     protected override string ImageName => "sui_shen_cai_lan";
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("Ingredient")];
     public override RelicRarity Rarity => RelicRarity.Uncommon;
     public override async Task BeforeCombatStart()
     {

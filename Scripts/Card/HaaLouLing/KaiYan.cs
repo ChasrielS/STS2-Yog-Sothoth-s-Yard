@@ -18,7 +18,7 @@ public sealed class KaiYan : HaaLouLingCard
     {
         var count = ResolveEnergyXValue() + DynamicVars["Amount"].IntValue;
         if (EnergyCost.CapturedXValue == HaaLouLingCookingService.GetState(Owner).Capacity) await Apply<GuoWanPiaoPenPower>(context, 1);
-        await HaaLouLingCookingService.CookRandomDishes(context, Owner, count, rare: false, uncommonOnly: true);
+        await HaaLouLingCookingService.RandomDishEffects(context, Owner, count, uncommonOnly: true);
     }
 
     protected override void OnUpgrade()

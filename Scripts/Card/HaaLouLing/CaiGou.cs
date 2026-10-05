@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class CaiGou : HaaLouLingCard
 {
     public CaiGou() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(6)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(8)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -20,6 +20,6 @@ public sealed class CaiGou : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Cards.UpgradeValueBy(3);
+        DynamicVars.Cards.UpgradeValueBy(6);
     }
 }

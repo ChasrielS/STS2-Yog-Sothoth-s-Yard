@@ -8,7 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class YinYangHuoHou : HaaLouLingCard
 {
-    public YinYangHuoHou() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public YinYangHuoHou() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Ethereal]);
 
@@ -17,8 +17,5 @@ public sealed class YinYangHuoHou : HaaLouLingCard
         await Apply<YinYangHuoHouPower>(context, DynamicVars["Amount"].IntValue);
     }
 
-    protected override void OnUpgrade()
-    {
-        RemoveKeyword(CardKeyword.Ethereal);
-    }
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

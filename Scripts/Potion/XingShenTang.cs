@@ -11,7 +11,7 @@ public sealed class XingShenTang : HaaLouLingPotion
 {
     protected override string ImageName => "xing_shen_tang";
     public override PotionRarity Rarity => PotionRarity.Common;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 3)];
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     protected override Task OnUse(PlayerChoiceContext context, Creature? target) =>
         HaaLouLingCombatRules.GainKnife(context, Owner, DynamicVars["Amount"].IntValue);

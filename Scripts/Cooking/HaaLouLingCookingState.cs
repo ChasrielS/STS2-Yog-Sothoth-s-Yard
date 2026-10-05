@@ -9,7 +9,10 @@ public sealed class HaaLouLingCookingState
     public int OctopusBallIngredientProgress { get; set; }
     public int ShengYanManglePerTurn { get; set; }
     public int IngredientsUsedThisTurn { get; set; }
-    public int DishesCooked { get; set; }
+    public int IngredientsUsed { get; set; }
+    public int DishesStartedThisTurn { get; set; }
+    public event Action? RecipePreviewsChanged;
+    public void RefreshRecipePreviews() => RecipePreviewsChanged?.Invoke();
     public bool ProcessingTurnStart { get; set; }
     public bool AwaitingNativeTurnStart { get; set; }
     public bool PlatingGrantedAtTurnStart { get; set; }

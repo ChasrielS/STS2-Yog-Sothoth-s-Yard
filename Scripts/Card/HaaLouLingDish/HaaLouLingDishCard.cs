@@ -15,6 +15,7 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     private readonly int _cookingTurns;
 
     public bool IsEffectChoice { get; set; }
+    public bool IsCookingChoice { get; set; }
     public bool IsCookingCompletion { get; set; }
 
     protected abstract string PortraitFileName { get; }

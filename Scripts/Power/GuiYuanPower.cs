@@ -57,7 +57,7 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
         {
             if (Amount >= 100)
             {
-                _pendingDamage = decimal.Floor(amount * 2);
+                _pendingDamage = decimal.Floor(amount * 2 * 0.5m);
                 _pendingDealer = applier;
                 modifiedAmount = 0;
                 return true;

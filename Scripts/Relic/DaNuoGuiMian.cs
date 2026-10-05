@@ -7,5 +7,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class DaNuoGuiMian : HaaLouLingRelic
 {
     protected override string ImageName => "da_nuo_gui_mian";
+    protected override IEnumerable<string> RegisteredKeywordIds =>
+        [HaaLouLingKeywords.KeywordId("GuiYuan"), HaaLouLingKeywords.KeywordId("GuiYuanPlus")];
     public override RelicRarity Rarity => RelicRarity.Shop;
 }

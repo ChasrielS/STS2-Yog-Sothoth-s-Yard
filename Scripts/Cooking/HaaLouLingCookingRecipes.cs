@@ -133,7 +133,7 @@ public static class HaaLouLingCookingRecipes
                     choiceContext, player, upgraded ? 3 : 2)
             ),
             Create<SuanCaiYu>(
-                1,
+                2,
                 "suan_cai_yu",
                 Ingredients((fish, 1), (leafyVegetable, 1)),
                 static (choiceContext, player, upgraded) =>
@@ -304,8 +304,7 @@ public static class HaaLouLingCookingRecipes
                 "ting_zai_zhou",
                 Ingredients((rice, 1), (shrimp, 1), (fish, 1), (strangeMeat, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.UpgradeCookingSlots(
-                        choiceContext, player, allSlots: true),
+                    ApplyPower<TingZaiZhouPower>(choiceContext, player, 1),
                 upgradedCookingTurns: 0
             ),
             Create<ZhangChaYa>(

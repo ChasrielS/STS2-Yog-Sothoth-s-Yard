@@ -23,7 +23,6 @@ public sealed class DaoBeiQiaoDa : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(1);
         DynamicVars.Cards.UpgradeValueBy(1);
     }
 }

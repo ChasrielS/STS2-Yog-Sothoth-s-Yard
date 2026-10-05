@@ -8,7 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class NaShouHaoCai : HaaLouLingCard
 {
-    public NaShouHaoCai() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public NaShouHaoCai() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>

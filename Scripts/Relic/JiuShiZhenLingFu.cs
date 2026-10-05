@@ -8,10 +8,11 @@ namespace YogSothothsYard.Scripts;
 public sealed class JiuShiZhenLingFu : HaaLouLingRelic
 {
     protected override string ImageName => "jiu_shi_zhen_ling_fu";
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("GuiYuan")];
     public override RelicRarity Rarity => RelicRarity.Common;
     public override async Task BeforeCombatStart()
     {
         Flash();
-        await HaaLouLingCombatRules.GiveGuiYuanToEnemies(new ThrowingPlayerChoiceContext(), Owner, 5);
+        await HaaLouLingCombatRules.GiveGuiYuanToEnemies(new ThrowingPlayerChoiceContext(), Owner, 10);
     }
 }

@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -31,6 +33,8 @@ public sealed class ChaoHeFenPower : CommonDishPower
 public sealed class SuShiLengPanPower : CommonDishPower
 {
     protected override string IconFileName => "su_shi_leng_pan";
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.Static(StaticHoverTip.ReplayDynamic, new DynamicVar("Times", 1))];
 }
 
 [RegisterPower]

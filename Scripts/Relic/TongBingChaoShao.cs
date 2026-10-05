@@ -10,6 +10,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class TongBingChaoShao : HaaLouLingRelic
 {
     protected override string ImageName => "tong_bing_chao_shao";
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("Ingredient")];
     public override RelicRarity Rarity => RelicRarity.Uncommon;
     [SavedProperty]
     public int Progress { get; set; }
@@ -23,7 +24,7 @@ public sealed class TongBingChaoShao : HaaLouLingRelic
         for (var i = 0; i < total / 12; i++)
         {
             Flash();
-            await HaaLouLingCookingService.DamageRandomEnemy(context, Owner, 6);
+            await HaaLouLingCookingService.DamageAllEnemies(context, Owner, 6);
         }
     }
 }

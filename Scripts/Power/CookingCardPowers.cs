@@ -62,7 +62,7 @@ public sealed class CaiLanPower : HaaLouLingPower
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
     {
         if (player.Creature == Owner && AmountOnTurnStart > 0)
-            await HaaLouLingCookingService.AddRandomIngredients(context, player, AmountOnTurnStart);
+            await HaaLouLingCookingService.AddRandomIngredients(context, player, AmountOnTurnStart, nonRare: true);
     }
 }
 
@@ -74,7 +74,7 @@ public sealed class ZaoHuoChangMingPower : HaaLouLingPower
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
     {
         if (player.Creature == Owner && AmountOnTurnStart > 0)
-            await HaaLouLingCookingService.CookRandomDishes(context, player, AmountOnTurnStart, rare: false);
+            await HaaLouLingCookingService.CookRandomDishes(context, player, AmountOnTurnStart);
     }
 }
 
@@ -100,10 +100,11 @@ public sealed class YinYangHuoHouPower : HaaLouLingPower
     public override string? CustomIconPath => "res://images/powers/yin_yang_huo_hou_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/yin_yang_huo_hou_power.png";
     public override PowerStackType StackType => PowerStackType.Single;
-    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
+    public async Task AfterDishEnqueued(PlayerChoiceContext context)
     {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0) return;
+        var player = Owner.Player!;
         var total = HaaLouLingCookingService.GetRemainingCookingTurnsTotal(player);
+        Flash();
         await HaaLouLingCookingService.ChangeCookingTurns(context, player, total % 2 == 1 ? -1 : 1);
     }
 }

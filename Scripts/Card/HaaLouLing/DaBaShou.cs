@@ -13,7 +13,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class DaBaShou : HaaLouLingCard
 {
     public DaBaShou() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 4)];
     protected override bool UsesKnife => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromPower<VigorPower>()]);
@@ -28,6 +28,6 @@ public sealed class DaBaShou : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Amount"].UpgradeValueBy(1);
+        DynamicVars["Amount"].UpgradeValueBy(2);
     }
 }

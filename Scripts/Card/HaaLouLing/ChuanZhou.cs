@@ -29,6 +29,7 @@ public sealed class ChuanZhou : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
+        DynamicVars.Damage.UpgradeValueBy(5);
         DynamicVars["Amount"].UpgradeValueBy(5);
     }
 }

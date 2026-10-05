@@ -176,7 +176,11 @@ public sealed class JiDiZhou : HaaLouLingDishCard
 public sealed class SuanLaSaoZiTiJin : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "suan_la_sao_zi_ti_jin";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ZhuRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<LaJiao>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+    [
+        HoverTipFactory.FromCard<ZhuRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<LaJiao>(),
+        HoverTipFactory.Static(StaticHoverTip.ReplayDynamic, new DynamicVar("Times", 1))
+    ];
     public SuanLaSaoZiTiJin() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
     protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
