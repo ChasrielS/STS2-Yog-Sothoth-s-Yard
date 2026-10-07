@@ -10,13 +10,13 @@ namespace YogSothothsYard.Scripts;
 public sealed class KaiYan : HaaLouLingCard
 {
     public KaiYan() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 0)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Retain]);
     protected override bool HasEnergyCostX => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var count = ResolveEnergyXValue() + DynamicVars["Amount"].IntValue;
+        var count = ResolveEnergyXValue() * DynamicVars["Amount"].IntValue;
         if (EnergyCost.CapturedXValue == HaaLouLingCookingService.GetState(Owner).Capacity) await Apply<GuoWanPiaoPenPower>(context, 1);
         await HaaLouLingCookingService.RandomDishEffects(context, Owner, count, uncommonOnly: true);
     }

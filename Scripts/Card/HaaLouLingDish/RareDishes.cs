@@ -78,7 +78,7 @@ public sealed class ShengYan : HaaLouLingDishCard
         HoverTipFactory.FromPower<ArtifactPower>(),
         HoverTipFactory.FromPower<WeakPower>(),
         HoverTipFactory.FromPower<VulnerablePower>(),
-        HoverTipFactory.FromPower<ManglePower>()
+        HoverTipFactory.FromPower<DebilitatePower>()
     ];
 
     public ShengYan() : base(CardType.Power, 3, CardRarity.Rare) { }

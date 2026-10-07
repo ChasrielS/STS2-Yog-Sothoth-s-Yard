@@ -10,6 +10,7 @@ public sealed class SuiNiDianCai : HaaLouLingCard
 {
     public SuiNiDianCai() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         await HaaLouLingCardChoices.CookDishesChoice(context, this, DynamicVars.Cards.IntValue);

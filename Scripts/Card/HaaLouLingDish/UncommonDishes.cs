@@ -116,6 +116,7 @@ public sealed class ShuiZhuRouPian : HaaLouLingDishCard
 [RegisterCard(typeof(HaaLouLingFoodPool))]
 public sealed class MaPoDouFu : HaaLouLingDishCard
 {
+    public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
     protected override string PortraitFileName => "ma_po_dou_fu";
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<DouFu>(), HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<HuaJiao>()];
     public MaPoDouFu() : base(CardType.Skill, 1, CardRarity.Uncommon) { }

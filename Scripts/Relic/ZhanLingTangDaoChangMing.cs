@@ -15,7 +15,7 @@ public sealed class ZhanLingTangDaoChangMing : HaaLouLingRelic
     {
         Flash();
         var context = new ThrowingPlayerChoiceContext();
-        await PowerCmd.Apply<DaoFaJingJinPower>(context, Owner.Creature, 2, Owner.Creature, null);
-        await HaaLouLingCombatRules.GainKnife(context, Owner, 5);
+        await PowerCmd.Apply<DaoFaJingJinPower>(context, Owner.Creature, 1, Owner.Creature, null);
+        await HaaLouLingCombatRules.GainKnife(context, Owner, 4);
     }
 }

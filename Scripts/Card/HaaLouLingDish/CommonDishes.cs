@@ -165,6 +165,7 @@ public sealed class MaLaYu : HaaLouLingDishCard
 [RegisterCard(typeof(HaaLouLingFoodPool))]
 public sealed class SuanCaiYu : HaaLouLingDishCard
 {
+    public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
     protected override string PortraitFileName => "suan_cai_yu";
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [

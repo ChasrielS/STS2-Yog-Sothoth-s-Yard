@@ -17,9 +17,9 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
     public override string? CustomBigIconPath => "res://images/powers/gui_yuan_power.png";
     protected abstract int AttackPenalty { get; }
     protected abstract int Vulnerability { get; }
-    private decimal _pendingDamage;
-    private Creature? _pendingDealer;
+    private decimal _pendingHpLoss;
     private int EffectMultiplier => Amount >= 100 ? 2 : 1;
+    private int HpLossPercent => 50 + Math.Max(0, Amount - 100);
     private int CurrentAttackPenalty => AttackPenalty * ((Amount >= 10 ? 1 : 0) + (Amount >= 50 ? 1 : 0)) * EffectMultiplier;
     private int CurrentVulnerability => Vulnerability * ((Amount >= 20 ? 1 : 0) + (Amount >= 70 ? 1 : 0)) * EffectMultiplier;
     public override PowerType Type => PowerType.Debuff;
@@ -32,8 +32,9 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
             text.Add("AttackPenalty", CurrentAttackPenalty);
             text.Add("Vulnerability", CurrentVulnerability);
             text.Add("Amplified", Amount >= 30);
-            text.Add("Amplification", 50 * EffectMultiplier);
+            text.Add("Amplification", 25 * EffectMultiplier);
             text.Add("AtMaximum", Amount >= 100);
+            text.Add("HpLossPercent", HpLossPercent);
             return text;
         }
     }
@@ -55,29 +56,24 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
         if (target != Owner || canonicalPower is not GuiYuanBasePower) return false;
         if (amount > 0)
         {
+            var gained = Amount >= 30 ? decimal.Floor(amount * (1m + 0.25m * EffectMultiplier)) : amount;
             if (Amount >= 100)
-            {
-                _pendingDamage = decimal.Floor(amount * 2 * 0.5m);
-                _pendingDealer = applier;
-                modifiedAmount = 0;
-                return true;
-            }
-            if (Amount >= 30) amount = decimal.Floor(amount * 1.5m);
-            modifiedAmount = Math.Min(amount, Math.Max(0, 100 - Amount));
+                _pendingHpLoss = decimal.Floor(gained * HpLossPercent / 100m);
+            modifiedAmount = HaaLouLingCombatRules.CanExceedGuiYuanLimit(applier)
+                ? gained : Math.Min(gained, Math.Max(0, 100 - Amount));
         }
         else modifiedAmount = Math.Max(amount, -Amount);
-        return modifiedAmount != amount || Amount >= 30 && amount > 0;
+        return modifiedAmount != amount || _pendingHpLoss > 0;
     }
 
     public override async Task AfterModifyingPowerAmountReceived(PowerModel power)
     {
-        if (_pendingDamage <= 0) return;
-        var damage = _pendingDamage;
-        var dealer = _pendingDealer;
-        _pendingDamage = 0;
-        _pendingDealer = null;
+        if (_pendingHpLoss <= 0) return;
+        var loss = _pendingHpLoss;
+        _pendingHpLoss = 0;
         Flash();
-        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner, damage, ValueProp.Move, dealer, null, null);
+        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner, loss,
+            ValueProp.Unblockable | ValueProp.Unpowered, null, null);
     }
 }
 

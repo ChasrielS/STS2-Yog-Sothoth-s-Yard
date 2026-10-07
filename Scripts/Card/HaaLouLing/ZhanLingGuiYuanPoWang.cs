@@ -10,7 +10,6 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace YogSothothsYard.Scripts;
 
 [RegisterCard(typeof(HaaLouLingCardPool))]
-[RegisterDustyTomeCard(typeof(HaaLouLing))]
 public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 {
     public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies) { }

@@ -1,9 +1,9 @@
 {
   "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO.title": "斩灵唐刀",
-  "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO.description": "在每场战斗开始时，获得3层[gold]刀势[/gold]。",
+  "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO.description": "在每场战斗开始时，获得2层[gold]刀势[/gold]。",
   "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO.flavor": "[red]这个遗物的细节将在未来揭晓……[/red]",
   "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO_CHANG_MING.title": "斩灵唐刀·长鸣",
-  "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO_CHANG_MING.description": "在每场战斗开始时，获得2层[gold]刀势[/gold]上限和5层[gold]刀势[/gold]。",
+  "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO_CHANG_MING.description": "在每场战斗开始时，获得1层[gold]刀势[/gold]上限和4层[gold]刀势[/gold]。",
   "YOG_SOTHOTH_S_YARD_RELIC_ZHAN_LING_TANG_DAO_CHANG_MING.flavor": "[red]这个遗物的细节将在未来揭晓……[/red]",
   "YOG_SOTHOTH_S_YARD_RELIC_JIU_SHI_ZHEN_LING_FU.title": "旧式镇灵符",
   "YOG_SOTHOTH_S_YARD_RELIC_JIU_SHI_ZHEN_LING_FU.description": "在每场战斗开始时，给予所有敌人10层[gold]归元[/gold]。",

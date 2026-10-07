@@ -6,6 +6,7 @@ namespace YogSothothsYard.Scripts;
 public abstract class HaaLouLingIngredientCard : ModCardTemplate, IHaaLouLingIngredientCard
 {
     private const string PortraitRoot = "res://images/packed/card_portraits/haa_lou_ling_food";
+    public bool IsKindChoice { get; set; }
 
     protected abstract string PortraitFileName { get; }
 

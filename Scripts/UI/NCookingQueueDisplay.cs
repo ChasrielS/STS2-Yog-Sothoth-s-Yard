@@ -142,7 +142,7 @@ public partial class NCookingQueueDisplay : Control
 
     public override void _Process(double delta)
     {
-        if (_player == null || !CombatManager.Instance.IsInProgress)
+        if (_player == null || !_player.Creature.IsAlive || !CombatManager.Instance.IsInProgress)
         {
             // 附加节点可能早于战斗初始化就绪，随房间释放即可。
             Visible = false;

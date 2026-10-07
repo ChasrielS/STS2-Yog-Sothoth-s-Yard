@@ -20,6 +20,10 @@ public static class HaaLouLingCookingRecipes
     public static CookingDishDefinition? Get(ModelId dishModelId) =>
         All.FirstOrDefault(recipe => recipe.DishModelId == dishModelId);
 
+    public static IEnumerable<CookingDishDefinition> AvailableFor(Player player) => All.Where(recipe =>
+        recipe.CreatePreviewCard().MultiplayerConstraint != (player.RunState.Players.Count > 1
+            ? CardMultiplayerConstraint.SingleplayerOnly : CardMultiplayerConstraint.MultiplayerOnly));
+
     private static IReadOnlyList<CookingDishDefinition> CreateRecipes()
     {
         var chicken = ModelDb.Card<JiRou>().Id;
@@ -542,7 +546,7 @@ public static class HaaLouLingCookingRecipes
         await ApplyPower<ShengYanPower>(choiceContext, player, 1);
         if (upgraded)
         {
-            HaaLouLingCookingService.AddShengYanMangle(player, 1);
+            HaaLouLingCookingService.AddShengYanDebilitate(player, 1);
         }
     }
 

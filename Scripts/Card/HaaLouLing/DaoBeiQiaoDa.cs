@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class DaoBeiQiaoDa : HaaLouLingCard
 {
-    public DaoBeiQiaoDa() : base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy) { }
+    public DaoBeiQiaoDa() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new CardsVar(1)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(CardKeyword.Retain)]);

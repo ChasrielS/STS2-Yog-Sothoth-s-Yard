@@ -36,6 +36,19 @@ public static class HaaLouLingCardChoices
             prefs with { Comparison = (first, second) => HaaLouLingCardSortOrder.CompareIngredientsByQuantity(first, second, quantities) });
     }
 
+    public static Task<IEnumerable<CardModel>> SelectIngredientKinds(PlayerChoiceContext context, CardModel source, int maximum)
+    {
+        var kinds = Entry.FoodPile.GetPile(source.Owner).Cards.DistinctBy(card => card.Id);
+        var choices = HaaLouLingCardSortOrder.SortIngredients(kinds).Select(template =>
+        {
+            var card = (HaaLouLingIngredientCard)source.Owner.Creature.CombatState!.CreateCard(template.CanonicalInstance, source.Owner);
+            card.IsKindChoice = true;
+            return (CardModel)card;
+        }).ToList();
+        return CardSelectCmd.FromSimpleGrid(context, choices, source.Owner,
+            new CardSelectorPrefs(Prompt(source), 0, maximum));
+    }
+
     public static async Task TransformIngredients(PlayerChoiceContext context, CardModel source, IEnumerable<CardModel> cards)
     {
         foreach (var card in cards.ToList())
@@ -63,7 +76,7 @@ public static class HaaLouLingCardChoices
     }
     public static async Task CookDishesChoice(PlayerChoiceContext context, CardModel source, int count, CardRarity? rarity = null)
     {
-        var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.All
+        var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.AvailableFor(source.Owner)
             .Where(recipe => rarity == null || recipe.CreatePreviewCard().Rarity == rarity))
             .Select(recipe => source.Owner.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), source.Owner)).ToList();
         var upgraded = HaaLouLingCookingService.HasPendingDishUpgrade(source.Owner);

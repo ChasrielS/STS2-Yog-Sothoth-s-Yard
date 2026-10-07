@@ -7,6 +7,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace YogSothothsYard.Scripts;
 
 [RegisterCard(typeof(HaaLouLingCardPool))]
+[RegisterArchaicToothTranscendence(typeof(ZhanLingGuiYuanPoWang))]
 public sealed class ZhanLingGuiYuan : HaaLouLingCard
 {
     public ZhanLingGuiYuan() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }

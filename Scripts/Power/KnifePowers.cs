@@ -167,19 +167,6 @@ public sealed class GuiYuanJuePower : HaaLouLingPower
     }
 }
 
-public abstract class ZhouRenBasePower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/zhou_ren_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/zhou_ren_power.png";
-    protected virtual int ExtraGuiYuan => 0;
-    public override async Task AfterDamageGiven(PlayerChoiceContext context, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource)
-    {
-        if (dealer == Owner && target.Side == CombatSide.Enemy && cardSource?.Type == CardType.Attack && result.TotalDamage > 0)
-            await HaaLouLingCombatRules.GiveGuiYuan(context, target,
-                (HaaLouLingCombatRules.KnifeForCard(cardSource) + ExtraGuiYuan) * Amount, Owner, cardSource);
-    }
-}
-
 [RegisterPower]
 public sealed class WuFaHuoDeDaoShiPower : HaaLouLingPower
 {
@@ -216,13 +203,4 @@ public sealed class TiQianBeiCaiPlusPower : TiQianBeiCaiBasePower
 {
     protected override int Ingredients => 4;
     protected override int Cards => 3;
-}
-
-[RegisterPower]
-public sealed class ZhouRenPower : ZhouRenBasePower;
-
-[RegisterPower]
-public sealed class ZhouRenPlusPower : ZhouRenBasePower
-{
-    protected override int ExtraGuiYuan => 1;
 }

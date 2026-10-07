@@ -6,15 +6,15 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace YogSothothsYard.Scripts;
 
 [RegisterCard(typeof(HaaLouLingCardPool))]
-public sealed class ZhouRen : HaaLouLingCard
+public sealed class ZhouHaiWuYa : HaaLouLingCard
 {
-    public ZhouRen() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
-    protected override bool UsesKnife => true;
+    public ZhouHaiWuYa() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 20)];
     protected override bool UsesGuiYuan => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        if (IsUpgraded) await Apply<ZhouRenPlusPower>(context, 1);
-        else await Apply<ZhouRenPower>(context, 1);
+        await Apply<ZhouHaiWuYaPower>(context, 1);
+        if (IsUpgraded) await HaaLouLingCombatRules.GiveGuiYuanToEnemies(context, Owner, DynamicVars["Amount"].IntValue, this);
     }
 }

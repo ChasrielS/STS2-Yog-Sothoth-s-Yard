@@ -2,5 +2,47 @@
 
 [ext_resource type="Texture2D" uid="uid://f7usdnj7bb06" path="res://images/characters/haa_lou_ling/rest/rest.png" id="1_rest"]
 
-[node name="HaaLouLingRestSite" type="Sprite2D"]
+[node name="HaaLouLingRestSite" type="Node2D"]
+
+[node name="ControlRoot" type="Control" parent="."]
+layout_mode = 3
+mouse_filter = 2
+
+[node name="Visuals" type="Sprite2D" parent="ControlRoot"]
+position = Vector2(0, -56.8)
 texture = ExtResource("1_rest")
+
+[node name="SelectionReticle" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -220.0
+offset_top = -336.0
+offset_right = 132.0
+offset_bottom = 146.0
+mouse_filter = 2
+
+[node name="Hitbox" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -220.0
+offset_top = -336.0
+offset_right = 132.0
+offset_bottom = 146.0
+
+[node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 110.0
+offset_top = -270.0
+offset_right = 110.0
+offset_bottom = -270.0
+mouse_filter = 2
+
+[node name="ThoughtBubbleLeft" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -190.0
+offset_top = -270.0
+offset_right = -190.0
+offset_bottom = -270.0
+mouse_filter = 2

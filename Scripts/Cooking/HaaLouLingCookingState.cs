@@ -7,7 +7,7 @@ public sealed class HaaLouLingCookingState
     public int Capacity { get; set; } = DefaultCapacity;
     public List<CookingSlot> Slots { get; } = [];
     public int OctopusBallIngredientProgress { get; set; }
-    public int ShengYanManglePerTurn { get; set; }
+    public int ShengYanDebilitatePerTurn { get; set; }
     public int IngredientsUsedThisTurn { get; set; }
     public int IngredientsUsed { get; set; }
     public int DishesStartedThisTurn { get; set; }

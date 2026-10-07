@@ -26,6 +26,10 @@ public class HaaLouLingCookingPower : ModPowerTemplate
             return;
         }
 
+        if (Owner.GetPower<TianZaoPlusPower>() is { } early)
+            await early.CheckForFullQueue(choiceContext);
         await HaaLouLingCookingService.Advance(choiceContext, player);
+        if (Owner.GetPower<TianZaoPower>() is { } late)
+            await late.CheckForFullQueue(choiceContext);
     }
 }

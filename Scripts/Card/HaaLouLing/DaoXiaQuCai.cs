@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class DaoXiaQuCai : HaaLouLingCard
 {
     public DaoXiaQuCai() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(5)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Finish;
 
@@ -22,6 +22,6 @@ public sealed class DaoXiaQuCai : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Cards.UpgradeValueBy(2);
+        DynamicVars.Cards.UpgradeValueBy(3);
     }
 }

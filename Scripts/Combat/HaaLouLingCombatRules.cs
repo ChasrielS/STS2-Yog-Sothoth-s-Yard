@@ -55,6 +55,8 @@ public static class HaaLouLingCombatRules
     public static int GuiYuan(Creature? creature) => creature == null ? 0 :
         creature.GetPowerAmount<GuiYuanPower>() + creature.GetPowerAmount<GuiYuanPlusPower>();
 
+    public static bool CanExceedGuiYuanLimit(Creature? giver) => giver?.HasPower<ZhouHaiWuYaPower>() == true;
+
     public static async Task GiveGuiYuan(PlayerChoiceContext context, Creature target, int amount, Creature giver, CardModel? source = null)
     {
         if (amount <= 0 || !target.IsAlive) return;

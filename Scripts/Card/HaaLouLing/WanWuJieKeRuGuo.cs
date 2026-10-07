@@ -11,16 +11,17 @@ namespace YogSothothsYard.Scripts;
 public sealed class WanWuJieKeRuGuo : HaaLouLingCard
 {
     public WanWuJieKeRuGuo() : base(3, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(12, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(20, ValueProp.Move)];
     public override bool GainsBlock => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Transform)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        var cards = PileType.Hand.GetPile(Owner).Cards.ToList();
+        var cards = new[] { PileType.Hand, PileType.Draw, PileType.Discard }
+            .SelectMany(pile => pile.GetPile(Owner).Cards).ToList();
         await HaaLouLingCardChoices.TransformCombatCards(context, this, cards);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(6);
 }

@@ -113,26 +113,12 @@ public abstract class TianZaoBasePower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/tian_zao_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/tian_zao_power.png";
-    protected virtual int Threshold => 10;
-    [SavedProperty]
-    public int Progress { get; set; }
-    public override LocString Description
+    public async Task CheckForFullQueue(PlayerChoiceContext context)
     {
-        get
-        {
-            var text = base.Description;
-            text.Add("Amount", Amount);
-            text.Add("Progress", Progress);
-            text.Add("Threshold", Threshold);
-            return text;
-        }
-    }
-    public async Task IngredientsUsed(PlayerChoiceContext context, int count)
-    {
-        var total = Progress + count;
-        Progress = total % Threshold;
-        var gains = total / Threshold * Amount;
-        if (gains > 0) await PowerCmd.Apply<GuoWanPiaoPenPower>(context, Owner, gains, Owner, null);
+        var state = HaaLouLingCookingService.GetState(Owner.Player!);
+        if (AmountOnTurnStart <= 0 || state.Slots.Count < state.Capacity) return;
+        Flash();
+        await PowerCmd.Apply<GuoWanPiaoPenPower>(context, Owner, AmountOnTurnStart, Owner, null);
     }
 }
 
@@ -140,10 +126,7 @@ public abstract class TianZaoBasePower : HaaLouLingPower
 public sealed class TianZaoPower : TianZaoBasePower;
 
 [RegisterPower]
-public sealed class TianZaoPlusPower : TianZaoBasePower
-{
-    protected override int Threshold => 8;
-}
+public sealed class TianZaoPlusPower : TianZaoBasePower;
 
 [RegisterPower]
 public sealed class FenNiYiFenPower : HaaLouLingPower

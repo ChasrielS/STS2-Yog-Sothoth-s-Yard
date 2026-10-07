@@ -15,7 +15,7 @@ public sealed class ShuangFen : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, DynamicVars.Cards.IntValue);
+        var selected = await HaaLouLingCardChoices.SelectIngredientKinds(context, this, DynamicVars.Cards.IntValue);
         var copies = selected.Select(card => card.CreateClone()).ToList();
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, copies);
         await CardPileCmd.Draw(context, 1, Owner);

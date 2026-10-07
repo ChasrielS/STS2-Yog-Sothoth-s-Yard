@@ -10,19 +10,17 @@ namespace YogSothothsYard.Scripts;
 public sealed class DianDuZi : HaaLouLingCard
 {
     public DianDuZi() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2), new EnergyVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3), new EnergyVar(1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var count = DynamicVars.Cards.IntValue;
         var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, count, count, sortByQuantity: true);
-        foreach (var card in selected) await CardPileCmd.RemoveFromCombat(card, false);
+        var ingredients = selected.ToList();
+        await CardPileCmd.Add(ingredients, PileType.Play);
+        await CardPileCmd.RemoveFromCombat(ingredients);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Cards.UpgradeValueBy(1);
-        DynamicVars.Energy.UpgradeValueBy(1);
-    }
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(-1);
 }

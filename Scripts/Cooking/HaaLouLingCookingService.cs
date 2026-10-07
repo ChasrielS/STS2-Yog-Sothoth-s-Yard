@@ -56,7 +56,7 @@ public static class HaaLouLingCookingService
         var pile = Entry.FoodPile.GetPile(player);
         var counts = pile.Cards.GroupBy(card => card.Id).ToDictionary(group => group.Key, group => group.Count());
         var chef = player.Creature.HasPower<DaChuXingTaiPower>();
-        return HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.All.Where(recipe =>
+        return HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe =>
             CanStartRecipe(player, recipe) && (chef ? pile.Cards.Count >= recipe.Ingredients.Values.Sum() : HasIngredients(counts, recipe))));
     }
 
@@ -182,7 +182,7 @@ public static class HaaLouLingCookingService
         bool isUpgraded
     )
     {
-        var recipeCards = HaaLouLingCookingRecipes.All
+        var recipeCards = HaaLouLingCookingRecipes.AvailableFor(player)
             .Where(recipe => recipe.CreatePreviewCard().Rarity == rarity &&
                 recipe.CreatePreviewCard() is not (HuoGuo or ShuiZhuRouPian or YuXiangRouSi or MaLaHuoGuo))
             .Select(recipe => (Recipe: recipe, Card: recipe.CreatePreviewCard()))
@@ -402,9 +402,6 @@ public static class HaaLouLingCookingService
                     for (var i = 0; i < ingredients.Count; i++)
                         await DamageAllEnemies(choiceContext, player, clayPotRice.Amount);
                     break;
-                case TianZaoBasePower stove:
-                    await stove.IngredientsUsed(choiceContext, ingredients.Count);
-                    break;
                 case ZhangYuWanZiPower { Amount: > 0 } octopusBalls:
                     var total = state.OctopusBallIngredientProgress + ingredients.Count;
                     var thresholds = total / 8;
@@ -589,16 +586,16 @@ public static class HaaLouLingCookingService
         }
     }
 
-    public static void AddShengYanMangle(Player player, int amount)
+    public static void AddShengYanDebilitate(Player player, int amount)
     {
         if (amount > 0)
         {
-            GetState(player).ShengYanManglePerTurn += amount;
+            GetState(player).ShengYanDebilitatePerTurn += amount;
         }
     }
 
-    public static int GetShengYanMangle(Player player) =>
-        GetState(player).ShengYanManglePerTurn;
+    public static int GetShengYanDebilitate(Player player) =>
+        GetState(player).ShengYanDebilitatePerTurn;
 
     public static async Task UpgradeAllCookingSlots(
         PlayerChoiceContext choiceContext,
@@ -742,6 +739,7 @@ public static class HaaLouLingCookingService
     private static async Task Enqueue(PlayerChoiceContext context, Player player, CookingDishDefinition recipe, bool upgraded)
     {
         var state = GetState(player);
+        CookingMenuPreferences.RecordCooking(player, recipe.DishModelId);
         var replayCount = PendingDishReplayCount(player, recipe);
         state.DishesStartedThisTurn++;
         if (PendingReplayPower(player, recipe) is { Amount: > 0 } replayPower)
@@ -795,7 +793,7 @@ public static class HaaLouLingCookingService
 
     public static async Task CookRandomDishes(PlayerChoiceContext context, Player player, int count)
     {
-        var recipes = HaaLouLingCookingRecipes.All.Where(recipe => recipe.CreatePreviewCard().Rarity != CardRarity.Rare).ToList();
+        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => recipe.CreatePreviewCard().Rarity != CardRarity.Rare).ToList();
         for (var i = 0; i < count; i++)
         {
             var upgraded = HasPendingDishUpgrade(player);
@@ -808,7 +806,7 @@ public static class HaaLouLingCookingService
 
     public static async Task RandomDishEffects(PlayerChoiceContext context, Player player, int count, bool uncommonOnly)
     {
-        var recipes = HaaLouLingCookingRecipes.All.Where(recipe => uncommonOnly ?
+        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => uncommonOnly ?
             recipe.CreatePreviewCard().Rarity == CardRarity.Uncommon : recipe.CreatePreviewCard().Rarity != CardRarity.Rare).ToList();
         for (var i = 0; i < count; i++)
             await GainDishEffect(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!, false);

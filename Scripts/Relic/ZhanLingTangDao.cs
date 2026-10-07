@@ -14,6 +14,6 @@ public sealed class ZhanLingTangDao : HaaLouLingRelic
     public override async Task BeforeCombatStart()
     {
         Flash();
-        await HaaLouLingCombatRules.GainKnife(new ThrowingPlayerChoiceContext(), Owner, 3);
+        await HaaLouLingCombatRules.GainKnife(new ThrowingPlayerChoiceContext(), Owner, 2);
     }
 }

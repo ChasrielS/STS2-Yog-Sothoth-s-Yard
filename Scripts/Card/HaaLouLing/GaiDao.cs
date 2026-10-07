@@ -17,7 +17,8 @@ public sealed class GaiDao : HaaLouLingCard
     public GaiDao() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     public override KnifeForm Form => KnifeForm.Turn;
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(16, ValueProp.Move), new CardsVar(2)];
+    public override bool WantsGreenOutline => Knife > 0;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(15, ValueProp.Move), new CardsVar(2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.Static(StaticHoverTip.Transform)]);
 
@@ -29,7 +30,7 @@ public sealed class GaiDao : HaaLouLingCard
         await SpendKnife(context, 1);
         var selected = await CardSelectCmd.FromHand(context, Owner,
             new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionScreenPrompt"), 1),
-            card => card.Type == CardType.Status, this);
+            null, this);
         foreach (var card in selected)
         {
             await CardPileCmd.RemoveFromCombat(card, false);

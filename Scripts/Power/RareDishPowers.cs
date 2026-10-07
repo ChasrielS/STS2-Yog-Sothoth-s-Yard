@@ -90,8 +90,8 @@ public sealed class BaoZaiFanPower : RareDishPower
 [RegisterPower]
 public sealed class ShengYanPower : RareDishPower
 {
-    private int _mangleTurn;
-    private int _appliedMangle;
+    private int _debilitateTurn;
+    private int _appliedDebilitate;
     protected override string IconFileName => "sheng_yan";
 
     public override LocString Description
@@ -99,7 +99,7 @@ public sealed class ShengYanPower : RareDishPower
         get
         {
             var text = base.Description;
-            text.Add("Mangle", IsMutable ? HaaLouLingCookingService.GetShengYanMangle(Owner.Player!) : 0);
+            text.Add("Debilitate", IsMutable ? HaaLouLingCookingService.GetShengYanDebilitate(Owner.Player!) : 0);
             return text;
         }
     }
@@ -108,7 +108,7 @@ public sealed class ShengYanPower : RareDishPower
 
     public override Task AfterRemoved(Creature oldOwner)
     {
-        HaaLouLingCookingService.GetState(oldOwner.Player!).ShengYanManglePerTurn = 0;
+        HaaLouLingCookingService.GetState(oldOwner.Player!).ShengYanDebilitatePerTurn = 0;
         return Task.CompletedTask;
     }
 
@@ -125,20 +125,20 @@ public sealed class ShengYanPower : RareDishPower
             amount
         );
 
-        if (_mangleTurn != player.PlayerCombatState!.TurnNumber)
+        if (_debilitateTurn != player.PlayerCombatState!.TurnNumber)
         {
-            _mangleTurn = player.PlayerCombatState.TurnNumber;
-            _appliedMangle = 0;
+            _debilitateTurn = player.PlayerCombatState.TurnNumber;
+            _appliedDebilitate = 0;
         }
-        var totalMangle = HaaLouLingCookingService.GetShengYanMangle(player);
-        var mangle = totalMangle - _appliedMangle;
-        _appliedMangle = totalMangle;
-        if (mangle > 0)
+        var totalDebilitate = HaaLouLingCookingService.GetShengYanDebilitate(player);
+        var debilitate = totalDebilitate - _appliedDebilitate;
+        _appliedDebilitate = totalDebilitate;
+        if (debilitate > 0)
         {
-            await HaaLouLingCookingService.ApplyPowerToEnemies<ManglePower>(
+            await HaaLouLingCookingService.ApplyPowerToEnemies<DebilitatePower>(
                 choiceContext,
                 player,
-                mangle
+                debilitate
             );
         }
     }

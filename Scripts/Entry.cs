@@ -49,8 +49,8 @@ public class Entry
 
     private const string FoodPileIconPath = "res://images/packed/combat_ui/food_pile.png";
     private const string FoodPileEmptyMessageKey = "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.empty";
-    private const string NoCookableDishesMessageKey = "YOG_SOTHOTH_S_YARD_COOKING_NO_COOKABLE_DISHES";
     private const string CannotCookMessageKey = "YOG_SOTHOTH_S_YARD_COOKING_CANNOT_COOK_NOW";
+    private const string NoCookableDishesMessageKey = "YOG_SOTHOTH_S_YARD_COOKING_NO_COOKABLE_DISHES";
     private static IRuntimeHotkeyHandle? FoodPileHotkeyHandle;
     private static IRuntimeHotkeyHandle? CookingHotkeyHandle;
     private static IDisposable? CombatStartingSubscription;
@@ -67,6 +67,7 @@ public class Entry
             [HaaLouLingTransitionSfx] = "res://audio/sfx/haa_lou_ling/character_transition.wav"
         }, busPath: FmodStudioRouting.SfxBus);
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+        CookingMenuPreferences.Register();
         ModUnlockRegistry.For(ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
             XunRenQiChengEpoch.EpochId,
             "用铁甲战士结束一局普通游戏后获得寻人启程",
@@ -77,6 +78,7 @@ public class Entry
         Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();
         Patcher.RegisterPatch<DaoShiPersistencePatch>();
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
+        Patcher.RegisterPatch<YardTimelineRunUnlockPatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
             ModCardHandOutlineRules.Switch<HaaLouLingCard>(ResolveHandOutline));
@@ -84,6 +86,7 @@ public class Entry
         NFoodPileMotion.Register();
         NDishEffectChoicePrompt.Register();
         NDishCookingChoiceOutline.Register();
+        NIngredientCountDisplay.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
             replayCurrentState: false
@@ -254,14 +257,14 @@ public class Entry
         ShowThoughtMessage(player, "static_hover_tips", FoodPileEmptyMessageKey);
     }
 
-    public static void ShowNoCookableDishesMessage(MegaCrit.Sts2.Core.Entities.Players.Player player)
-    {
-        ShowThoughtMessage(player, "gameplay_ui", NoCookableDishesMessageKey);
-    }
-
     public static void ShowCannotCookMessage(MegaCrit.Sts2.Core.Entities.Players.Player player)
     {
         ShowThoughtMessage(player, "gameplay_ui", CannotCookMessageKey);
+    }
+
+    public static void ShowNoCookableDishesMessage(MegaCrit.Sts2.Core.Entities.Players.Player player)
+    {
+        ShowThoughtMessage(player, "gameplay_ui", NoCookableDishesMessageKey);
     }
 
     private static void ShowThoughtMessage(

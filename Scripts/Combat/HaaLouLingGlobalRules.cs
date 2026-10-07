@@ -74,7 +74,8 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
         modifiedAmount = amount;
         // 首次施加也需要限制修正后的数量；已有归元由自身处理额外获得层数。
         if (power is GuiYuanBasePower && HaaLouLingCombatRules.GuiYuan(target) == 0)
-            modifiedAmount = Math.Clamp(amount, 0, 100);
+            modifiedAmount = HaaLouLingCombatRules.CanExceedGuiYuanLimit(applier)
+                ? Math.Max(0, amount) : Math.Clamp(amount, 0, 100);
         if (target.Player is { } player)
         {
             if (power is DaoShiPower)

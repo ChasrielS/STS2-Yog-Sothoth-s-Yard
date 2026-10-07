@@ -18,8 +18,7 @@ public sealed class ZhouHenJiaShen : HaaLouLingCard
     {
         await Attack(context, play);
         if (IsUpgraded) await GiveGuiYuan(context, play, DynamicVars["Amount"].IntValue);
-        foreach (var power in play.Target!.Powers.OfType<GuiYuanBasePower>())
-            power.SetAmount(Math.Min(100, power.Amount * 2));
+        await GiveGuiYuan(context, play, HaaLouLingCombatRules.GuiYuan(play.Target));
     }
 
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(10);

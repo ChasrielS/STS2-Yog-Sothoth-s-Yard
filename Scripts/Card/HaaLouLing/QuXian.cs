@@ -10,18 +10,19 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class QuXian : HaaLouLingCard
 {
-    public QuXian() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];
+    public QuXian() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(11, ValueProp.Move), new CardsVar(3)];
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, 1, CardRarity.Uncommon);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, CardRarity.Uncommon);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(3);
+        DynamicVars.Block.UpgradeValueBy(5);
+        DynamicVars.Cards.UpgradeValueBy(2);
     }
 }

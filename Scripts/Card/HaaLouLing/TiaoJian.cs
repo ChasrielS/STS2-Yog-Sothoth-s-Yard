@@ -10,15 +10,15 @@ namespace YogSothothsYard.Scripts;
 public sealed class TiaoJian : HaaLouLingCard
 {
     public TiaoJian() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(0)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Ingredients", 3)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var selected = (await HaaLouLingCardChoices.SelectOwnedIngredients(context, this,
             Entry.FoodPile.GetPile(Owner).Cards.Count)).ToList();
         foreach (var card in selected) await CardPileCmd.RemoveFromCombat(card, false);
-        await CardPileCmd.Draw(context, selected.Count / 2 + DynamicVars.Cards.IntValue, Owner);
+        await CardPileCmd.Draw(context, selected.Count / DynamicVars["Ingredients"].IntValue, Owner);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["Ingredients"].UpgradeValueBy(-1);
 }

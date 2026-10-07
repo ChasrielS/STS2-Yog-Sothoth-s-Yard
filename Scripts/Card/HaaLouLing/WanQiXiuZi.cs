@@ -15,12 +15,12 @@ public sealed class WanQiXiuZi : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
         await HaaLouLingCardChoices.Retrieve(context, this, PileType.Draw, skillsOnly: true);
+        await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Energy.UpgradeValueBy(1);
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 }

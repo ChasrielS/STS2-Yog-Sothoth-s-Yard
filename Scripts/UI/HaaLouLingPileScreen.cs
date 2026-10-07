@@ -2,7 +2,6 @@ using Godot;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
@@ -17,8 +16,6 @@ namespace YogSothothsYard.Scripts.UI;
 public static class HaaLouLingPileScreen
 {
     private const string FoodPileInfoTextKey = "YOG_SOTHOTH_S_YARD_FOOD_PILE_INFO";
-    private const string CookingScreenTitleKey = "YOG_SOTHOTH_S_YARD_COOKING_SCREEN_TITLE";
-    private const string CookingScreenEmptyKey = "YOG_SOTHOTH_S_YARD_COOKING_SCREEN_EMPTY";
 
     public static void Show(CardPile pile)
     {
@@ -63,11 +60,6 @@ public static class HaaLouLingPileScreen
         CookingRecipePile recipePile
     )
     {
-        var infoKey = recipePile.IsEmpty ? CookingScreenEmptyKey : CookingScreenTitleKey;
-        var bottomLabel = screen.GetNode<MegaRichTextLabel>("%BottomLabel");
-        bottomLabel.Visible = true;
-        bottomLabel.Text = "[center]" + new LocString("gameplay_ui", infoKey).GetFormattedText();
-
         var grid = screen.GetNode<NCardGrid>("CardGrid");
         grid.Connect(
             NCardGrid.SignalName.HolderPressed,
@@ -79,28 +71,7 @@ public static class HaaLouLingPileScreen
             NGame.Instance!.GetInspectCardScreen().Open(cards, cards.IndexOf(holder.CardModel!));
         }));
 
-        void OnPowerChanged(PowerModel power)
-        {
-            if (power is ChangFenPower or ChaoHeFenPower or TingZaiZhouPower or MoYuBaoPower or
-                SuShiLengPanPower or SuanLaSaoZiTiJinPower) recipePile.RefreshCookingEffects();
-        }
-        void OnPowerIncreased(PowerModel power, int amount, bool silent) => OnPowerChanged(power);
-        void OnPowerDecreased(PowerModel power, bool silent) => OnPowerChanged(power);
-        var creature = recipePile.Player.Creature;
-        creature.PowerApplied += OnPowerChanged;
-        creature.PowerRemoved += OnPowerChanged;
-        creature.PowerIncreased += OnPowerIncreased;
-        creature.PowerDecreased += OnPowerDecreased;
-        var cookingState = HaaLouLingCookingService.GetState(recipePile.Player);
-        cookingState.RecipePreviewsChanged += recipePile.RefreshCookingEffects;
-        screen.TreeExiting += () =>
-        {
-            creature.PowerApplied -= OnPowerChanged;
-            creature.PowerRemoved -= OnPowerChanged;
-            creature.PowerIncreased -= OnPowerIncreased;
-            creature.PowerDecreased -= OnPowerDecreased;
-            cookingState.RecipePreviewsChanged -= recipePile.RefreshCookingEffects;
-        };
+        screen.AddChild(NCookingRecipeFilter.Create(screen, recipePile));
     }
 
     private static void OnRecipePressed(CookingRecipePile recipePile, NCardHolder holder)
