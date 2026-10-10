@@ -40,14 +40,13 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         HaaLouLingCookingService.GainDishEffect(context, Owner, HaaLouLingCookingRecipes.Get(Id)!, IsUpgraded);
 
-    protected override CardLocation GetResultLocationForCardPlay() => Type == CardType.Skill
-        ? new CardLocation(Owner, PileType.None, CardPilePosition.Bottom)
-        : base.GetResultLocationForCardPlay();
+    protected override CardLocation GetResultLocationForCardPlay() =>
+        new(Owner, PileType.None, CardPilePosition.Bottom);
 
     public override CardLocation ModifyCardPlayResultLocation(CardModel card, bool isAutoPlay, ResourceInfo resources, CardLocation location)
     {
-        // 原版先处理能力，再处理卡牌；覆盖腐化等效果给予菜肴的消耗去向。
-        if (card == this && Type == CardType.Skill) location.pileType = PileType.None;
+        // 技能和能力菜肴都移出战斗，不接受腐化、回手等普通牌堆去向。
+        if (card == this) location.pileType = PileType.None;
         return location;
     }
 

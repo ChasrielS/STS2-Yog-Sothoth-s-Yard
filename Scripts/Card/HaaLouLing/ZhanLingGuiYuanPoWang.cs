@@ -12,36 +12,32 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 {
-    public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies) { }
-    private Creature? _highestHpTarget;
-    private Creature? HighestHpTarget => _highestHpTarget ?? CombatState?.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new ExtraDamageVar(5),
-        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)),
-        new IntVar("ExtraHit", 6)];
+    public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(12), new ExtraDamageVar(8),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesKnife => true;
     protected override bool UsesGuiYuan => true;
     public override KnifeForm Form => KnifeForm.Finish;
 
-    public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props,
+    public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props,
         Creature? dealer, CardModel? cardSource, CardPlay? cardPlay) =>
-        cardSource == this && target != null && target == HighestHpTarget
-            ? HaaLouLingCombatRules.KnifeForCard(this) * DynamicVars["ExtraHit"].BaseValue
-            : 0m;
+        cardSource == this && props.IsPoweredAttack() && cardPlay?.Target != null && target != null && target != cardPlay.Target ? 0.5m : 1m;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        _highestHpTarget = CombatState!.HittableEnemies.OrderByDescending(enemy => enemy.CurrentHp).FirstOrDefault();
-        await FinishKnife(context);
-        var attack = await Attack(context, play, calculated: true);
-        _highestHpTarget = null;
+        var knife = await FinishKnife(context);
+        await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, knife, true);
+        var attack = await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play)
+            .TargetingAllOpponents(CombatState!)
+            .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, knife, true, target == play.Target))
+            .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
         foreach (var results in attack.Results.SelectMany(hit => hit).GroupBy(result => result.Receiver))
             await HaaLouLingCombatRules.GiveGuiYuan(context, results.Key, (int)results.Sum(result => result.TotalDamage), Owner.Creature, this);
+        await HaaLouLingFinisherVfx.ImpactPause(true);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.CalculationBase.UpgradeValueBy(3);
-        DynamicVars.ExtraDamage.UpgradeValueBy(2);
-        DynamicVars["ExtraHit"].UpgradeValueBy(2);
+        DynamicVars.ExtraDamage.UpgradeValueBy(4);
     }
 }

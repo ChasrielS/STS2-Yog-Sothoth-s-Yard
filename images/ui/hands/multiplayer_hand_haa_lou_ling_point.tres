@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://images/ui/hands/multiplayer_hand_haa_lou_ling_point.png" id="1_hand"]
+
+[resource]
+atlas = ExtResource("1_hand")
+region = Rect2(0, 82, 422, 1118)
+margin = Rect2(0, 0, 0, 82)

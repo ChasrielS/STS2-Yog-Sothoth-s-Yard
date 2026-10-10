@@ -9,8 +9,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class KeZhou : HaaLouLingCard
 {
-    public KeZhou() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new IntVar("Amount", 10)];
+    public KeZhou() : base(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move), new IntVar("Amount", 10)];
     protected override bool UsesKnife => true;
     protected override bool UsesGuiYuan => true;
     public override KnifeForm Form => KnifeForm.Turn;
@@ -20,11 +20,15 @@ public sealed class KeZhou : HaaLouLingCard
     {
         var eligible = Knife > 0;
         await Attack(context, play);
-        if (eligible) { await SpendKnife(context, 1); await GiveGuiYuan(context, play, DynamicVars["Amount"].IntValue); }
+        if (eligible)
+        {
+            await SpendKnife(context, 1);
+            await HaaLouLingCombatRules.GiveGuiYuanToEnemies(context, Owner, DynamicVars["Amount"].IntValue, this);
+        }
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(4);
+        DynamicVars.Damage.UpgradeValueBy(3);
     }
 }

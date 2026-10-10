@@ -11,10 +11,13 @@ public sealed class DianDuZi : HaaLouLingCard
 {
     public DianDuZi() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3), new EnergyVar(1)];
+    protected override bool ShouldGlowRedInternal => Owner?.PlayerCombatState != null &&
+        Entry.FoodPile.GetPile(Owner).Cards.Count < DynamicVars.Cards.IntValue;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var count = DynamicVars.Cards.IntValue;
+        if (Entry.FoodPile.GetPile(Owner).Cards.Count < count) return;
         var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this, count, count, sortByQuantity: true);
         var ingredients = selected.ToList();
         await CardPileCmd.Add(ingredients, PileType.Play);

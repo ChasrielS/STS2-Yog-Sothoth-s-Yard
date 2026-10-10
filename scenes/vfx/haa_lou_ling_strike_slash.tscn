@@ -1,43 +1,17 @@
-[gd_scene load_steps=9 format=3 uid="uid://bk8w4l1ql7h2i"]
+[gd_scene load_steps=5 format=3 uid="uid://bk8w4l1ql7h2i"]
 
 [ext_resource type="Script" path="res://Scripts/Vfx/HaaLouLingStrikeSlashVfx.cs" id="1_script"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_00.png" id="2_frame"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_01.png" id="3_frame"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_02.png" id="4_frame"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_03.png" id="5_frame"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_04.png" id="6_frame"]
-[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash/strike_slash_05.png" id="7_frame"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash.png" id="2_slash"]
+[ext_resource type="Shader" path="res://shaders/vfx/haa_lou_ling_strike_slash.gdshader" id="3_shader"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_slash"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_frame")
-}, {
-"duration": 1.0,
-"texture": ExtResource("3_frame")
-}, {
-"duration": 1.0,
-"texture": ExtResource("4_frame")
-}, {
-"duration": 1.0,
-"texture": ExtResource("5_frame")
-}, {
-"duration": 1.0,
-"texture": ExtResource("6_frame")
-}, {
-"duration": 1.0,
-"texture": ExtResource("7_frame")
-}],
-"loop": false,
-"name": &"default",
-"speed": 45.0
-}]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_slash"]
+shader = ExtResource("3_shader")
 
 [node name="HaaLouLingStrikeSlashVfx" type="Node2D"]
 script = ExtResource("1_script")
 
-[node name="SlashSprite" type="AnimatedSprite2D" parent="."]
+[node name="SlashSprite" type="Sprite2D" parent="."]
 z_index = 20
+material = SubResource("ShaderMaterial_slash")
 centered = true
-sprite_frames = SubResource("SpriteFrames_slash")
+texture = ExtResource("2_slash")

@@ -44,6 +44,12 @@ public partial class NCookingRecipeFilter : Control
         var grid = _screen.GetNode<NCardGrid>("CardGrid");
         grid.OffsetTop = top + 70f;
         grid.YOffset = -55;
+        // 原版 ScrollContainer 是会移动的内容层，裁切必须放在固定的网格上。
+        grid.ClipChildren = ClipChildrenMode.Disabled;
+        grid.ClipContents = true;
+        var scroll = grid.GetNode<Control>("ScrollContainer");
+        scroll.ClipChildren = ClipChildrenMode.Disabled;
+        scroll.ClipContents = false;
         _bottomLabel = _screen.GetNode<MegaRichTextLabel>("%BottomLabel");
         _bottomLabel.Visible = true;
 

@@ -17,9 +17,11 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
     public override string? CustomBigIconPath => "res://images/powers/gui_yuan_power.png";
     protected abstract int AttackPenalty { get; }
     protected abstract int Vulnerability { get; }
+    protected abstract decimal ExcessHpLossPerLayer { get; }
+    protected abstract int HpLossLimitPercent { get; }
     private decimal _pendingHpLoss;
     private int EffectMultiplier => Amount >= 100 ? 2 : 1;
-    private int HpLossPercent => 50 + Math.Max(0, Amount - 100);
+    private decimal HpLossPercent => 50m + Math.Max(0, Amount - 100) * ExcessHpLossPerLayer;
     private int CurrentAttackPenalty => AttackPenalty * ((Amount >= 10 ? 1 : 0) + (Amount >= 50 ? 1 : 0)) * EffectMultiplier;
     private int CurrentVulnerability => Vulnerability * ((Amount >= 20 ? 1 : 0) + (Amount >= 70 ? 1 : 0)) * EffectMultiplier;
     public override PowerType Type => PowerType.Debuff;
@@ -35,6 +37,7 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
             text.Add("Amplification", 25 * EffectMultiplier);
             text.Add("AtMaximum", Amount >= 100);
             text.Add("HpLossPercent", HpLossPercent);
+            text.Add("HpLossLimitPercent", HpLossLimitPercent);
             return text;
         }
     }
@@ -58,7 +61,8 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
         {
             var gained = Amount >= 30 ? decimal.Floor(amount * (1m + 0.25m * EffectMultiplier)) : amount;
             if (Amount >= 100)
-                _pendingHpLoss = decimal.Floor(gained * HpLossPercent / 100m);
+                _pendingHpLoss = decimal.Floor(Math.Min(gained * HpLossPercent / 100m,
+                    Owner.MaxHp * (HpLossLimitPercent / 100m)));
             modifiedAmount = HaaLouLingCombatRules.CanExceedGuiYuanLimit(applier)
                 ? gained : Math.Min(gained, Math.Max(0, 100 - Amount));
         }
@@ -82,6 +86,8 @@ public sealed class GuiYuanPower : GuiYuanBasePower
 {
     protected override int AttackPenalty => 10;
     protected override int Vulnerability => 20;
+    protected override decimal ExcessHpLossPerLayer => 0.5m;
+    protected override int HpLossLimitPercent => 10;
 }
 
 [RegisterPower]
@@ -89,4 +95,6 @@ public sealed class GuiYuanPlusPower : GuiYuanBasePower
 {
     protected override int AttackPenalty => 15;
     protected override int Vulnerability => 30;
+    protected override decimal ExcessHpLossPerLayer => 1m;
+    protected override int HpLossLimitPercent => 20;
 }

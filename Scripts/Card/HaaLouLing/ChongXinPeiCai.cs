@@ -7,7 +7,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ChongXinPeiCai : HaaLouLingCard
 {
-    public ChongXinPeiCai() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public ChongXinPeiCai() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

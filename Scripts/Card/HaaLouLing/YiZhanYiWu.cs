@@ -12,7 +12,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class YiZhanYiWu : HaaLouLingCard
 {
     public YiZhanYiWu() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(0), new ExtraDamageVar(4), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)), new IntVar("Increase", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(0), new ExtraDamageVar(8), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)), new IntVar("Increase", 1)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Finish;
     public override bool CanBeGeneratedInCombat => false;
@@ -28,10 +28,10 @@ public sealed class YiZhanYiWu : HaaLouLingCard
         {
             AssertMutable();
             _increasedDamage = value;
-            DynamicVars.ExtraDamage.BaseValue = 4 + value;
+            DynamicVars.ExtraDamage.BaseValue = 8 + value;
         }
     }
-    protected override void AfterDowngraded() => DynamicVars.ExtraDamage.BaseValue = 4 + IncreasedDamage;
+    protected override void AfterDowngraded() => DynamicVars.ExtraDamage.BaseValue = 8 + IncreasedDamage;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

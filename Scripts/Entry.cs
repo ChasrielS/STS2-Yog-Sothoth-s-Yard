@@ -47,7 +47,7 @@ public class Entry
     public static PileType FoodPile;
     public static TargetType OtherPlayerTarget;
 
-    private const string FoodPileIconPath = "res://images/packed/combat_ui/food_pile.png";
+    internal const string FoodPileIconPath = "res://images/packed/combat_ui/food_pile.png";
     private const string FoodPileEmptyMessageKey = "YOG_SOTHOTH_S_YARD_CARDPILE_FOOD_PILE.empty";
     private const string CannotCookMessageKey = "YOG_SOTHOTH_S_YARD_COOKING_CANNOT_COOK_NOW";
     private const string NoCookableDishesMessageKey = "YOG_SOTHOTH_S_YARD_COOKING_NO_COOKABLE_DISHES";
@@ -79,6 +79,10 @@ public class Entry
         Patcher.RegisterPatch<DaoShiPersistencePatch>();
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
         Patcher.RegisterPatch<YardTimelineRunUnlockPatch>();
+        Patcher.RegisterPatch<CookingCardPlayPermissionPatch>();
+        Patcher.RegisterPatch<CookingCardPileAddPatch>();
+        Patcher.RegisterPatch<CookingCardPileInternalAddPatch>();
+        Patcher.RegisterPatch<CookingCardExhaustPatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
             ModCardHandOutlineRules.Switch<HaaLouLingCard>(ResolveHandOutline));
@@ -87,6 +91,7 @@ public class Entry
         NDishEffectChoicePrompt.Register();
         NDishCookingChoiceOutline.Register();
         NIngredientCountDisplay.Register();
+        NMultiplayerIngredientCount.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
             replayCurrentState: false

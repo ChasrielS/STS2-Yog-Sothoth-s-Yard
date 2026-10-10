@@ -9,7 +9,11 @@ namespace YogSothothsYard.Scripts;
 public partial class HaaLouLingStrikeSlashVfx : Node2D
 {
     private const string ScenePath = "res://scenes/vfx/haa_lou_ling_strike_slash.tscn";
+    private const float Duration = 0.14f;
+    private static readonly StringName ProgressParameter = new("progress");
     private Vector2 _spawnPosition;
+    private ShaderMaterial _material = null!;
+    private float _elapsed;
 
     public static Node2D? Create(Creature target)
     {
@@ -38,8 +42,20 @@ public partial class HaaLouLingStrikeSlashVfx : Node2D
     public override void _Ready()
     {
         GlobalPosition = _spawnPosition;
-        var sprite = GetNode<AnimatedSprite2D>("SlashSprite");
-        sprite.AnimationFinished += () => this.QueueFreeSafely();
-        sprite.Play();
+        var sprite = GetNode<Sprite2D>("SlashSprite");
+        _material = (ShaderMaterial)sprite.Material.Duplicate();
+        sprite.Material = _material;
+        _material.SetShaderParameter(ProgressParameter, 0f);
+    }
+
+    public override void _Process(double delta)
+    {
+        _elapsed += (float)delta;
+        if (_elapsed >= Duration)
+        {
+            this.QueueFreeSafely();
+            return;
+        }
+        _material.SetShaderParameter(ProgressParameter, _elapsed / Duration);
     }
 }

@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Vfx/HaaLouLingGuiYuanVfx.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/gui_yuan_soul.svg" id="2_soul"]
+[ext_resource type="Shader" path="res://shaders/vfx/haa_lou_ling_gui_yuan.gdshader" id="3_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_soul"]
+shader = ExtResource("3_shader")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_pulse"]
+offsets = PackedFloat32Array(0, 0.52, 1)
+colors = PackedColorArray(0.6235, 0.898, 0.8353, 0.16, 0.5961, 0.8627, 0.8, 0.08, 0.5961, 0.8627, 0.8, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pulse"]
+gradient = SubResource("Gradient_pulse")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="HaaLouLingGuiYuanVfx" type="Node2D"]
+material = SubResource("CanvasItemMaterial_add")
+z_index = 20
+script = ExtResource("1_script")
+
+[node name="Pulse" type="Sprite2D" parent="."]
+use_parent_material = true
+modulate = Color(1, 1, 1, 0)
+texture = SubResource("GradientTexture2D_pulse")
+
+[node name="SoulTemplate" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_soul")
+texture = ExtResource("2_soul")
+offset = Vector2(0, 10)

@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -19,8 +20,12 @@ public sealed class ZhanLingGuiYuan : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var spent = await FinishKnife(context);
-        await Attack(context, play, calculated: true);
+        await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, spent, false);
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play).Targeting(play.Target!)
+            .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, spent, false, true))
+            .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
         await GiveGuiYuan(context, play, spent * DynamicVars["Amount"].IntValue);
+        await HaaLouLingFinisherVfx.ImpactPause(false);
     }
 
     protected override void OnUpgrade()

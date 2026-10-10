@@ -308,6 +308,10 @@ public static class HaaLouLingCookingService
         {
             switch (power)
             {
+                case DaoGongPower { Amount: > 0 } knifeWork:
+                    knifeWork.FlashEffect();
+                    await HaaLouLingCombatRules.GainKnife(choiceContext, player, knifeWork.Amount);
+                    break;
                 case XueHuaJiNaoPower { Amount: > 0 } snowChicken:
                     snowChicken.FlashEffect();
                     await AddSpecificIngredients<JiRou>(
@@ -793,7 +797,7 @@ public static class HaaLouLingCookingService
 
     public static async Task CookRandomDishes(PlayerChoiceContext context, Player player, int count)
     {
-        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => recipe.CreatePreviewCard().Rarity != CardRarity.Rare).ToList();
+        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => recipe.CreatePreviewCard().Rarity == CardRarity.Uncommon).ToList();
         for (var i = 0; i < count; i++)
         {
             var upgraded = HasPendingDishUpgrade(player);
@@ -804,10 +808,11 @@ public static class HaaLouLingCookingService
         }
     }
 
-    public static async Task RandomDishEffects(PlayerChoiceContext context, Player player, int count, bool uncommonOnly)
+    public static async Task RandomDishEffects(PlayerChoiceContext context, Player player, int count, bool uncommonOnly = false,
+        bool includeRare = false)
     {
-        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => uncommonOnly ?
-            recipe.CreatePreviewCard().Rarity == CardRarity.Uncommon : recipe.CreatePreviewCard().Rarity != CardRarity.Rare).ToList();
+        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => includeRare || (uncommonOnly ?
+            recipe.CreatePreviewCard().Rarity == CardRarity.Uncommon : recipe.CreatePreviewCard().Rarity != CardRarity.Rare)).ToList();
         for (var i = 0; i < count; i++)
             await GainDishEffect(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!, false);
     }

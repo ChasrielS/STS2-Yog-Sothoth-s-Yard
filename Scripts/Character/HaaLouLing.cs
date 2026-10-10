@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Entities.Characters;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -45,7 +46,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 CharacterSelectIconPath: "res://images/packed/character_select/char_select_haa_lou_ling.png",
                 CharacterSelectLockedIconPath: "res://images/packed/character_select/char_select_haa_lou_ling_locked.png",
                 CharacterSelectTransitionPath: "res://materials/transitions/haa_lou_ling_transition_mat.tres",
-                MapMarkerPath: "res://images/ui/top_panel/character_icon_haa_lou_ling.png"
+                MapMarkerPath: "res://images/packed/map/icons/map_marker_haa_lou_ling.svg"
             ),
             Vfx: new(
                 TrailPath: "res://scenes/vfx/card_trail_haa_lou_ling.tscn"
@@ -59,7 +60,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
                 CharacterTransitionSfx = Entry.HaaLouLingTransitionSfx
             },
             Multiplayer: new(
-                ArmPointingTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_point.png",
+                ArmPointingTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_point.tres",
                 ArmRockTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_rock.png",
                 ArmPaperTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_paper.png",
                 ArmScissorsTexturePath: "res://images/ui/hands/multiplayer_hand_haa_lou_ling_scissors.png"
@@ -74,7 +75,7 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
         ));
 
     public override float AttackAnimDelay => 0.15f;
-    public override float CastAnimDelay => 0f;
+    public override float CastAnimDelay => 0.25f;
 
     protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
         RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
@@ -84,17 +85,15 @@ public sealed class HaaLouLing : ModCharacterTemplate<HaaLouLingCardPool, HaaLou
             .Concat(Enumerable.Repeat<CardModel>(ModelDb.Card<DefendHaaLouLing>(), 4))
             .Concat([ModelDb.Card<FindFood>(), ModelDb.Card<ZhanLingGuiYuan>()]);
 
-    protected override CreatureAnimator? SetupCustomCreatureAnimator(MegaSprite controller)
+    public override CreatureAnimator GenerateAnimator(MegaSprite controller, Creature creature)
     {
-        var animator = ModAnimStateMachines.Standard(
-            controller,
-            idleName: "idle_loop",
-            deadName: "die",
-            hitName: "hurt",
-            attackName: "attack");
-
-        // 施法和强化暂时沿用待机，后续再接入对应的新动作。
-        animator.AddAnyState("PowerUp", new AnimState("idle_loop", true));
+        var idle = new AnimState("idle_loop", true);
+        var animator = new CreatureAnimator(idle, controller);
+        animator.AddAnyState("Idle", idle);
+        animator.AddAnyState("Relaxed", idle);
+        animator.AddAnyState("Attack", new AnimState("attack") { NextState = idle });
+        animator.AddAnyState("Hit", new AnimState("hurt") { NextState = idle });
+        animator.AddAnyState("Dead", new AnimState("die"));
         return animator;
     }
 

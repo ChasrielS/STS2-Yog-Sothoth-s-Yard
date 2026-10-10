@@ -10,7 +10,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class KanHuo : HaaLouLingCard
 {
-    public KanHuo() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public KanHuo() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move), new IntVar("CookingAdvance", 1)];
     public override bool GainsBlock => true;
 

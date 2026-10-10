@@ -12,7 +12,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class ShouShi : HaaLouLingCard
 {
     public ShouShi() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new CalculationExtraVar(8), new CalculatedBlockVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new CalculationExtraVar(7), new CalculatedBlockVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Finish;
     public override bool GainsBlock => true;
@@ -25,6 +25,6 @@ public sealed class ShouShi : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.CalculationBase.UpgradeValueBy(2); DynamicVars.CalculationExtra.UpgradeValueBy(1);
+        DynamicVars.CalculationBase.UpgradeValueBy(2); DynamicVars.CalculationExtra.UpgradeValueBy(3);
     }
 }

@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ZhouHenJiaShen : HaaLouLingCard
 {
-    public ZhouHenJiaShen() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+    public ZhouHenJiaShen() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5, ValueProp.Move), new IntVar("Amount", 0)];
     protected override bool UsesGuiYuan => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);

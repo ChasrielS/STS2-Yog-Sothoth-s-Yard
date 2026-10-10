@@ -213,6 +213,15 @@ public sealed class ShenQianTangFenPower : RareDishPower
 public sealed class PenCaiPower : RareDishPower
 {
     protected override string IconFileName => "pen_cai";
+    public override LocString Description
+    {
+        get
+        {
+            var description = base.Description;
+            description.Add("Multiplier", (decimal)Math.Pow(2, Amount));
+            return description;
+        }
+    }
 }
 
 [RegisterPower]

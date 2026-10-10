@@ -247,3 +247,15 @@ attack_blade
   orig: 256, 48
   offset: 0, 0
   index: -1
+
+attack_blade_glow.svg
+size: 288,128
+filter: Linear,Linear
+repeat: none
+attack_blade_glow
+  rotate: false
+  xy: 0, 0
+  size: 288, 128
+  orig: 288, 128
+  offset: 0, 0
+  index: -1

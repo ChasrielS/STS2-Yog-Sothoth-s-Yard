@@ -14,9 +14,9 @@
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHI.title": "刀势",
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHI.description": "可用于强化部分卡牌效果。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN.title": "归元",
-  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN.description": "根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少10%。\n20层：受到的攻击伤害增加20%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少10%。\n70层：受到的攻击伤害增加20%。\n100层：翻倍上述效果。此后获得归元时失去等量于获得层数50%的生命。100层以上：每超过上限1层，增加获得归元时失去等量于获得层数1%的生命。",
+  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN.description": "根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少10%。\n20层：受到的攻击伤害增加20%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少10%。\n70层：受到的攻击伤害增加20%。\n100层：翻倍上述效果。此后获得归元时失去等量于获得层数50%的生命(不超过最大生命的10%)。\n100层以上：每超过上限1层，增加获得归元时失去等量于获得层数0.5%的生命。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.title": "归元＋",
-  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.description": "属于归元。根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少15%。\n20层：受到的攻击伤害增加30%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少15%。\n70层：受到的攻击伤害增加30%。\n100层：翻倍上述效果，此后获得归元时失去等量于获得层数50%的生命。100层以上：每超过上限1层，增加获得归元时失去等量于获得层数1%的生命。",
+  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.description": "属于归元。根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少15%。\n20层：受到的攻击伤害增加30%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少15%。\n70层：受到的攻击伤害增加30%。\n100层：翻倍上述效果，此后获得归元时失去等量于获得层数50%的生命(不超过最大生命的20%)。\n100层以上：每超过上限1层，增加获得归元时失去等量于获得层数1%的生命。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHU.title": "刀术",
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHU.description": "包括起式、承式、转式和合式共四式。"
 }

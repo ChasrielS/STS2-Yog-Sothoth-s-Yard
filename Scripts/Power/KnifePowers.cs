@@ -39,7 +39,7 @@ public sealed class DaoShiPower : HaaLouLingPower
         if (cry == null) return;
         cry.FlashEffect();
         for (var i = 0; i < (int)amount; i++)
-            await HaaLouLingCookingService.DamageRandomEnemy(context, Owner.Player!, cry.Amount);
+            await HaaLouLingCookingService.DamageAllEnemies(context, Owner.Player!, cry.Amount);
     }
 }
 
@@ -71,6 +71,13 @@ public sealed class DaoMingPower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/dao_ming_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/dao_ming_power.png";
+}
+
+[RegisterPower]
+public sealed class DaoGongPower : HaaLouLingPower
+{
+    public override string? CustomIconPath => "res://images/powers/dao_gong_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/dao_gong_power.png";
 }
 
 [RegisterPower]

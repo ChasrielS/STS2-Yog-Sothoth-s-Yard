@@ -59,14 +59,6 @@ public static class HaaLouLingCardChoices
                 CardFactory.GetForCombat(source.Owner, choices, 1, source.Owner.RunState.Rng.CombatCardGeneration));
         }
     }
-    public static async Task TransformCombatCards(PlayerChoiceContext context, CardModel source, IEnumerable<CardModel> cards)
-    {
-        foreach (var card in cards.ToList())
-        {
-            await CardPileCmd.RemoveFromCombat(card, false);
-            await HaaLouLingCookingService.AddRandomIngredients(context, source.Owner, 1);
-        }
-    }
     public static async Task Retrieve(PlayerChoiceContext context, CardModel source, PileType pile, bool skillsOnly = false)
     {
         var selected = (await CardSelectCmd.FromCombatPile(context, pile.GetPile(source.Owner), source.Owner,

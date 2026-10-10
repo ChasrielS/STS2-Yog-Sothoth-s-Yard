@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -15,10 +16,14 @@ public sealed class ShuangFen : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var firstPlay = !CombatManager.Instance.History.CardPlaysFinished.Any(entry =>
+            entry.CardPlay.Card == this && entry.HappenedThisTurn(CombatState));
         var selected = await HaaLouLingCardChoices.SelectIngredientKinds(context, this, DynamicVars.Cards.IntValue);
-        var copies = selected.Select(card => card.CreateClone()).ToList();
+        var kinds = selected.Select(card => card.Id).ToHashSet();
+        var copies = Entry.FoodPile.GetPile(Owner).Cards.Where(card => kinds.Contains(card.Id))
+            .Select(card => card.CreateClone()).ToList();
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, copies);
-        await CardPileCmd.Draw(context, 1, Owner);
+        if (firstPlay) await CardPileCmd.Draw(context, 1, Owner);
     }
 
     protected override void OnUpgrade()

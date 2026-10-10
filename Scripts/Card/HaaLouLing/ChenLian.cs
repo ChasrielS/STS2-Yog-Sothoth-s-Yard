@@ -8,12 +8,12 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ChenLian : HaaLouLingCard
 {
-    public ChenLian() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
+    public ChenLian() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
     protected override bool UsesKnife => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         await Apply<ChenLianPower>(context, DynamicVars["Amount"].IntValue);
 
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

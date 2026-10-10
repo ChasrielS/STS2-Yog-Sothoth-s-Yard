@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="128" viewBox="0 0 288 128">
+  <defs>
+    <radialGradient id="halo" cx="155" cy="65" r="115" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 46.8) scale(1 .28)">
+      <stop offset="0" stop-color="#d9ffb7" stop-opacity=".56"/>
+      <stop offset=".55" stop-color="#93e8a6" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#6abd8a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="trail" x1="145" y1="62" x2="145" y2="107" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e8ffd3" stop-opacity=".72"/>
+      <stop offset=".42" stop-color="#9deab1" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#67bf90" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="76" y1="67" x2="265" y2="57" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ebffd9" stop-opacity=".15"/>
+      <stop offset=".28" stop-color="#f8ffe8" stop-opacity=".85"/>
+      <stop offset=".78" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".6"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="155" cy="65" rx="115" ry="33" fill="url(#halo)"/>
+  <path d="M74 68 C137 80 231 91 265 55 C235 108 151 112 84 82 Z" fill="url(#trail)"/>
+  <path d="M78 69 C153 80 234 81 267 54 C239 94 156 96 79 73 Z" fill="url(#trail)"/>
+  <path d="M76 67 L246 67 L264 56 L247 71 L76 69 Z" fill="url(#edge)"/>
+  <path d="M78 67 L246 67 L264 56" fill="none" stroke="#faffec" stroke-width="1.7" stroke-linejoin="round"/>
+</svg>

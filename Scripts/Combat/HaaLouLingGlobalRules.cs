@@ -69,6 +69,13 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
         return Task.CompletedTask;
     }
 
+    public override Task BeforePowerAmountChanged(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource)
+    {
+        if (power is GuiYuanBasePower && amount > 0)
+            HaaLouLingGuiYuanVfx.Show(target);
+        return Task.CompletedTask;
+    }
+
     public override bool TryModifyPowerAmountReceived(PowerModel power, Creature target, decimal amount, Creature? applier, out decimal modifiedAmount)
     {
         modifiedAmount = amount;
