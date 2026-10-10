@@ -11,12 +11,13 @@ namespace YogSothothsYard.Scripts.Patches;
 
 internal static class CookingCardPileRules
 {
-    internal static bool CanEnter(CardModel card, PileType pile) => card switch
+    internal static bool CanEnter(CardModel card, CardPile pile)
     {
-        IHaaLouLingDishCard => pile == PileType.Play,
-        IHaaLouLingIngredientCard => pile == Entry.FoodPile,
-        _ => true
-    };
+        if (card is not (IHaaLouLingDishCard or IHaaLouLingIngredientCard)) return true;
+        // 烹饪菜单等展示用牌堆不属于玩家的实际牌堆，不限制预览卡入堆。
+        if (!card.Owner.Piles.Contains(pile)) return true;
+        return card is IHaaLouLingDishCard ? pile.Type == PileType.Play : pile.Type == Entry.FoodPile;
+    }
 
     internal static Task Remove(CardModel card, bool skipVisuals)
     {
@@ -66,7 +67,7 @@ public sealed class CookingCardPileAddPatch : IPatchMethod
     {
         var snapshot = cards as IReadOnlyList<CardModel> ?? cards.ToList();
         cards = snapshot;
-        if (snapshot.All(card => CookingCardPileRules.CanEnter(card, newPile.Type))) return true;
+        if (snapshot.All(card => CookingCardPileRules.CanEnter(card, newPile))) return true;
         __result = RouteCards(snapshot, newPile, position, clonedBy, skipVisuals, isChangingOwners);
         return false;
     }
@@ -75,11 +76,11 @@ public sealed class CookingCardPileAddPatch : IPatchMethod
         CardPilePosition position, AbstractModel? clonedBy, bool skipVisuals, bool isChangingOwners)
     {
         var results = new Dictionary<CardModel, CardPileAddResult>();
-        var allowed = cards.Where(card => CookingCardPileRules.CanEnter(card, newPile.Type)).ToList();
+        var allowed = cards.Where(card => CookingCardPileRules.CanEnter(card, newPile)).ToList();
         var added = await CardPileCmd.Add(allowed, newPile, position, clonedBy, skipVisuals, isChangingOwners);
         for (var i = 0; i < allowed.Count; i++) results[allowed[i]] = added[i];
 
-        foreach (var card in cards.Where(card => !CookingCardPileRules.CanEnter(card, newPile.Type)))
+        foreach (var card in cards.Where(card => !CookingCardPileRules.CanEnter(card, newPile)))
         {
             var oldPile = card.Pile;
             var targetPile = PileType.None;
@@ -114,7 +115,7 @@ public sealed class CookingCardPileInternalAddPatch : IPatchMethod
 
     public static bool Prefix(CardPile __instance, CardModel card, bool silent)
     {
-        if (CookingCardPileRules.CanEnter(card, __instance.Type)) return true;
+        if (CookingCardPileRules.CanEnter(card, __instance)) return true;
         // 覆盖初始化、变牌等直接入堆的路径，不让卡牌先进入非法牌堆。
         if (card is IHaaLouLingIngredientCard && card.Owner.PlayerCombatState != null)
         {
