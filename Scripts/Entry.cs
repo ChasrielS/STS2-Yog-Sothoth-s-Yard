@@ -70,7 +70,7 @@ public class Entry
         CookingMenuPreferences.Register();
         ModUnlockRegistry.For(ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
             XunRenQiChengEpoch.EpochId,
-            "用铁甲战士结束一局普通游戏后获得寻人启程",
+            "用铁甲战士结束一局普通游戏后获得寻人启程。",
             context => context.CharacterId == ModelDb.Character<Ironclad>().Id
         ));
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
