@@ -10,7 +10,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class YiShenDuE : HaaLouLingCard
 {
-    public YiShenDuE() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
+    public YiShenDuE() : base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
+    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(0), new ExtraDamageVar(1), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (_, target) => HaaLouLingCombatRules.GuiYuan(target))];
     protected override bool UsesGuiYuan => true;
 
@@ -19,7 +20,9 @@ public sealed class YiShenDuE : HaaLouLingCard
         var amount = HaaLouLingCombatRules.GuiYuan(play.Target);
         await Attack(context, play, calculated: true);
         await HaaLouLingCombatRules.GiveGuiYuan(context, Owner.Creature, amount, Owner.Creature, this);
-        if (!IsUpgraded) await HaaLouLingCombatRules.RemoveGuiYuan(play.Target!);
+        await HaaLouLingCombatRules.RemoveGuiYuan(play.Target!);
     }
+
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
 }

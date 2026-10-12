@@ -40,6 +40,19 @@ public static class CookingMenuPreferences
         Store.Save(Key);
     }
 
+    public static IEnumerable<CookingDishDefinition> FilterRecipes(IReadOnlyList<CookingDishDefinition> available)
+    {
+        var data = Data;
+        if (data.SelectedFilter == 1)
+        {
+            var byId = available.ToDictionary(recipe => recipe.DishModelId.Entry);
+            return data.History.Where(byId.ContainsKey).Select(id => byId[id]);
+        }
+        if (data.SelectedFilter >= 2)
+            return available.Where(recipe => data.Presets[data.SelectedFilter - 2].Dishes.Contains(recipe.DishModelId.Entry));
+        return available;
+    }
+
     public static void RecordCooking(Player player, ModelId dishId)
     {
         if (!LocalContext.IsMe(player)) return;

@@ -238,8 +238,8 @@ public sealed class YuXiangRouSi : HaaLouLingDishCard
 public sealed class HuoBaoYaoHua : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "huo_bao_yao_hua";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 1));
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 3));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ZhuRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<LaJiao>(), HoverTipFactory.FromCard<Sun>(), HoverTipFactory.FromPower<StrengthPower>()];
     public HuoBaoYaoHua() : base(CardType.Power, 2, CardRarity.Uncommon) { }
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(2);
 }

@@ -15,8 +15,10 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     private readonly int _cookingTurns;
 
     public bool IsEffectChoice { get; set; }
-    public bool IsCookingChoice { get; set; }
+    public CookingDishSelection? CookingSelection { get; set; }
+    public bool IsCookingChoice => CookingSelection != null;
     public bool IsCookingCompletion { get; set; }
+    public bool IsRecipePreview { get; set; }
 
     protected abstract string PortraitFileName { get; }
 
@@ -34,7 +36,6 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     {
         base.AddExtraArgsToDescription(description);
         description.Add("ShowCookingTurns", !IsCookingCompletion);
-        description.Add("CookingTurnsReduced", IsUpgraded && DynamicVars["CookingTurns"].BaseValue < _cookingTurns);
     }
 
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>

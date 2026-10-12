@@ -281,6 +281,8 @@ public static class HaaLouLingCookingService
         card.IsCookingCompletion = true;
         if (isUpgraded) card.UpgradeInternal();
         card.BaseReplayCount = replayCount;
+        // 先触发原版新卡入场，让昏眩、烟雾等限制附上侵蚀，再检查能否打出。
+        await CardPileCmd.Add(card, PileType.Play, skipVisuals: true);
         await CardCmd.AutoPlay(choiceContext, card, card.TargetType == TargetType.Self ? player.Creature : null);
         foreach (var recipient in recipients)
             if (recipient?.Creature.IsAlive == true)
@@ -714,7 +716,7 @@ public static class HaaLouLingCookingService
             .Where(card => card is IHaaLouLingIngredientCard && (rarity == null || card.Rarity == rarity) &&
                 (!nonRare || card.Rarity != CardRarity.Rare)).ToList();
 
-    private static bool CanStartRecipe(Player player, CookingDishDefinition recipe) =>
+    public static bool CanStartRecipe(Player player, CookingDishDefinition recipe) =>
         !player.Creature.HasPower<CaiCongXinShengPower>() || !GetState(player).CookedThisTurn.Contains(recipe.DishModelId);
 
     private static bool HasRoom(Player player, CookingDishDefinition recipe, bool upgraded)

@@ -532,8 +532,8 @@ public static class HaaLouLingCookingRecipes
         bool upgraded
     )
     {
-        await ApplyPower<StrengthPower>(choiceContext, player, 5);
-        await ApplyPower<HuoBaoYaoHuaPower>(choiceContext, player, upgraded ? 2 : 1);
+        await ApplyPower<StrengthPower>(choiceContext, player, upgraded ? 5 : 3);
+        await ApplyPower<HuoBaoYaoHuaPower>(choiceContext, player, 1);
     }
 
     private static async Task ApplyShengYan(

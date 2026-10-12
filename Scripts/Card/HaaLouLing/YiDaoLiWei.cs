@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -15,7 +16,9 @@ public sealed class YiDaoLiWei : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var attack = await Attack(context, play);
+        var attack = await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this, play).Targeting(play.Target!)
+            .WithHitVfxNode(HaaLouLingVerticalCleaveVfx.Create)
+            .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
         if (attack.Results.SelectMany(hit => hit).Any(result => result.WasTargetKilled))
         {
             await Apply<DaoFaJingJinPower>(context, 1);

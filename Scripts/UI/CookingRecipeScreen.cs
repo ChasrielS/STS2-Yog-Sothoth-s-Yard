@@ -30,7 +30,6 @@ public static class CookingRecipeScreen
         }
 
         NCookingQueueDisplay.EnsureFor(player);
-        NCookingQueueDisplay.RefreshFor(player);
 
         if (Entry.FoodPile.GetPile(player).IsEmpty)
         {
@@ -45,7 +44,7 @@ public static class CookingRecipeScreen
         }
         var pile = new CookingRecipePile(
             player,
-            recipes,
+            CookingMenuPreferences.FilterRecipes(recipes),
             HaaLouLingCookingService.HasPendingDishUpgrade(player)
         );
         HaaLouLingPileScreen.Show(pile);

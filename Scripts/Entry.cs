@@ -80,9 +80,12 @@ public class Entry
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
         Patcher.RegisterPatch<YardTimelineRunUnlockPatch>();
         Patcher.RegisterPatch<CookingCardPlayPermissionPatch>();
+        Patcher.RegisterPatch<CookingRecipePreviewPilePatch>();
         Patcher.RegisterPatch<CookingCardPileAddPatch>();
         Patcher.RegisterPatch<CookingCardPileInternalAddPatch>();
         Patcher.RegisterPatch<CookingCardExhaustPatch>();
+        Patcher.RegisterPatch<DishCookingChoiceClickPatch>();
+        Patcher.RegisterPatch<DishCookingChoiceResultPatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
             ModCardHandOutlineRules.Switch<HaaLouLingCard>(ResolveHandOutline));

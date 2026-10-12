@@ -27,6 +27,19 @@ internal static class CookingCardPileRules
     }
 }
 
+public sealed class CookingRecipePreviewPilePatch : IPatchMethod
+{
+    public static string PatchId => "yog_sothoths_yard_cooking_recipe_preview_pile";
+    public static ModPatchTarget[] GetTargets() => [PatchTarget.Getter<CardModel>(nameof(CardModel.Pile))];
+
+    public static bool Prefix(CardModel __instance, ref CardPile? __result)
+    {
+        if (__instance is not HaaLouLingDishCard { IsRecipePreview: true }) return true;
+        __result = null;
+        return false;
+    }
+}
+
 public sealed class CookingCardPlayPermissionPatch : IPatchMethod
 {
     public static string PatchId => "yog_sothoths_yard_cooking_card_play_permission";
@@ -36,15 +49,8 @@ public sealed class CookingCardPlayPermissionPatch : IPatchMethod
             typeof(AbstractModel).MakeByRefType(), typeof(AutoPlayType))
     ];
 
-    public static bool Prefix(CardModel card, AutoPlayType autoPlayType, ref AbstractModel? preventer, ref bool __result)
+    public static bool Prefix(CardModel card, ref AbstractModel? preventer, ref bool __result)
     {
-        if (card is HaaLouLingDishCard { IsCookingCompletion: true } && autoPlayType != AutoPlayType.None)
-        {
-            // 继续走原版自动打出、重放和打出触发，只放行已完成的菜肴。
-            preventer = null;
-            __result = true;
-            return false;
-        }
         if (card is not IHaaLouLingIngredientCard) return true;
         preventer = card;
         __result = false;

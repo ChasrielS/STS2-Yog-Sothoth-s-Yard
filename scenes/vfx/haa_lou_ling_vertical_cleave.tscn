@@ -1,0 +1,32 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Vfx/HaaLouLingVerticalCleaveVfx.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/strike_slash.png" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/finisher_chip.svg" id="3_chip"]
+[ext_resource type="Texture2D" path="res://images/vfx/haa_lou_ling/finisher_glint.svg" id="4_glint"]
+[ext_resource type="Shader" path="res://shaders/vfx/haa_lou_ling_vertical_cleave.gdshader" id="5_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cleave"]
+shader = ExtResource("5_shader")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_light"]
+blend_mode = 1
+
+[node name="HaaLouLingVerticalCleaveVfx" type="Node2D"]
+z_index = 20
+material = SubResource("CanvasItemMaterial_light")
+script = ExtResource("1_script")
+
+[node name="Sheet" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_cleave")
+texture = ExtResource("2_sheet")
+texture_filter = 2
+
+[node name="ImpactFlash" type="Sprite2D" parent="."]
+use_parent_material = true
+texture = ExtResource("4_glint")
+texture_filter = 2
+
+[node name="ChipTemplate" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_chip")

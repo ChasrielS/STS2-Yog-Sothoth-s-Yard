@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Screens;
-using MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary;
 using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts.UI;
@@ -26,6 +25,7 @@ public partial class NCookingRecipeFilter : Control
     private HaaLouLingCookingState _cookingState = null!;
     private CardPile _foodPile = null!;
     private int _renamingSlot;
+    private bool _refreshQueued;
 
     public static NCookingRecipeFilter Create(NCardPileScreen screen, CookingRecipePile pile) => new()
     {
@@ -99,7 +99,7 @@ public partial class NCookingRecipeFilter : Control
         _filter.ItemSelected += index =>
         {
             CookingMenuPreferences.Update(data => data.SelectedFilter = (int)index);
-            RefreshRecipes();
+            QueueRefresh();
             RefreshToolbar();
         };
         _nameEdit = new LineEdit { CustomMinimumSize = new Vector2(360f, 48f), Visible = false };
@@ -134,12 +134,11 @@ public partial class NCookingRecipeFilter : Control
         creature.PowerIncreased += OnPowerIncreased;
         creature.PowerDecreased += OnPowerDecreased;
         _foodPile = Entry.FoodPile.GetPile(_pile.Player);
-        _foodPile.ContentsChanged += RefreshRecipes;
+        _foodPile.ContentsChanged += QueueRefresh;
         _cookingState = HaaLouLingCookingService.GetState(_pile.Player);
-        _cookingState.RecipePreviewsChanged += RefreshRecipes;
+        _cookingState.RecipePreviewsChanged += QueueRefresh;
         RefreshToolbar();
-        RefreshRecipes();
-        grid.SetCards(_pile.Cards.ToList(), _pile.Type, [SortingOrders.Ascending]);
+        RefreshInfo(hasAvailableRecipes: true);
     }
 
     public override void _ExitTree()
@@ -150,38 +149,46 @@ public partial class NCookingRecipeFilter : Control
         creature.PowerRemoved -= OnPowerChanged;
         creature.PowerIncreased -= OnPowerIncreased;
         creature.PowerDecreased -= OnPowerDecreased;
-        _foodPile.ContentsChanged -= RefreshRecipes;
-        _cookingState.RecipePreviewsChanged -= RefreshRecipes;
+        _foodPile.ContentsChanged -= QueueRefresh;
+        _cookingState.RecipePreviewsChanged -= QueueRefresh;
     }
 
     private void OnPowerChanged(PowerModel power)
     {
         if (power is ChangFenPower or ChaoHeFenPower or TingZaiZhouPower or MoYuBaoPower or
             SuShiLengPanPower or SuanLaSaoZiTiJinPower or DaChuXingTaiPower or CaiCongXinShengPower)
-            RefreshRecipes();
+            QueueRefresh();
     }
 
     private void OnPowerIncreased(PowerModel power, int amount, bool silent) => OnPowerChanged(power);
     private void OnPowerDecreased(PowerModel power, bool silent) => OnPowerChanged(power);
 
+    private void QueueRefresh()
+    {
+        if (_refreshQueued) return;
+        _refreshQueued = true;
+        Callable.From(() =>
+        {
+            _refreshQueued = false;
+            if (GodotObject.IsInstanceValid(this) && IsInsideTree()) RefreshRecipes();
+        }).CallDeferred();
+    }
+
     private void RefreshRecipes()
     {
-        var data = CookingMenuPreferences.Data;
         var available = HaaLouLingCookingService.GetCookableRecipes(_pile.Player);
-        IEnumerable<CookingDishDefinition> recipes = available;
-        if (data.SelectedFilter == 1)
-        {
-            var byId = available.ToDictionary(recipe => recipe.DishModelId.Entry);
-            recipes = data.History.Where(byId.ContainsKey).Select(id => byId[id]);
-        }
-        else if (data.SelectedFilter >= 2)
-            recipes = available.Where(recipe => data.Presets[data.SelectedFilter - 2].Dishes.Contains(recipe.DishModelId.Entry));
-        _pile.SetRecipes(recipes);
+        _pile.SetRecipes(CookingMenuPreferences.FilterRecipes(available));
+        RefreshInfo(available.Count > 0);
+    }
+
+    private void RefreshInfo(bool hasAvailableRecipes)
+    {
+        var data = CookingMenuPreferences.Data;
         _bottomLabel.Text = "[center]" + Text(_pile.IsEmpty ? data.SelectedFilter switch
         {
             0 => "SCREEN_EMPTY", 1 => "HISTORY_EMPTY", _ => "PRESET_EMPTY"
         } : "SCREEN_TITLE");
-        _add.Disabled = available.Count == 0;
+        _add.Disabled = !hasAvailableRecipes;
         _remove.Disabled = data.SelectedFilter < 2 || !HaaLouLingCookingRecipes.All.Any(recipe =>
             data.Presets[data.SelectedFilter - 2].Dishes.Contains(recipe.DishModelId.Entry));
     }

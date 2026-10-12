@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves;
+using YogSothothsYard.Scripts.Card.HaaLouLingDish;
 
 namespace YogSothothsYard.Scripts.Cooking;
 
@@ -39,7 +40,8 @@ public sealed class CookingRecipePile : CardPile
     {
         foreach (var recipe in recipes)
         {
-            var previewCard = recipe.CreatePreviewCard().ToMutable();
+            var previewCard = (HaaLouLingDishCard)recipe.CreatePreviewCard().ToMutable();
+            previewCard.IsRecipePreview = true;
             if (upgradeNextDish)
             {
                 previewCard.UpgradeInternal();

@@ -72,10 +72,13 @@ public static class HaaLouLingCardChoices
             .Where(recipe => rarity == null || recipe.CreatePreviewCard().Rarity == rarity))
             .Select(recipe => source.Owner.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), source.Owner)).ToList();
         var upgraded = HaaLouLingCookingService.HasPendingDishUpgrade(source.Owner);
+        var selection = new CookingDishSelection();
         foreach (var card in choices.Cast<HaaLouLingDishCard>())
         {
-            card.IsCookingChoice = true;
+            card.CookingSelection = selection;
             if (upgraded) card.UpgradeInternal();
+            card.BaseReplayCount = HaaLouLingCookingService.PendingDishReplayCount(source.Owner,
+                HaaLouLingCookingRecipes.Get(card.Id)!);
         }
         var selected = await CardSelectCmd.FromSimpleGrid(context, choices, source.Owner,
             new CardSelectorPrefs(Prompt(source), count));
@@ -91,7 +94,6 @@ public static class HaaLouLingCardChoices
             var card = CardFactory.GetForCombat(source.Owner, pool.Where(card => card.Form == form), 1,
                 source.Owner.RunState.Rng.CombatCardGeneration).Single();
             if (source.IsUpgraded) CardCmd.Upgrade(card);
-            CardCmd.ApplyKeyword(card, CardKeyword.Exhaust);
             card.EnergyCost.SetThisTurn(0);
             var result = await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, source.Owner);
             CardCmd.PreviewCardPileAdd(result);
