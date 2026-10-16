@@ -176,7 +176,7 @@ public sealed class MaLaHuoGuo : HaaLouLingDishCard
         HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
     ];
 
-    public MaLaHuoGuo() : base(CardType.Skill, 3, CardRarity.Rare) { }
+    public MaLaHuoGuo() : base(CardType.Skill, 4, CardRarity.Rare) { }
     protected override void OnUpgrade() { }
 }
 

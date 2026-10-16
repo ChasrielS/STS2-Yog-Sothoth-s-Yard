@@ -441,7 +441,7 @@ public static class HaaLouLingCookingRecipes
                 upgradedCookingTurns: 2
             ),
             Create<MaLaHuoGuo>(
-                3,
+                4,
                 "ma_la_huo_guo",
                 Ingredients(
                     (strangeMeat, 1),

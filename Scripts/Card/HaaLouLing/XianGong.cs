@@ -27,5 +27,9 @@ public sealed class XianGong : HaaLouLingCard
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(4);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Block.UpgradeValueBy(4);
+        DynamicVars["Amount"].UpgradeValueBy(1);
+    }
 }

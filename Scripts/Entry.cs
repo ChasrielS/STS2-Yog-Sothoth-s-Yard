@@ -67,6 +67,7 @@ public class Entry
             [HaaLouLingTransitionSfx] = "res://audio/sfx/haa_lou_ling/character_transition.wav"
         }, busPath: FmodStudioRouting.SfxBus);
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+        YardStory.RegisterTimelineLayout();
         CookingMenuPreferences.Register();
         ModUnlockRegistry.For(ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
             XunRenQiChengEpoch.EpochId,
@@ -80,6 +81,7 @@ public class Entry
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
         Patcher.RegisterPatch<YardTimelineRunUnlockPatch>();
         Patcher.RegisterPatch<CookingCardPlayPermissionPatch>();
+        Patcher.RegisterPatch<IngredientHookListenersPatch>();
         Patcher.RegisterPatch<CookingRecipePreviewPilePatch>();
         Patcher.RegisterPatch<CookingCardPileAddPatch>();
         Patcher.RegisterPatch<CookingCardPileInternalAddPatch>();

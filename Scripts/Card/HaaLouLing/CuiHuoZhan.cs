@@ -19,9 +19,5 @@ public sealed class CuiHuoZhan : HaaLouLingCard
         await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -DynamicVars["CookingAdvance"].IntValue, left: true);
     }
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Damage.UpgradeValueBy(2);
-        DynamicVars["CookingAdvance"].UpgradeValueBy(1);
-    }
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(4);
 }

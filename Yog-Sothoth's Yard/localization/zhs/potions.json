@@ -2,7 +2,7 @@
   "YOG_SOTHOTH_S_YARD_POTION_XING_SHEN_TANG.title": "醒神汤",
   "YOG_SOTHOTH_S_YARD_POTION_XING_SHEN_TANG.description": "获得{Amount}层刀势。",
   "YOG_SOTHOTH_S_YARD_POTION_GAO_TANG_JING_HUA.title": "高汤精华",
-  "YOG_SOTHOTH_S_YARD_POTION_GAO_TANG_JING_HUA.description": "随机获得{Amount}张罕见食材。",
+  "YOG_SOTHOTH_S_YARD_POTION_GAO_TANG_JING_HUA.description": "从所有非稀有菜肴中选择一道，获得其效果。",
   "YOG_SOTHOTH_S_YARD_POTION_GUI_YUAN_FU_SHUI.title": "归元符水",
   "YOG_SOTHOTH_S_YARD_POTION_GUI_YUAN_FU_SHUI.description": "给予所有敌人{Amount}层归元。"
 }

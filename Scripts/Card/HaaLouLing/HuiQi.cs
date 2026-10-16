@@ -15,7 +15,7 @@ public sealed class HuiQi : HaaLouLingCard
     public override bool GainsBlock => true;
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Turn;
-    protected override bool ShouldGlowRedInternal => Knife == 0;
+    public override bool WantsGreenOutline => Knife > 0;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

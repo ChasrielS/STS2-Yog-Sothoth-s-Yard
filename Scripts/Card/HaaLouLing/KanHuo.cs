@@ -20,8 +20,5 @@ public sealed class KanHuo : HaaLouLingCard
         await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -DynamicVars["CookingAdvance"].IntValue, right: true);
     }
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars["CookingAdvance"].UpgradeValueBy(1);
-    }
+    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3);
 }
