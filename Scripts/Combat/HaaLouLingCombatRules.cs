@@ -12,12 +12,7 @@ namespace YogSothothsYard.Scripts;
 public static class HaaLouLingCombatRules
 {
     public static int Knife(Player player) => player.Creature.GetPowerAmount<DaoShiPower>();
-    public static int KnifeLimit(Player player)
-    {
-        var limit = 3 + player.Creature.GetPowerAmount<DaoFaJingJinPower>();
-        return player.Creature.HasPower<LiangShouJueHuoPower>()
-            ? Math.Max(limit, HaaLouLingCookingState.DefaultCapacity + player.Creature.GetPowerAmount<GuoWanPiaoPenPower>()) : limit;
-    }
+    public static int KnifeLimit(Player player) => 3 + player.Creature.GetPowerAmount<DaoFaJingJinPower>();
 
     public static int KnifeForCard(CardModel card)
     {

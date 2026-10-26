@@ -13,13 +13,13 @@ public sealed class JiaDao : HaaLouLingCard
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move)];
     protected override bool UsesKnife => true;
     public override KnifeForm Form => KnifeForm.Open;
-    public override bool WantsGreenOutline => Knife == 0;
+    public override bool WantsGreenOutline => OpeningReady;
 
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var eligible = Knife == 0;
+        var eligible = OpeningReady;
         await Block(play);
         if (eligible) await GainKnife(context, 2);
     }

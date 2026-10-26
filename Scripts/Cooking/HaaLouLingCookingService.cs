@@ -306,10 +306,15 @@ public static class HaaLouLingCookingService
         Player player
     )
     {
+        var completed = ++GetState(player).DishesCompletedThisTurn;
         foreach (var power in player.Creature.Powers.ToList())
         {
             switch (power)
             {
+                case ShiWeiPower taste when completed <= taste.Amount:
+                    taste.FlashEffect();
+                    await CardPileCmd.Draw(choiceContext, 1, player);
+                    break;
                 case DaoGongPower { Amount: > 0 } knifeWork:
                     knifeWork.FlashEffect();
                     await HaaLouLingCombatRules.GainKnife(choiceContext, player, knifeWork.Amount);
@@ -427,7 +432,23 @@ public static class HaaLouLingCookingService
         if (count <= 0 || player.Character is not HaaLouLing || player.Creature.HasPower<CaiCongXinShengPower>()) return;
         var ingredients = Ingredients(player, rarity, nonRare);
         await AddGeneratedIngredients(choiceContext, player,
-            CardFactory.GetForCombat(player, ingredients, count, player.RunState.Rng.CombatCardGeneration));
+            GenerateRandomIngredients(player, ingredients, count));
+    }
+
+    public static List<CardModel> GenerateRandomIngredients(Player player, IReadOnlyList<CardModel> options, int count)
+    {
+        if (count <= 0 || options.Count == 0) return [];
+        var rng = player.RunState.Rng.CombatCardGeneration;
+        var priority = player.Creature.GetPower<ChaQueBuLouPower>();
+        if (priority == null || player.Creature.HasPower<CaiCongXinShengPower>())
+            return CardFactory.GetForCombat(player, options, count, rng).ToList();
+        var owned = Entry.FoodPile.GetPile(player).Cards.Select(card => card.Id).ToHashSet();
+        var missing = CardFactory.FilterForCombat(options).Where(card => !owned.Contains(card.Id)).ToList();
+        if (missing.Count == 0) return CardFactory.GetForCombat(player, options, count, rng).ToList();
+        var generated = CardFactory.GetDistinctForCombat(player, missing, Math.Min(count, missing.Count), rng).ToList();
+        if (generated.Count > 0) priority.FlashEffect();
+        generated.AddRange(CardFactory.GetForCombat(player, options, count - generated.Count, rng));
+        return generated;
     }
 
     public static int CountIngredients<TIngredient>(Player player)
@@ -698,16 +719,15 @@ public static class HaaLouLingCookingService
         }
 
         var text = new LocString("gameplay_ui", key).GetFormattedText();
-        NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(
-            NThoughtBubbleVfx.Create(text, player.Creature, 2.0)
-        );
+        var vfx = NThoughtBubbleVfx.Create(text, player.Creature, 2.0);
+        if (vfx == null) return;
+        NCombatVfxVisibility.Attach(vfx);
+        NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(vfx);
     }
 
     public static void RefreshCapacity(Player player)
     {
-        var capacity = HaaLouLingCookingState.DefaultCapacity + player.Creature.GetPowerAmount<GuoWanPiaoPenPower>();
-        GetState(player).Capacity = player.Creature.HasPower<LiangShouJueHuoPower>()
-            ? Math.Max(capacity, HaaLouLingCombatRules.KnifeLimit(player)) : capacity;
+        GetState(player).Capacity = HaaLouLingCookingState.DefaultCapacity + player.Creature.GetPowerAmount<GuoWanPiaoPenPower>();
         NCookingQueueDisplay.RefreshFor(player);
     }
 
@@ -760,17 +780,16 @@ public static class HaaLouLingCookingService
         {
             state.Slots.Add(new CookingSlot { DishModelId = recipe.DishModelId, RemainingTurns = turns,
                 IsUpgraded = upgraded, ReplayCount = replayCount });
-            if (player.Creature.GetPower<YinYangHuoHouPower>() is { } yinYang)
-                await yinYang.AfterDishEnqueued(context);
         }
         NCookingQueueDisplay.EnsureFor(player);
         NCookingQueueDisplay.RefreshFor(player);
     }
 
-    public static async Task ChangeCookingTurns(PlayerChoiceContext context, Player player, int delta, bool left = false, bool right = false)
+    public static async Task ChangeCookingTurns(PlayerChoiceContext context, Player player, int delta,
+        bool left = false, bool right = false, int count = 1)
     {
         var slots = GetState(player).Slots;
-        var selected = left ? slots.Take(1) : right ? slots.TakeLast(1) : slots;
+        var selected = left ? slots.Take(count) : right ? slots.TakeLast(count) : slots;
         foreach (var slot in selected) slot.RemainingTurns = Math.Max(0, slot.RemainingTurns + delta);
         await FinishReady(context, player);
     }
@@ -788,26 +807,14 @@ public static class HaaLouLingCookingService
         NCookingQueueDisplay.RefreshFor(player);
     }
 
-    public static int RemoveCookingSlots(Player player)
+    public static int RemoveCookingSlots(Player player, int count = int.MaxValue, bool fromRight = false)
     {
         var state = GetState(player);
-        var count = state.Slots.Count;
-        state.Slots.Clear();
+        var removed = Math.Min(count, state.Slots.Count);
+        state.Slots.RemoveRange(fromRight ? state.Slots.Count - removed : 0, removed);
+        state.RefreshRecipePreviews();
         NCookingQueueDisplay.RefreshFor(player);
-        return count;
-    }
-
-    public static async Task CookRandomDishes(PlayerChoiceContext context, Player player, int count)
-    {
-        var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => recipe.CreatePreviewCard().Rarity == CardRarity.Uncommon).ToList();
-        for (var i = 0; i < count; i++)
-        {
-            var upgraded = HasPendingDishUpgrade(player);
-            var available = recipes.Where(recipe => CanStartRecipe(player, recipe) && CanFitRecipe(player, recipe, upgraded)).ToList();
-            var selected = player.RunState.Rng.CombatCardGeneration.NextItem(available);
-            if (selected == null) break;
-            await StartWithoutIngredients(context, player, selected);
-        }
+        return removed;
     }
 
     public static async Task RandomDishEffects(PlayerChoiceContext context, Player player, int count, bool uncommonOnly = false,

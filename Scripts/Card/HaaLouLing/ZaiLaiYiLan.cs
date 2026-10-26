@@ -13,9 +13,9 @@ public sealed class ZaiLaiYiLan : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var copies = Entry.FoodPile.GetPile(Owner).Cards.Select(card => card.CreateClone()).ToList();
+        var copies = Entry.FoodPile.GetPile(Owner).Cards
+            .Where(card => IsUpgraded ? card.Rarity != CardRarity.Rare : card.Rarity == CardRarity.Common)
+            .Select(card => card.CreateClone()).ToList();
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, copies);
     }
-
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

@@ -15,7 +15,9 @@ public sealed class DengFeng : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        if (Knife == HaaLouLingCombatRules.KnifeLimit(Owner)) await Apply<DaoFaJingJinPower>(context, DynamicVars["Amount"].IntValue);
+        if (Knife != HaaLouLingCombatRules.KnifeLimit(Owner)) return;
+        await Apply<DaoFaJingJinPower>(context, DynamicVars["Amount"].IntValue);
+        await GainKnife(context, 1);
     }
 
     protected override void OnUpgrade()

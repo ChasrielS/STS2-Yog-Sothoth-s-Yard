@@ -16,7 +16,9 @@ public partial class NCookingRecipeFilter : Control
     private const string LocPrefix = "YOG_SOTHOTH_S_YARD_COOKING_";
     private CookingRecipePile _pile = null!;
     private NCardPileScreen _screen = null!;
-    private OptionButton _filter = null!;
+    private Button _filter = null!;
+    private PanelContainer _dropdown = null!;
+    private VBoxContainer _filterItems = null!;
     private LineEdit _nameEdit = null!;
     private TextureButton _rename = null!;
     private Button _add = null!;
@@ -74,35 +76,38 @@ public partial class NCookingRecipeFilter : Control
         row.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         row.OffsetLeft = 24f;
         row.OffsetRight = -24f;
-        row.OffsetTop = 8f;
-        row.OffsetBottom = -8f;
         row.AddThemeConstantOverride("separation", 12);
 
-        _filter = new OptionButton
+        _filter = new Button
         {
-            CustomMinimumSize = new Vector2(360f, 48f), FitToLongestItem = false,
+            CustomMinimumSize = new Vector2(360f, 42f), Alignment = HorizontalAlignment.Left,
             TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
         };
-        StyleButton(_filter, "popup_cancel_button");
-        var popup = _filter.GetPopup();
-        popup.AddThemeFontOverride("font", _filter.GetThemeFont("font"));
-        popup.AddThemeFontSizeOverride("font_size", 26);
-        popup.AddThemeColorOverride("font_color", new Color("efc851"));
-        popup.AddThemeColorOverride("font_hover_color", new Color("fff6e2"));
-        popup.AddThemeStyleboxOverride("panel", new StyleBoxFlat
+        StyleFilterButton(_filter);
+        row.AddChild(_filter);
+        // 下拉列表留在游戏视口内，不创建会令主窗口失焦的 PopupMenu 窗口。
+        _dropdown = new PanelContainer { Visible = false, ZIndex = 20 };
+        _dropdown.AddThemeStyleboxOverride("panel", new StyleBoxFlat
         {
             BgColor = new Color("482628"), BorderColor = new Color("c9ac67"),
             BorderWidthLeft = 2, BorderWidthRight = 2, BorderWidthTop = 2, BorderWidthBottom = 2,
-            ContentMarginLeft = 12, ContentMarginRight = 12, ContentMarginTop = 8, ContentMarginBottom = 8
+            ContentMarginLeft = 2, ContentMarginRight = 2, ContentMarginTop = 4, ContentMarginBottom = 4
         });
-        row.AddChild(_filter);
-        _filter.ItemSelected += index =>
+        AddChild(_dropdown);
+        _filterItems = new VBoxContainer();
+        _filterItems.AddThemeConstantOverride("separation", 0);
+        _dropdown.AddChild(_filterItems);
+        _filter.Pressed += () =>
         {
-            CookingMenuPreferences.Update(data => data.SelectedFilter = (int)index);
-            QueueRefresh();
-            RefreshToolbar();
+            _dropdown.Visible = !_dropdown.Visible;
+            _dropdown.GlobalPosition = _filter.GlobalPosition + new Vector2(0f, _filter.Size.Y);
+            _dropdown.Size = new Vector2(_filter.Size.X, 0f);
         };
-        _nameEdit = new LineEdit { CustomMinimumSize = new Vector2(360f, 48f), Visible = false };
+        _nameEdit = new LineEdit
+        {
+            CustomMinimumSize = new Vector2(360f, 42f), Visible = false,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter
+        };
         StyleFont(_nameEdit);
         row.AddChild(_nameEdit);
         _nameEdit.TextSubmitted += _ => CommitRename();
@@ -110,6 +115,7 @@ public partial class NCookingRecipeFilter : Control
         _rename = new TextureButton
         {
             CustomMinimumSize = new Vector2(44f, 48f), IgnoreTextureSize = true,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
             StretchMode = TextureButton.StretchModeEnum.KeepAspectCentered,
             TextureNormal = GD.Load<Texture2D>("res://images/atlases/ui_atlas.sprites/cursor_pencil.tres"),
             TooltipText = Text("PRESET_RENAME")
@@ -196,18 +202,36 @@ public partial class NCookingRecipeFilter : Control
     private void RefreshToolbar()
     {
         var data = CookingMenuPreferences.Data;
-        _filter.Clear();
-        _filter.AddItem(Text("FILTER_DEFAULT"));
-        _filter.AddItem(Text("FILTER_HISTORY"));
+        foreach (var child in _filterItems.GetChildren())
+        {
+            _filterItems.RemoveChild(child);
+            child.QueueFree();
+        }
+        var titles = new List<string> { Text("FILTER_DEFAULT"), Text("FILTER_HISTORY") };
         for (var i = 0; i < 5; i++)
         {
             var preset = data.Presets[i];
             var title = new LocString("gameplay_ui", LocPrefix + "FILTER_CUSTOM");
             title.Add("SlotNumber", i + 1);
-            _filter.AddItem(preset.Name.Length > 0 ? preset.Name : title.GetFormattedText());
+            titles.Add(preset.Name.Length > 0 ? preset.Name : title.GetFormattedText());
         }
-        _filter.Select(data.SelectedFilter);
-        _filter.TooltipText = _filter.Text;
+        _filter.Text = titles[data.SelectedFilter];
+        for (var i = 0; i < titles.Count; i++)
+        {
+            var index = i;
+            var option = new Button { Text = titles[i], Alignment = HorizontalAlignment.Left,
+                CustomMinimumSize = new Vector2(356f, 42f) };
+            StyleFilterButton(option);
+            _filterItems.AddChild(option);
+            option.Pressed += () =>
+            {
+                _dropdown.Hide();
+                CookingMenuPreferences.Update(value => value.SelectedFilter = index);
+                QueueRefresh();
+                RefreshToolbar();
+                _filter.GrabFocus();
+            };
+        }
         _rename.Visible = _add.Visible = _remove.Visible = data.SelectedFilter >= 2;
     }
 
@@ -234,8 +258,35 @@ public partial class NCookingRecipeFilter : Control
 
     public override void _Input(InputEvent inputEvent)
     {
+        if (!IsVisibleInTree()) return;
+        if (_dropdown.Visible && inputEvent.IsActionPressed("ui_cancel"))
+        {
+            _dropdown.Hide();
+            GetViewport().SetInputAsHandled();
+        }
+        if (_dropdown.Visible && inputEvent is InputEventMouseButton { Pressed: true } &&
+            !_dropdown.GetGlobalRect().HasPoint(GetGlobalMousePosition()) &&
+            !_filter.GetGlobalRect().HasPoint(GetGlobalMousePosition())) _dropdown.Hide();
         if (IsVisibleInTree() && _nameEdit.Visible && inputEvent is InputEventMouseButton { Pressed: true } &&
             !_nameEdit.GetGlobalRect().HasPoint(GetGlobalMousePosition())) CommitRename();
+    }
+
+    private static void StyleFilterButton(Button button)
+    {
+        StyleFont(button);
+        button.SizeFlagsVertical = SizeFlags.ShrinkCenter;
+        button.ClipText = true;
+        button.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+        button.AddThemeColorOverride("font_focus_color", new Color("efc851"));
+        button.AddThemeColorOverride("font_pressed_color", new Color("efc851"));
+        button.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
+        foreach (var state in new[] { "normal", "hover", "pressed", "hover_pressed" })
+            button.AddThemeStyleboxOverride(state, new StyleBoxFlat
+            {
+                BgColor = new Color(state is "hover" or "hover_pressed" ? "713337" : "572327"),
+                ContentMarginLeft = 12, ContentMarginRight = 12,
+                ContentMarginTop = 4, ContentMarginBottom = 4
+            });
     }
 
     private static void StyleFont(Control control)
@@ -251,6 +302,7 @@ public partial class NCookingRecipeFilter : Control
     private static void StyleButton(Button button, string image, bool mirror = false)
     {
         StyleFont(button);
+        button.SizeFlagsVertical = SizeFlags.ShrinkCenter;
         var texture = GD.Load<Texture2D>($"res://images/atlases/ui_atlas.sprites/{image}.tres");
         if (mirror)
         {

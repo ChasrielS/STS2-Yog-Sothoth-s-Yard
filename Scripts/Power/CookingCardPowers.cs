@@ -28,10 +28,10 @@ public sealed class DaoLuZaiXinPower : HaaLouLingPower
         if (play.Player.Creature != Owner || play.Card is not HaaLouLingCard { Form: not KnifeForm.None }) return;
         var count = CombatManager.Instance.History.CardPlaysFinished.Count(entry => entry.HappenedThisTurn(CombatState) &&
             entry.CardPlay.Player == play.Player && entry.CardPlay.Card is HaaLouLingCard { Form: not KnifeForm.None });
-        if (count == 1)
+        if (count <= Amount)
         {
             Flash();
-            await CardPileCmd.Draw(context, Amount, play.Player);
+            await CardPileCmd.Draw(context, 1, play.Player);
         }
     }
 }
@@ -46,11 +46,10 @@ public sealed class GuoWanPiaoPenPower : HaaLouLingPower
         if (power == this) HaaLouLingCookingService.RefreshCapacity(Owner.Player!);
         return Task.CompletedTask;
     }
-    public override async Task AfterRemoved(Creature oldOwner)
+    public override Task AfterRemoved(Creature oldOwner)
     {
         HaaLouLingCookingService.RefreshCapacity(oldOwner.Player!);
-        if (oldOwner.GetPower<LiangShouJueHuoPower>() is { } linked)
-            await linked.Synchronize(new ThrowingPlayerChoiceContext());
+        return Task.CompletedTask;
     }
 }
 
@@ -67,15 +66,11 @@ public sealed class CaiLanPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ZaoHuoChangMingPower : HaaLouLingPower
+public sealed class ChaQueBuLouPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/zao_huo_chang_ming_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/zao_huo_chang_ming_power.png";
-    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
-    {
-        if (player.Creature == Owner && AmountOnTurnStart > 0)
-            await HaaLouLingCookingService.CookRandomDishes(context, player, AmountOnTurnStart);
-    }
+    public override string? CustomIconPath => "res://images/powers/cha_que_bu_lou_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/cha_que_bu_lou_power.png";
+    public override PowerStackType StackType => PowerStackType.Single;
 }
 
 [RegisterPower]
@@ -95,17 +90,18 @@ public sealed class CaiCongXinShengPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class YinYangHuoHouPower : HaaLouLingPower
+public sealed class ShunShouTianHuoPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/yin_yang_huo_hou_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/yin_yang_huo_hou_power.png";
-    public override PowerStackType StackType => PowerStackType.Single;
-    public async Task AfterDishEnqueued(PlayerChoiceContext context)
+    public override string? CustomIconPath => "res://images/powers/shun_shou_tian_huo_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/shun_shou_tian_huo_power.png";
+    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     {
-        var player = Owner.Player!;
-        var total = HaaLouLingCookingService.GetRemainingCookingTurnsTotal(player);
+        if (play.Player.Creature != Owner || play.Card.Type != CardType.Skill) return;
+        var count = CombatManager.Instance.History.CardPlaysFinished.Count(entry => entry.HappenedThisTurn(CombatState) &&
+            entry.CardPlay.Player == play.Player && entry.CardPlay.Card.Type == CardType.Skill);
+        if (count != 1) return;
         Flash();
-        await HaaLouLingCookingService.ChangeCookingTurns(context, player, total % 2 == 1 ? -1 : 1);
+        await HaaLouLingCookingService.ChangeCookingTurns(context, play.Player, -1, left: true, count: Amount);
     }
 }
 

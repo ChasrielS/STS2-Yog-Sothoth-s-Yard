@@ -39,6 +39,7 @@ public partial class HaaLouLingVerticalCleaveVfx : Node2D
 
     public override void _Ready()
     {
+        NCombatVfxVisibility.Attach(this);
         var sheet = GetNode<Sprite2D>("Sheet");
         _material = (ShaderMaterial)sheet.Material.Duplicate();
         sheet.Material = _material;
@@ -66,7 +67,8 @@ public partial class HaaLouLingVerticalCleaveVfx : Node2D
         }
         chip.QueueFree();
         UpdateVisuals();
-        NGame.Instance?.ScreenShake(ShakeStrength.Medium, ShakeDuration.Short, 88f);
+        if (NCombatVfxVisibility.IsBattleVisible)
+            NGame.Instance?.ScreenShake(ShakeStrength.Medium, ShakeDuration.Short, 88f);
     }
 
     public override void _Process(double delta)

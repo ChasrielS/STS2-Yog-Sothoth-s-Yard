@@ -25,6 +25,6 @@ public sealed class HuiQi : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        AddKeyword(CardKeyword.Retain);
+        DynamicVars.Energy.UpgradeValueBy(1);
     }
 }

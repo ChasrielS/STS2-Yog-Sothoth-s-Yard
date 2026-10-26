@@ -17,7 +17,7 @@ public sealed class KanHuo : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -DynamicVars["CookingAdvance"].IntValue, right: true);
+        await HaaLouLingCookingService.ChangeCookingTurns(context, Owner, -DynamicVars["CookingAdvance"].IntValue, left: true);
     }
 
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3);

@@ -24,6 +24,7 @@ public static class HaaLouLingDishCompletedVfx
         var root = new Control { MouseFilter = Control.MouseFilterEnum.Ignore };
         root.AddChild(label);
         room!.CombatVfxContainer.AddChild(root);
+        NCombatVfxVisibility.Attach(root);
         root.GlobalPosition = creatureNode.VfxSpawnPosition;
         label.Position += NCreature.PowerAppliedVfxPositionOffset;
         label.SetTextAutoSize(title);

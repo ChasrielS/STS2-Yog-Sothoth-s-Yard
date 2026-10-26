@@ -2,7 +2,6 @@ using Godot;
 using STS2RitsuLib.CardPiles.Nodes;
 using STS2RitsuLib.Patching.Models;
 using YogSothothsYard.Scripts;
-using YogSothothsYard.Scripts.UI;
 
 namespace YogSothothsYard.Scripts.Patches;
 
@@ -24,7 +23,7 @@ public sealed class FoodPileRightClickPatch : IPatchMethod
         }
 
         __instance.AcceptEvent();
-        CookingRecipeScreen.ShowForLocalPlayer();
+        Entry.OpenCookingScreen();
         return false;
     }
 }

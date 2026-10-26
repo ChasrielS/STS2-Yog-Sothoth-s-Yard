@@ -67,6 +67,7 @@ public partial class HaaLouLingFinisherVfx : Node2D
 
     public override void _Ready()
     {
+        NCombatVfxVisibility.Attach(this);
         _sheet = GetNode<Sprite2D>("Sheet");
         _material = (ShaderMaterial)_sheet.Material.Duplicate();
         _sheet.Material = _material;
@@ -109,7 +110,7 @@ public partial class HaaLouLingFinisherVfx : Node2D
                 AddChild(echo);
                 MoveChild(echo, 0);
             }
-            if (_primary)
+            if (_primary && NCombatVfxVisibility.IsBattleVisible)
                 NGame.Instance?.ScreenShake(_breaking && _knife >= 2 ? ShakeStrength.Strong : ShakeStrength.Medium,
                     ShakeDuration.Short, 342f);
         }

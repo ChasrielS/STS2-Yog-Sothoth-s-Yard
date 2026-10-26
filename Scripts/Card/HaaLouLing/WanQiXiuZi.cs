@@ -10,17 +10,17 @@ namespace YogSothothsYard.Scripts;
 public sealed class WanQiXiuZi : HaaLouLingCard
 {
     public WanQiXiuZi() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1), new CardsVar(1)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCardChoices.Retrieve(context, this, PileType.Draw, skillsOnly: true);
+        await HaaLouLingCardChoices.Retrieve(context, this, PileType.Draw, skillsOnly: true, count: DynamicVars.Cards.IntValue);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 
     protected override void OnUpgrade()
     {
-        RemoveKeyword(CardKeyword.Exhaust);
+        DynamicVars.Cards.UpgradeValueBy(1);
     }
 }

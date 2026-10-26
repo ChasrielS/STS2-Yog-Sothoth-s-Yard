@@ -41,6 +41,7 @@ public partial class HaaLouLingStrikeSlashVfx : Node2D
 
     public override void _Ready()
     {
+        NCombatVfxVisibility.Attach(this);
         GlobalPosition = _spawnPosition;
         var sprite = GetNode<Sprite2D>("SlashSprite");
         _material = (ShaderMaterial)sprite.Material.Duplicate();

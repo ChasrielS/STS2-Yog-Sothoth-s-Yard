@@ -9,11 +9,11 @@ namespace YogSothothsYard.Scripts;
 public sealed class DaoLuZaiXin : HaaLouLingCard
 {
     public DaoLuZaiXin() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnifeForms => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
-        await Apply<DaoLuZaiXinPower>(context, DynamicVars.Cards.IntValue);
+        await Apply<DaoLuZaiXinPower>(context, DynamicVars["Amount"].IntValue);
 
-    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1);
+    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
 }

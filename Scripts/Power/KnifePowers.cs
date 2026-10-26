@@ -32,15 +32,6 @@ public sealed class DaoShiPower : HaaLouLingPower
         }
     }
 
-    public override async Task AfterPowerAmountChanged(PlayerChoiceContext context, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
-    {
-        if (power != this || amount <= 0) return;
-        var cry = Owner.GetPower<DaoMingPower>();
-        if (cry == null) return;
-        cry.FlashEffect();
-        for (var i = 0; i < (int)amount; i++)
-            await HaaLouLingCookingService.DamageAllEnemies(context, Owner.Player!, cry.Amount);
-    }
 }
 
 [RegisterPower]
@@ -53,11 +44,10 @@ public sealed class DaoFaJingJinPower : HaaLouLingPower
         if (power == this) ClampKnife();
         return Task.CompletedTask;
     }
-    public override async Task AfterRemoved(Creature oldOwner)
+    public override Task AfterRemoved(Creature oldOwner)
     {
-        if (oldOwner.GetPower<LiangShouJueHuoPower>() is { } linked)
-            await linked.Synchronize(new ThrowingPlayerChoiceContext());
         ClampKnife();
+        return Task.CompletedTask;
     }
     private void ClampKnife()
     {
@@ -67,10 +57,10 @@ public sealed class DaoFaJingJinPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class DaoMingPower : HaaLouLingPower
+public sealed class ShiWeiPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/dao_ming_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/dao_ming_power.png";
+    public override string? CustomIconPath => "res://images/powers/shi_wei_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/shi_wei_power.png";
 }
 
 [RegisterPower]
@@ -119,27 +109,18 @@ public sealed class ChongZhengJiaShiPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ChiDaoErLiPower : HaaLouLingPower
+public sealed class SuiXinQiShiPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/chi_dao_er_li_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/chi_dao_er_li_power.png";
-    public override async Task BeforeSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
-    {
-        if (participants.Contains(Owner))
-            await CreatureCmd.GainBlock(Owner, Amount * HaaLouLingCombatRules.Knife(Owner.Player!), ValueProp.Unpowered, null);
-    }
-}
-
-public abstract class ThisTurnHaaLouLingPower : HaaLouLingPower
-{
-    public override async Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
-    {
-        if (participants.Contains(Owner)) await PowerCmd.Remove(this);
-    }
+    public override string? CustomIconPath => "res://images/powers/sui_xin_qi_shi_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/sui_xin_qi_shi_power.png";
+    public override PowerStackType StackType => PowerStackType.Single;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        new[] { HaaLouLingKeywords.KeywordId("DaoShi") }.ToHoverTips()
+            .Concat([HoverTipFactory.FromKeyword(HaaLouLingKeywords.QiShi)]);
 }
 
 [RegisterPower]
-public sealed class CangFengPower : ThisTurnHaaLouLingPower
+public sealed class CangFengPower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/cang_feng_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/cang_feng_power.png";

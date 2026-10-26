@@ -8,7 +8,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class HuiQiFenSan : HaaLouLingCard
 {
-    public HuiQiFenSan() : base(1, CardType.Skill, CardRarity.Rare, TargetType.AnyEnemy) { }
+    public HuiQiFenSan() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 30)];
     protected override bool UsesGuiYuan => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);

@@ -15,10 +15,12 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Nodes.Screens.Capstones;
+using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using STS2RitsuLib;
 using STS2RitsuLib.Audio;
 using STS2RitsuLib.CardPiles;
+using STS2RitsuLib.CardPiles.Nodes;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Patching.Core;
@@ -88,6 +90,7 @@ public class Entry
         Patcher.RegisterPatch<CookingCardExhaustPatch>();
         Patcher.RegisterPatch<DishCookingChoiceClickPatch>();
         Patcher.RegisterPatch<DishCookingChoiceResultPatch>();
+        Patcher.RegisterPatch<IngredientSelectionClickPatch>();
         Patcher.PatchAll();
         ModCardHandOutlineRegistry.Register<HaaLouLingCard>(
             ModCardHandOutlineRules.Switch<HaaLouLingCard>(ResolveHandOutline));
@@ -95,7 +98,7 @@ public class Entry
         NFoodPileMotion.Register();
         NDishEffectChoicePrompt.Register();
         NDishCookingChoiceOutline.Register();
-        NIngredientCountDisplay.Register();
+        NIngredientSelection.Register();
         NMultiplayerIngredientCount.Register();
         CombatStartingSubscription = RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
             OnCombatStarting,
@@ -201,65 +204,26 @@ public class Entry
 
     private static void OpenFoodPile()
     {
-        if (!CombatManager.Instance.IsInProgress)
+        if (ActiveScreenContext.Instance.GetCurrentScreen() is NCardPileScreen screen && screen.Pile.Type == FoodPile)
         {
+            NCapstoneContainer.Instance?.Close();
             return;
         }
-
-        var player = LocalContext.GetMe(CombatManager.Instance.DebugOnlyGetState());
-        if (player?.Character is not HaaLouLing)
-        {
-            return;
-        }
-
-        var pile = FoodPile.GetPile(player);
-        var capstoneContainer = NCapstoneContainer.Instance;
-        if (!CanUseCombatPileHotkey(screen => screen.Pile == pile))
-        {
-            return;
-        }
-
-        if (pile.IsEmpty)
-        {
-            ShowFoodPileEmptyMessage(player);
-            return;
-        }
-
-        if (capstoneContainer?.CurrentCapstoneScreen is NCardPileScreen screen &&
-            screen.Pile == pile)
-        {
-            capstoneContainer.Close();
-            return;
-        }
-
-        HaaLouLingPileScreen.Show(pile);
+        FindFoodPileButton()?.TriggerOpen();
     }
 
-    private static void OpenCookingScreen()
+    internal static void OpenCookingScreen()
     {
-        if (!CombatManager.Instance.IsInProgress)
-        {
-            return;
-        }
-
-        var player = LocalContext.GetMe(CombatManager.Instance.DebugOnlyGetState());
-        if (player?.Character is HaaLouLing &&
-            CanUseCombatPileHotkey(screen => screen.Pile is Cooking.CookingRecipePile))
-        {
-            YogSothothsYard.Scripts.UI.CookingRecipeScreen.Show(player);
-        }
+        if (ActiveScreenContext.Instance.GetCurrentScreen() is NCardPileScreen { Pile: CookingRecipePile } ||
+            FindFoodPileButton() != null) CookingRecipeScreen.ShowForLocalPlayer();
     }
 
-    private static bool CanUseCombatPileHotkey(Func<NCardPileScreen, bool> isOwnScreen)
+    private static NModCardPileButton? FindFoodPileButton()
     {
-        var capstone = NCapstoneContainer.Instance;
-        if (capstone?.InUse == true)
-        {
-            return capstone.CurrentCapstoneScreen is NCardPileScreen screen && isOwnScreen(screen);
-        }
-
-        var drawPile = NCombatRoom.Instance?.Ui.DrawPile;
-        return drawPile is { IsEnabled: true } && drawPile.IsVisibleInTree();
+        if (!CombatManager.Instance.IsInProgress) return null;
+        var screen = ActiveScreenContext.Instance.GetCurrentScreen() as Godot.Node;
+        return screen?.FindChildren("*", recursive: true, owned: false).OfType<NModCardPileButton>()
+            .FirstOrDefault(button => button.Definition?.PileType == FoodPile && button.IsVisibleInTree());
     }
 
     public static void ShowFoodPileEmptyMessage(MegaCrit.Sts2.Core.Entities.Players.Player player)
@@ -290,8 +254,9 @@ public class Entry
         }
 
         var message = new LocString(table, key);
-        NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(
-            NThoughtBubbleVfx.Create(message.GetFormattedText(), player.Creature, 2.0)
-        );
+        var vfx = NThoughtBubbleVfx.Create(message.GetFormattedText(), player.Creature, 2.0);
+        if (vfx == null) return;
+        NCombatVfxVisibility.Attach(vfx);
+        NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(vfx);
     }
 }

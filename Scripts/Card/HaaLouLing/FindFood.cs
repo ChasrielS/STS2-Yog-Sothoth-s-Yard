@@ -1,6 +1,5 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -50,12 +49,7 @@ public class FindFood : ModCardTemplate
             return;
         }
 
-        var generatedFoods = CardFactory.GetForCombat(
-            Owner,
-            commonFoods,
-            DynamicVars.Cards.IntValue,
-            Owner.RunState.Rng.CombatCardGeneration
-        ).ToList();
+        var generatedFoods = HaaLouLingCookingService.GenerateRandomIngredients(Owner, commonFoods, DynamicVars.Cards.IntValue);
 
         await HaaLouLingCookingService.AddGeneratedIngredients(choiceContext, Owner, generatedFoods);
     }

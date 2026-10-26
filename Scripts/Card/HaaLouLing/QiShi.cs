@@ -18,11 +18,12 @@ public sealed class QiShi : HaaLouLingCard
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(HaaLouLingKeywords.HeShi)]);
     public override KnifeForm Form => KnifeForm.Open;
-    protected override bool ShouldGlowRedInternal => Knife > 0;
+    protected override bool ShouldGlowRedInternal => !OpeningReady;
+    public override bool WantsGreenOutline => Owner?.PlayerCombatState != null && Owner.Creature.HasPower<SuiXinQiShiPower>();
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        if (Knife > 0) return;
+        if (!OpeningReady) return;
         await GainKnife(context, DynamicVars["Amount"].IntValue);
         var selected = (await CardSelectCmd.FromCombatPile(context, PileType.Discard.GetPile(Owner), Owner,
             new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionScreenPrompt"), 1),

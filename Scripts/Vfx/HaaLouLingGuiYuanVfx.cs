@@ -41,6 +41,7 @@ public partial class HaaLouLingGuiYuanVfx : Node2D
 
     public override void _Ready()
     {
+        NCombatVfxVisibility.Attach(this);
         _pulse = GetNode<Sprite2D>("Pulse");
         var template = GetNode<Sprite2D>("SoulTemplate");
         var shader = ((ShaderMaterial)template.Material).Shader;

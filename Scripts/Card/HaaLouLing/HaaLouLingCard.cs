@@ -17,6 +17,7 @@ public abstract class HaaLouLingCard : ModCardTemplate
     public virtual KnifeForm Form => KnifeForm.None;
     public virtual bool WantsGreenOutline => false;
     protected int Knife => Owner?.PlayerCombatState == null ? 0 : HaaLouLingCombatRules.Knife(Owner);
+    protected bool OpeningReady => Knife == 0 || Owner.Creature.HasPower<SuiXinQiShiPower>();
     protected virtual bool UsesKnife => false;
     protected virtual bool UsesGuiYuan => false;
     protected virtual bool UsesKnifeForms => false;

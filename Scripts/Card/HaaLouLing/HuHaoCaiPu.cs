@@ -11,7 +11,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class HuHaoCaiPu : HaaLouLingCard
 {
     public HuHaoCaiPu() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];
     public override bool GainsBlock => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromKeyword(CardKeyword.Retain)]);

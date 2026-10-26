@@ -22,7 +22,6 @@ public sealed class JiHuo : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(2);
-        DynamicVars["CookingAdvance"].UpgradeValueBy(1);
+        DynamicVars.Block.UpgradeValueBy(4);
     }
 }

@@ -16,7 +16,6 @@ public sealed class KaiYan : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var count = ResolveEnergyXValue() * DynamicVars["Amount"].IntValue;
-        if (EnergyCost.CapturedXValue >= HaaLouLingCookingService.GetState(Owner).Capacity) await Apply<GuoWanPiaoPenPower>(context, 1);
         await HaaLouLingCookingService.RandomDishEffects(context, Owner, count, uncommonOnly: false);
     }
 

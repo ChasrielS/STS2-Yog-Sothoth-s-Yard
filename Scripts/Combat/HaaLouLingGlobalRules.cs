@@ -25,6 +25,7 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
                     var cooking = HaaLouLingCookingService.GetState(player);
                     cooking.IngredientsUsedThisTurn = 0;
                     cooking.DishesStartedThisTurn = 0;
+                    cooking.DishesCompletedThisTurn = 0;
                     cooking.CookedThisTurn.Clear();
                     cooking.DishStartGains.Clear();
                     cooking.ProcessingTurnStart = true;

@@ -1,5 +1,7 @@
 {
     "YOG_SOTHOTH_S_YARD_FOOD_PILE_INFO": "你当前拥有的食材。",
+    "YOG_SOTHOTH_S_YARD_INGREDIENT_SELECTION_CONTROLS": "Shift+左键：选择一半\nCtrl+左键：选择一个",
+    "YOG_SOTHOTH_S_YARD_INGREDIENT_SELECTION_TOTAL": "已选择{Amount}张",
     "YOG_SOTHOTH_S_YARD_COOKING_SCREEN_TITLE": "你当前可烹饪的菜肴。",
     "YOG_SOTHOTH_S_YARD_COOKING_QUEUE_FULL": "我[red]没有[/red]空闲的烹饪位。",
     "YOG_SOTHOTH_S_YARD_COOKING_MISSING_INGREDIENTS": "我[red]没有[/red]足够的食材。",
