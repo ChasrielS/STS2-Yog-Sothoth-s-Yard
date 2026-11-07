@@ -108,7 +108,11 @@ public sealed class GongBaoJiDing : HaaLouLingDishCard
 public sealed class ShuiZhuRouPian : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "shui_zhu_rou_pian";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<LaJiao>(), HoverTipFactory.FromCard<HuaJiao>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+    [
+        HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<LaJiao>(),
+        HoverTipFactory.FromCard<HuaJiao>(), HaaLouLingKeywords.ImmediateCookingTip
+    ];
     public ShuiZhuRouPian() : base(CardType.Skill, 2, CardRarity.Uncommon) { }
     protected override void OnUpgrade() { }
 }
@@ -230,7 +234,11 @@ public sealed class ZhuDuJi : HaaLouLingDishCard
 public sealed class YuXiangRouSi : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "yu_xiang_rou_si";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<Sun>(), HoverTipFactory.FromCard<Tang>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+    [
+        HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<QingJiao>(),
+        HoverTipFactory.FromCard<Sun>(), HoverTipFactory.FromCard<Tang>(), HaaLouLingKeywords.ImmediateCookingTip
+    ];
     public YuXiangRouSi() : base(CardType.Skill, 3, CardRarity.Uncommon) { }
     protected override void OnUpgrade() { }
 }

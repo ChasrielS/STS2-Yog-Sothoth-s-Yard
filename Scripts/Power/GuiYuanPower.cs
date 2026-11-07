@@ -93,6 +93,7 @@ public sealed class GuiYuanPower : GuiYuanBasePower
 [RegisterPower]
 public sealed class GuiYuanPlusPower : GuiYuanBasePower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("GuiYuan")];
     protected override int AttackPenalty => 15;
     protected override int Vulnerability => 30;
     protected override decimal ExcessHpLossPerLayer => 1m;

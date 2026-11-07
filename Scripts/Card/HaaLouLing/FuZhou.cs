@@ -11,7 +11,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class FuZhou : HaaLouLingCard
 {
     public FuZhou() : base(2, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(13, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(20, ValueProp.Move)];
 
     public override bool GainsBlock => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<CanZhou>()];
@@ -24,6 +24,6 @@ public sealed class FuZhou : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(4);
+        DynamicVars.Block.UpgradeValueBy(6);
     }
 }

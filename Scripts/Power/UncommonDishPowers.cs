@@ -50,6 +50,7 @@ public sealed class TingZaiZhouPower : UncommonDishPower
 
 public abstract class TurnStartBlockDishPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override bool HasTurnStartEffect => true;
 
     protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
@@ -67,18 +68,22 @@ public sealed class MingLuShaoLuoPower : TurnStartBlockDishPower
 [RegisterPower]
 public sealed class KaoRuZhuPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override string IconFileName => "kao_ru_zhu";
 }
 
 [RegisterPower]
 public sealed class FenZhengRouPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromPower<PoisonPower>()];
     protected override string IconFileName => "fen_zheng_rou";
 }
 
 [RegisterPower]
 public sealed class YanJuJiPower : SingleUncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<JiRou>()];
     protected override string IconFileName => "yan_ju_ji";
 }
 
@@ -92,11 +97,6 @@ public sealed class ZhangYuNingMengZhiPower : UncommonDishPower
     protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
     {
         await PlayerCmd.GainEnergy(amount, player);
-        await HaaLouLingCookingService.AddRandomIngredients(
-            choiceContext,
-            player,
-            amount
-        );
         await CardPileCmd.Draw(choiceContext, amount, player);
     }
 }
@@ -104,6 +104,7 @@ public sealed class ZhangYuNingMengZhiPower : UncommonDishPower
 [RegisterPower]
 public sealed class KouShuiJiPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<JiRou>()];
     protected override string IconFileName => "kou_shui_ji";
 
     protected override bool HasTurnStartEffect => true;
@@ -128,6 +129,8 @@ public sealed class KouShuiJiPower : UncommonDishPower
 [RegisterPower]
 public sealed class GongBaoJiDingPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromCard<JiRou>(), HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override string IconFileName => "gong_bao_ji_ding";
 }
 
@@ -146,18 +149,21 @@ public sealed class JiDiZhouPower : UncommonDishPower
 [RegisterPower]
 public sealed class ShaoLaShuangPinPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override string IconFileName => "shao_la_shuang_pin";
 }
 
 [RegisterPower]
 public sealed class ZhangChaYaPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override string IconFileName => "zhang_cha_ya";
 }
 
 [RegisterPower]
 public sealed class ZhuDuJiPower : UncommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<JiRou>()];
     protected override string IconFileName => "zhu_du_ji";
 }
 

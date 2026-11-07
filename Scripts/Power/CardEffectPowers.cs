@@ -59,7 +59,7 @@ public abstract class ZhuanHuoWeiFuBasePower : HaaLouLingPower
 {
     protected override bool IncludeEnergyHoverTip => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        new[] { HaaLouLingKeywords.KeywordId("DaoShi") }.ToHoverTips().Prepend(HoverTipFactory.FromKeyword(CardKeyword.Exhaust));
+        new[] { HaaLouLingKeywords.KeywordId("DaoShi") }.ToHoverTips().Append(HaaLouLingKeywords.ImmediateCookingTip);
     public override string? CustomIconPath => "res://images/powers/zhuan_huo_wei_fu_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/zhuan_huo_wei_fu_power.png";
     protected abstract bool Enhanced { get; }
@@ -102,6 +102,7 @@ public sealed class ZhuanHuoWeiFuPlusPower : ZhuanHuoWeiFuBasePower
 [RegisterPower]
 public sealed class TuPoPingJingPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/tu_po_ping_jing_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/tu_po_ping_jing_power.png";
     public override PowerStackType StackType => PowerStackType.Single;

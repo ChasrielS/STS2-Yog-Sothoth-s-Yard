@@ -40,12 +40,14 @@ public sealed class SuShiLengPanPower : CommonDishPower
 [RegisterPower]
 public sealed class BoBoJiPower : CommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<JiRou>()];
     protected override string IconFileName => "bo_bo_ji";
 }
 
 [RegisterPower]
 public sealed class XueHuaJiNaoPower : CommonDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<JiRou>()];
     protected override string IconFileName => "xue_hua_ji_nao";
 }
 

@@ -765,6 +765,17 @@ public static class HaaLouLingCookingService
         await FinishReady(context, player);
     }
 
+    public static Task CompleteLeftmostDish(PlayerChoiceContext context, Player player, bool includeRare)
+    {
+        var slot = GetState(player).Slots.FirstOrDefault(slot =>
+            HaaLouLingCookingRecipes.Get(slot.DishModelId) is { } recipe &&
+            (includeRare || recipe.CreatePreviewCard().Rarity != CardRarity.Rare));
+        if (slot == null) return Task.CompletedTask;
+
+        slot.RemainingTurns = 0;
+        return FinishReady(context, player);
+    }
+
     private static async Task FinishReady(PlayerChoiceContext context, Player player)
     {
         var state = GetState(player);

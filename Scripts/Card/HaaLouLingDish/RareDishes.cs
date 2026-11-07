@@ -173,7 +173,8 @@ public sealed class MaLaHuoGuo : HaaLouLingDishCard
         HoverTipFactory.FromCard<Sun>(),
         HoverTipFactory.FromCard<LvYeCai>(),
         HoverTipFactory.FromCard<YuanGuXinXiSu>(),
-        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse)
+        HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse),
+        HaaLouLingKeywords.ImmediateCookingTip
     ];
 
     public MaLaHuoGuo() : base(CardType.Skill, 4, CardRarity.Rare) { }

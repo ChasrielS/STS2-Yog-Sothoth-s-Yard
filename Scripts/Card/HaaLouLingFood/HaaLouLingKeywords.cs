@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Keywords;
@@ -26,4 +28,8 @@ public sealed class HaaLouLingKeywords
 
     public static string KeywordId(string name) => ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, name);
     public static readonly CardKeyword SpecialIngredient = KeywordId(nameof(SpecialIngredient)).GetModCardKeyword();
+
+    public static IHoverTip ImmediateCookingTip => new HoverTip(
+        new LocString("static_hover_tips", "YOG_SOTHOTH_S_YARD_IMMEDIATE_COOKING.title"),
+        new LocString("static_hover_tips", "YOG_SOTHOTH_S_YARD_IMMEDIATE_COOKING.description"));
 }

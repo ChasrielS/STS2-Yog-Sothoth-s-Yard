@@ -34,7 +34,8 @@ public sealed class ChangFen : HaaLouLingDishCard
 public sealed class HuoGuo : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "huo_guo";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromCard<QiGuaiDeRou>(), HaaLouLingKeywords.ImmediateCookingTip];
     public HuoGuo() : base(CardType.Skill, 2) { }
     protected override void OnUpgrade() { }
 }

@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using STS2RitsuLib.Interop.AutoRegistration;
 using YogSothothsYard.Scripts.Card.HaaLouLingDish;
@@ -17,6 +18,7 @@ public sealed class GaoTangJingHua : HaaLouLingPotion
     protected override string ImageName => "gao_tang_jing_hua";
     public override PotionRarity Rarity => PotionRarity.Uncommon;
     public override TargetType TargetType => TargetType.AnyPlayer;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HaaLouLingKeywords.ImmediateCookingTip];
 
     protected override async Task OnUse(PlayerChoiceContext context, Creature? target)
     {

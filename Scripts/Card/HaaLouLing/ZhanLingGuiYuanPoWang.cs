@@ -38,6 +38,7 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
+        DynamicVars.CalculationBase.UpgradeValueBy(3);
         DynamicVars.ExtraDamage.UpgradeValueBy(3);
     }
 }

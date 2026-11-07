@@ -7,7 +7,7 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class XuShiDaiFa : HaaLouLingCard
 {
-    public XuShiDaiFa() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public XuShiDaiFa() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override bool UsesKnife => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
@@ -18,6 +18,6 @@ public sealed class XuShiDaiFa : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        AddKeyword(CardKeyword.Retain);
+        EnergyCost.UpgradeBy(-1);
     }
 }

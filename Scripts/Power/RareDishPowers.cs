@@ -36,6 +36,7 @@ public abstract class SingleRareDishPower : RareDishPower
 [RegisterPower]
 public sealed class YangWangXingKongPower : RareDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromPower<PoisonPower>()];
     protected override string IconFileName => "yang_wang_xing_kong";
 
     protected override bool HasTurnStartEffect => true;
@@ -90,6 +91,17 @@ public sealed class BaoZaiFanPower : RareDishPower
 [RegisterPower]
 public sealed class ShengYanPower : RareDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return HoverTipFactory.FromPower<WeakPower>();
+            yield return HoverTipFactory.FromPower<VulnerablePower>();
+            if (IsMutable && HaaLouLingCookingService.GetShengYanDebilitate(Owner.Player!) > 0)
+                yield return HoverTipFactory.FromPower<DebilitatePower>();
+        }
+    }
+
     private int _debilitateTurn;
     private int _appliedDebilitate;
     protected override string IconFileName => "sheng_yan";
@@ -147,6 +159,7 @@ public sealed class ShengYanPower : RareDishPower
 [RegisterPower]
 public sealed class MaoXueWangPower : RareDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
     protected override string IconFileName => "mao_xue_wang";
 
     public override async Task AfterBlockGained(
@@ -199,6 +212,7 @@ public sealed class KaiShuiBaiCaiPower : SingleRareDishPower
 [RegisterPower]
 public sealed class ShenQianTangFenPower : RareDishPower
 {
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromPower<PlatingPower>()];
     protected override string IconFileName => "shen_qian_tang_fen";
 
     protected override bool HasTurnStartEffect => true;

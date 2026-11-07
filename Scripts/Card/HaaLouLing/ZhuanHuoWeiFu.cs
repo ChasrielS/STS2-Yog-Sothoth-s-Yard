@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using STS2RitsuLib.Interop.AutoRegistration;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
@@ -12,6 +13,10 @@ public sealed class ZhuanHuoWeiFu : HaaLouLingCard
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1), new EnergyVar(1)];
 
     protected override bool UsesKnife => true;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        base.AdditionalHoverTips.Concat(
+            [HoverTipFactory.FromKeyword(CardKeyword.Exhaust), HaaLouLingKeywords.ImmediateCookingTip]);
+
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

@@ -34,6 +34,7 @@ public sealed class DaoShiPower : HaaLouLingPower
 [RegisterPower]
 public sealed class DaoFaJingJinPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/dao_fa_jing_jin_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/dao_fa_jing_jin_power.png";
     public override Task AfterPowerAmountChanged(PlayerChoiceContext context, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
@@ -71,6 +72,7 @@ public sealed class ZhouZhangPower : HaaLouLingPower
 [RegisterPower]
 public sealed class DaoGongPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/dao_gong_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/dao_gong_power.png";
 }
@@ -78,6 +80,7 @@ public sealed class DaoGongPower : HaaLouLingPower
 [RegisterPower]
 public sealed class WenXiDaoFaPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/wen_xi_dao_fa_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/wen_xi_dao_fa_power.png";
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
@@ -91,6 +94,7 @@ public sealed class WenXiDaoFaPower : HaaLouLingPower
 [RegisterPower]
 public sealed class CangFengPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/cang_feng_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/cang_feng_power.png";
 }
@@ -98,6 +102,7 @@ public sealed class CangFengPower : HaaLouLingPower
 [RegisterPower]
 public sealed class GuiYuanJuePower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("GuiYuan")];
     public override string? CustomIconPath => "res://images/powers/gui_yuan_jue_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/gui_yuan_jue_power.png";
     private int _givenThisTurn;
@@ -135,6 +140,7 @@ public sealed class GuiYuanJuePower : HaaLouLingPower
 [RegisterPower]
 public sealed class WuFaHuoDeDaoShiPower : HaaLouLingPower
 {
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/wu_fa_huo_de_dao_shi_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/wu_fa_huo_de_dao_shi_power.png";
     public override PowerType Type => PowerType.Debuff;

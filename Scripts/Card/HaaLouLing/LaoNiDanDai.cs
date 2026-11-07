@@ -10,19 +10,19 @@ namespace YogSothothsYard.Scripts;
 public sealed class LaoNiDanDai : HaaLouLingCard
 {
     public LaoNiDanDai() : base(0, CardType.Skill, CardRarity.Rare, TargetType.AnyAlly) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 5), new EnergyVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 5), new CardsVar(1), new EnergyVar(1)];
     protected override bool UsesGuiYuan => true;
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await GiveGuiYuan(context, play, DynamicVars["Amount"].IntValue);
-        await CardPileCmd.Draw(context, 1, Owner);
+        await CardPileCmd.Draw(context, DynamicVars.Cards.IntValue, Owner);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Energy.UpgradeValueBy(1);
+        DynamicVars.Cards.UpgradeValueBy(1);
     }
 }

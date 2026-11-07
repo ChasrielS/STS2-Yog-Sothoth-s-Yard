@@ -2,13 +2,13 @@
   "YOG_SOTHOTH_S_YARD_KEYWORD_INGREDIENT.title": "食材",
   "YOG_SOTHOTH_S_YARD_KEYWORD_INGREDIENT.description": "可用于烹饪为菜肴。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_ANCIENT_GLIMPSE.title": "古神的一瞥",
-  "YOG_SOTHOTH_S_YARD_KEYWORD_ANCIENT_GLIMPSE.description": "根据层数获得不同效果，最高4层。\n层数为1/2/3/4时，攻击伤害减少10/25/50/90%，受到的攻击伤害增加5/15/30/50%，层数为4时无法获得[gold]稀有[/gold]菜肴的效果。\n无法被减少、移除或阻止增加。",
+  "YOG_SOTHOTH_S_YARD_KEYWORD_ANCIENT_GLIMPSE.description": "根据层数获得不同效果，最高4层。\n层数为1/2/3/4时，攻击伤害减少10/25/50/90%，受到的攻击伤害增加5/15/30/50%，层数为4时无法获得稀有菜肴的效果。\n无法被减少、移除或阻止增加。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHI.title": "刀势",
   "YOG_SOTHOTH_S_YARD_KEYWORD_DAO_SHI.description": "可用于强化部分卡牌效果。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN.title": "归元",
   "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN.description": "根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少10%。\n20层：受到的攻击伤害增加20%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少10%。\n70层：受到的攻击伤害增加20%。\n100层：翻倍上述效果。此后获得归元时失去等量于获得层数50%的生命(不超过最大生命的10%)。\n100层以上：每超过上限1层，增加获得归元时失去等量于获得层数0.5%的生命。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.title": "归元＋",
-  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.description": "属于归元。根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少15%。\n20层：受到的攻击伤害增加30%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少15%。\n70层：受到的攻击伤害增加30%。\n100层：翻倍上述效果，此后获得归元时失去等量于获得层数50%的生命(不超过最大生命的20%)。\n100层以上：每超过上限1层，增加获得归元时失去等量于获得层数1%的生命。",
+  "YOG_SOTHOTH_S_YARD_KEYWORD_GUI_YUAN_PLUS.description": "属于[gold]归元[/gold]。根据层数获得可累积的效果，上限100层。\n10层：攻击伤害减少15%。\n20层：受到的攻击伤害增加30%。\n30层：获得25%额外归元层数。\n50层：攻击伤害减少15%。\n70层：受到的攻击伤害增加30%。\n100层：翻倍上述效果，此后获得归元时失去等量于获得层数50%的生命(不超过最大生命的20%)。\n100层以上：每超过上限1层，增加获得归元时失去等量于获得层数1%的生命。",
   "YOG_SOTHOTH_S_YARD_KEYWORD_SPECIAL_INGREDIENT.title": "特殊食材",
   "YOG_SOTHOTH_S_YARD_KEYWORD_SPECIAL_INGREDIENT.description": "只能通过[gold]古神的恩惠[/gold]获得。\n可用于烹饪为菜肴。\n配方包含本食材的菜肴烹饪完成时获得1层[gold]古神的一瞥[/gold]。"
 }
