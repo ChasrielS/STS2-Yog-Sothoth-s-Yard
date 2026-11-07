@@ -8,7 +8,9 @@ namespace YogSothothsYard.Scripts;
 public sealed class YuanGuXinXiSu : HaaLouLingIngredientCard
 {
     protected override string PortraitFileName => "yuan_gu_xin_xi_su";
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [HaaLouLingKeywords.SpecialIngredient];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => base.AdditionalHoverTips
+        .Prepend(HoverTipFactory.FromCard<GuShenDeEnHui>())
         .Append(HoverTipFactory.FromKeyword(HaaLouLingKeywords.AncientGlimpse));
 
     public YuanGuXinXiSu() : base(CardRarity.Rare) { }

@@ -161,21 +161,3 @@ public sealed class ZhuDuJiPower : UncommonDishPower
     protected override string IconFileName => "zhu_du_ji";
 }
 
-[RegisterPower]
-public sealed class HuoBaoYaoHuaPower : UncommonDishPower
-{
-    protected override string IconFileName => "huo_bao_yao_hua";
-
-    protected override bool HasTurnStartEffect => true;
-
-    protected override async Task OnTurnStart(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, int amount)
-    {
-        await PowerCmd.Apply<StrengthPower>(
-            choiceContext,
-            Owner,
-            amount,
-            Owner,
-            null
-        );
-    }
-}

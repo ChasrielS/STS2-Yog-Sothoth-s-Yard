@@ -11,20 +11,20 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class ShouShi : HaaLouLingCard
 {
-    public ShouShi() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new CalculationExtraVar(7), new CalculatedBlockVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
+    public ShouShi() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Finish;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new CalculationExtraVar(5), new CalculatedBlockVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
+
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await FinishKnife(context);
+        await SpendAllKnife(context);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target), DynamicVars.CalculatedBlock.Props, play);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.CalculationBase.UpgradeValueBy(2); DynamicVars.CalculationExtra.UpgradeValueBy(3);
+        DynamicVars.CalculationBase.UpgradeValueBy(2); DynamicVars.CalculationExtra.UpgradeValueBy(2);
     }
 }

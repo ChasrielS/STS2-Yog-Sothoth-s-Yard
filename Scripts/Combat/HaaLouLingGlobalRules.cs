@@ -26,6 +26,8 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
                     cooking.IngredientsUsedThisTurn = 0;
                     cooking.DishesStartedThisTurn = 0;
                     cooking.DishesCompletedThisTurn = 0;
+                    cooking.KnifeGainedThisTurn = false;
+                    cooking.KnifeSpentThisTurn = false;
                     cooking.CookedThisTurn.Clear();
                     cooking.DishStartGains.Clear();
                     cooking.ProcessingTurnStart = true;
@@ -74,6 +76,14 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
     {
         if (power is GuiYuanBasePower && amount > 0)
             HaaLouLingGuiYuanVfx.Show(target);
+        return Task.CompletedTask;
+    }
+
+    public override Task AfterPowerAmountChanged(PlayerChoiceContext context, PowerModel power, decimal amount,
+        Creature? applier, CardModel? cardSource)
+    {
+        if (power is DaoShiPower && amount > 0 && power.Owner.Player is { } player)
+            HaaLouLingCookingService.GetState(player).KnifeGainedThisTurn = true;
         return Task.CompletedTask;
     }
 

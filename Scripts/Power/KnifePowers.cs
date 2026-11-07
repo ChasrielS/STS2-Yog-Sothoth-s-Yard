@@ -8,11 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
-using STS2RitsuLib.Keywords;
-using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
 
@@ -57,10 +54,18 @@ public sealed class DaoFaJingJinPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ShiWeiPower : HaaLouLingPower
+public sealed class ZhouZhangPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/shi_wei_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/shi_wei_power.png";
+    public override string? CustomIconPath => "res://images/powers/zhou_zhang_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/zhou_zhang_power.png";
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.Static(StaticHoverTip.Block)];
+
+    public override async Task AfterCardGeneratedForCombat(CardModel card, Player? creator)
+    {
+        if (creator?.Creature != Owner || card.Type != CardType.Curse) return;
+        Flash();
+        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
+    }
 }
 
 [RegisterPower]
@@ -71,52 +76,16 @@ public sealed class DaoGongPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ChenLianPower : HaaLouLingPower
+public sealed class WenXiDaoFaPower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/chen_lian_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/chen_lian_power.png";
+    public override string? CustomIconPath => "res://images/powers/wen_xi_dao_fa_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/wen_xi_dao_fa_power.png";
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
     {
         if (player.Creature != Owner || AmountOnTurnStart <= 0) return;
         Flash();
         await HaaLouLingCombatRules.GainKnife(context, player, AmountOnTurnStart);
     }
-}
-
-[RegisterPower]
-public sealed class WuXieKeJiPower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/wu_xie_ke_ji_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/wu_xie_ke_ji_power.png";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => new[] { HaaLouLingKeywords.KeywordId("DaoShu") }.ToHoverTips();
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
-    {
-        if (play.Player.Creature == Owner && play.Card is HaaLouLingCard { Form: not KnifeForm.None })
-            await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
-    }
-}
-
-[RegisterPower]
-public sealed class ChongZhengJiaShiPower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/chong_zheng_jia_shi_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/chong_zheng_jia_shi_power.png";
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
-    {
-        if (play.Player.Creature == Owner && play.Card is HaaLouLingCard { Form: KnifeForm.Finish })
-            await HaaLouLingCombatRules.GainKnife(context, play.Player, Amount, play.Card);
-    }
-}
-
-[RegisterPower]
-public sealed class SuiXinQiShiPower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/sui_xin_qi_shi_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/sui_xin_qi_shi_power.png";
-    public override PowerStackType StackType => PowerStackType.Single;
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        new[] { HaaLouLingKeywords.KeywordId("DaoShi") }.ToHoverTips()
-            .Concat([HoverTipFactory.FromKeyword(HaaLouLingKeywords.QiShi)]);
 }
 
 [RegisterPower]
@@ -132,6 +101,14 @@ public sealed class GuiYuanJuePower : HaaLouLingPower
     public override string? CustomIconPath => "res://images/powers/gui_yuan_jue_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/gui_yuan_jue_power.png";
     private int _givenThisTurn;
+    private int _givingGroupDepth;
+
+    internal void BeginGivingGroup()
+    {
+        if (_givingGroupDepth++ == 0) _givenThisTurn++;
+    }
+
+    internal void EndGivingGroup() => _givingGroupDepth--;
 
     public override Task BeforeSideTurnStart(PlayerChoiceContext context, CombatSide side, IReadOnlyList<Creature> participants, ICombatState state)
     {
@@ -141,12 +118,12 @@ public sealed class GuiYuanJuePower : HaaLouLingPower
 
     public override Task BeforePowerAmountChanged(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource)
     {
-        if (applier == Owner && power is GuiYuanBasePower && amount > 0) _givenThisTurn++;
+        if (_givingGroupDepth == 0 && applier == Owner && power is GuiYuanBasePower && amount > 0) _givenThisTurn++;
         return Task.CompletedTask;
     }
 
     public override decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource) =>
-        giver == Owner && power is GuiYuanBasePower && amount > 0 && _givenThisTurn <= Amount ? 2 : 1;
+        giver == Owner && power is GuiYuanBasePower && amount > 0 && _givenThisTurn == 1 ? Amount : 1;
 
     public override Task AfterModifyingPowerAmountGiven(PowerModel power)
     {
@@ -165,30 +142,4 @@ public sealed class WuFaHuoDeDaoShiPower : HaaLouLingPower
     {
         if (participants.Contains(Owner)) await PowerCmd.Decrement(this);
     }
-}
-
-public abstract class TiQianBeiCaiBasePower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/ti_qian_bei_cai_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/ti_qian_bei_cai_power.png";
-    protected virtual int Ingredients => 3;
-    protected virtual int Cards => 2;
-    public override async Task BeforeHandDraw(Player player, PlayerChoiceContext context, ICombatState combatState)
-    {
-        if (player.Creature != Owner || AmountOnTurnStart <= 0) return;
-        Flash();
-        await HaaLouLingCookingService.AddRandomIngredients(context, player, Ingredients);
-        await CardPileCmd.Draw(context, Cards, player);
-        await PowerCmd.Decrement(this);
-    }
-}
-
-[RegisterPower]
-public sealed class TiQianBeiCaiPower : TiQianBeiCaiBasePower;
-
-[RegisterPower]
-public sealed class TiQianBeiCaiPlusPower : TiQianBeiCaiBasePower
-{
-    protected override int Ingredients => 4;
-    protected override int Cards => 3;
 }

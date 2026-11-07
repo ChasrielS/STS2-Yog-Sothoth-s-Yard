@@ -10,7 +10,7 @@ public sealed class DaChuXingTai : HaaLouLingCard
 {
     public DaChuXingTai() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Ethereal]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

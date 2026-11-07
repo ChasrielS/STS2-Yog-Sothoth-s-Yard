@@ -11,7 +11,7 @@ public sealed class CaiGou : HaaLouLingCard
 {
     public CaiGou() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(8)];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

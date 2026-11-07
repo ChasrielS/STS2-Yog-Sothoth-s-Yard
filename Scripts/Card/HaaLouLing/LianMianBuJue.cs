@@ -11,10 +11,10 @@ namespace YogSothothsYard.Scripts;
 public sealed class LianMianBuJue : HaaLouLingCard
 {
     public LianMianBuJue() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, ValueProp.Move)];
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Follow;
-    public override bool WantsGreenOutline => Knife > 0;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, ValueProp.Move)];
+
+    public override bool WantsConditionalHighlight => Knife > 0;
 
     public override bool GainsBlock => true;
 

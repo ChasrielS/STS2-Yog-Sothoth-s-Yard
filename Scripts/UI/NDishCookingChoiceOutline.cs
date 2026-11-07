@@ -67,7 +67,7 @@ public partial class NDishCookingChoiceOutline : Node
         foreach (var card in _selection.Selected)
         {
             if (ApplyPreview(card, effects, changed))
-                effects = effects.Reserve(card, _choices[card].GetCookingTurns(card.IsUpgraded) > 0);
+                effects = effects.Reserve(card, !_selection.CompleteImmediately && _choices[card].GetCookingTurns(card.IsUpgraded) > 0);
         }
         foreach (var card in _choices.Keys)
             if (!_selection.Selected.Contains(card)) ApplyPreview(card, effects, changed);
@@ -92,7 +92,7 @@ public partial class NDishCookingChoiceOutline : Node
             changed.Add(card);
         }
         var recipe = _choices[card];
-        var hasRoom = recipe.GetCookingTurns(upgraded) <= 0 || effects.OpenSlots > 0;
+        var hasRoom = _selection.CompleteImmediately || recipe.GetCookingTurns(upgraded) <= 0 || effects.OpenSlots > 0;
         if (!hasRoom) _unavailable.Add(card);
         return hasRoom && HaaLouLingCookingService.CanStartRecipe(card.Owner, recipe);
     }

@@ -13,11 +13,10 @@ namespace YogSothothsYard.Scripts;
 public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 {
     public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(12), new ExtraDamageVar(8),
-        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesKnife => true;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(7),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesGuiYuan => true;
-    public override KnifeForm Form => KnifeForm.Finish;
 
     public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props,
         Creature? dealer, CardModel? cardSource, CardPlay? cardPlay) =>
@@ -25,19 +24,20 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var knife = await FinishKnife(context);
+        var knife = await SpendAllKnife(context);
         await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, knife, true);
         var attack = await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play)
             .TargetingAllOpponents(CombatState!)
             .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, knife, true, target == play.Target))
             .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
-        foreach (var results in attack.Results.SelectMany(hit => hit).GroupBy(result => result.Receiver))
-            await HaaLouLingCombatRules.GiveGuiYuan(context, results.Key, (int)results.Sum(result => result.TotalDamage), Owner.Creature, this);
+        var targets = attack.Results.SelectMany(hit => hit).GroupBy(result => result.Receiver)
+            .Select(results => (results.Key, (int)results.Sum(result => result.TotalDamage)));
+        await HaaLouLingCombatRules.GiveGuiYuanGroup(context, targets, Owner.Creature, this);
         await HaaLouLingFinisherVfx.ImpactPause(true);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.ExtraDamage.UpgradeValueBy(4);
+        DynamicVars.ExtraDamage.UpgradeValueBy(3);
     }
 }

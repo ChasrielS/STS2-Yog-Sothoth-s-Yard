@@ -10,8 +10,8 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class JiHuo : HaaLouLingCard
 {
-    public JiHuo() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move), new IntVar("CookingAdvance", 1)];
+    public JiHuo() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(14, ValueProp.Move), new IntVar("CookingAdvance", 1)];
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -22,6 +22,6 @@ public sealed class JiHuo : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(4);
+        DynamicVars.Block.UpgradeValueBy(5);
     }
 }

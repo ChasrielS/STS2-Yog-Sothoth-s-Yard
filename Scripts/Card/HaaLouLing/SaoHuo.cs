@@ -9,7 +9,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class SaoHuo : HaaLouLingCard
 {
     public SaoHuo() : base(2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

@@ -5,36 +5,15 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Platform;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
-using STS2RitsuLib.Keywords;
 using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
-
-[RegisterPower]
-public sealed class DaoLuZaiXinPower : HaaLouLingPower
-{
-    public override string? CustomIconPath => "res://images/powers/dao_lu_zai_xin_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/dao_lu_zai_xin_power.png";
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => new[] { HaaLouLingKeywords.KeywordId("DaoShu") }.ToHoverTips();
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
-    {
-        if (play.Player.Creature != Owner || play.Card is not HaaLouLingCard { Form: not KnifeForm.None }) return;
-        var count = CombatManager.Instance.History.CardPlaysFinished.Count(entry => entry.HappenedThisTurn(CombatState) &&
-            entry.CardPlay.Player == play.Player && entry.CardPlay.Card is HaaLouLingCard { Form: not KnifeForm.None });
-        if (count <= Amount)
-        {
-            Flash();
-            await CardPileCmd.Draw(context, 1, play.Player);
-        }
-    }
-}
 
 [RegisterPower]
 public sealed class GuoWanPiaoPenPower : HaaLouLingPower
@@ -66,10 +45,10 @@ public sealed class CaiLanPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ChaQueBuLouPower : HaaLouLingPower
+public sealed class ChaLouBuQuePower : HaaLouLingPower
 {
-    public override string? CustomIconPath => "res://images/powers/cha_que_bu_lou_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/cha_que_bu_lou_power.png";
+    public override string? CustomIconPath => "res://images/powers/cha_lou_bu_que_power_icon.png";
+    public override string? CustomBigIconPath => "res://images/powers/cha_lou_bu_que_power.png";
     public override PowerStackType StackType => PowerStackType.Single;
 }
 

@@ -12,14 +12,13 @@ namespace YogSothothsYard.Scripts;
 public sealed class ZhanLingGuiYuan : HaaLouLingCard
 {
     public ZhanLingGuiYuan() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(9), new ExtraDamageVar(6), new IntVar("Amount", 5), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesKnife => true;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(8), new ExtraDamageVar(6), new IntVar("Amount", 5), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesGuiYuan => true;
-    public override KnifeForm Form => KnifeForm.Finish;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var spent = await FinishKnife(context);
+        var spent = await SpendAllKnife(context);
         await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, spent, false);
         await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play).Targeting(play.Target!)
             .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, spent, false, true))
@@ -31,6 +30,5 @@ public sealed class ZhanLingGuiYuan : HaaLouLingCard
     protected override void OnUpgrade()
     {
         DynamicVars.ExtraDamage.UpgradeValueBy(2);
-        DynamicVars["Amount"].UpgradeValueBy(5);
     }
 }

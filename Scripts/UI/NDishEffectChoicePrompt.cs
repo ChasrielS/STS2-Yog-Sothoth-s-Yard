@@ -21,10 +21,10 @@ public partial class NDishEffectChoicePrompt : Label
     public override void _Ready()
     {
         Visible = _screen.GetNode<Control>("CardRow").GetChildren().OfType<NGridCardHolder>()
-            .Any(holder => holder.CardModel is HaaLouLingDishCard { IsEffectChoice: true });
+            .Any(holder => holder.CardModel is HaaLouLingDishCard { IsCompletionChoice: true });
         if (!Visible) return;
 
-        Text = new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_DISH_EFFECT_CHOICE_PROMPT").GetFormattedText();
+        Text = new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_DISH_COMPLETE_CHOICE_PROMPT").GetFormattedText();
         SetAnchorsAndOffsetsPreset(LayoutPreset.BottomWide);
         OffsetTop = -100f;
         OffsetBottom = -60f;

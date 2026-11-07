@@ -62,20 +62,20 @@ public static class HaaLouLingCookingRecipes
                     choiceContext, player, upgraded ? 2 : 1)
             ),
             Create<HuoGuo>(
-                1,
+                2,
                 "huo_guo",
                 Ingredients((strangeMeat, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ChooseCommonDishEffect(
-                        choiceContext, player, upgraded)
+                    HaaLouLingCookingService.ChooseDishesToComplete(
+                        choiceContext, player, upgraded, CardRarity.Common)
             ),
             Create<ShengYuPian>(
-                2,
+                3,
                 "sheng_yu_pian",
                 Ingredients((fish, 1)),
                 static (choiceContext, player, upgraded) => ApplyPower<DexterityPower>(
                     choiceContext, player, 1),
-                upgradedCookingTurns: 1
+                upgradedCookingTurns: 2
             ),
             Create<DongPoZhouZi>(
                 2,
@@ -130,7 +130,7 @@ public static class HaaLouLingCookingRecipes
                     choiceContext, player, upgraded ? 3 : 2)
             ),
             Create<MaLaYu>(
-                2,
+                3,
                 "ma_la_yu",
                 Ingredients((fish, 1), (chili, 1)),
                 static (choiceContext, player, upgraded) => ApplyPower<DexterityPower>(
@@ -238,8 +238,8 @@ public static class HaaLouLingCookingRecipes
                 "shui_zhu_rou_pian",
                 Ingredients((strangeMeat, 1), (chili, 1), (sichuanPepper, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ChooseUncommonDishEffect(
-                        choiceContext, player, upgraded)
+                    HaaLouLingCookingService.ChooseDishesToComplete(
+                        choiceContext, player, upgraded, CardRarity.Uncommon)
             ),
             Create<MaPoDouFu>(
                 1,
@@ -308,8 +308,7 @@ public static class HaaLouLingCookingRecipes
                 "ting_zai_zhou",
                 Ingredients((rice, 1), (shrimp, 1), (fish, 1), (strangeMeat, 1)),
                 static (choiceContext, player, upgraded) =>
-                    ApplyPower<TingZaiZhouPower>(choiceContext, player, 1),
-                upgradedCookingTurns: 0
+                    ApplyPower<TingZaiZhouPower>(choiceContext, player, upgraded ? 2 : 1)
             ),
             Create<ZhangChaYa>(
                 2,
@@ -327,19 +326,19 @@ public static class HaaLouLingCookingRecipes
                     choiceContext, player, upgraded ? 2 : 1)
             ),
             Create<YuXiangRouSi>(
-                2,
+                3,
                 "yu_xiang_rou_si",
                 Ingredients((strangeMeat, 1), (greenPepper, 1), (bambooShoot, 1), (sugar, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ChooseCommonAndUncommonDishEffects(
-                        choiceContext, player, upgraded)
+                    HaaLouLingCookingService.ChooseDishesToComplete(
+                        choiceContext, player, upgraded, CardRarity.Common, CardRarity.Uncommon)
             ),
             Create<HuoBaoYaoHua>(
                 2,
                 "huo_bao_yao_hua",
                 Ingredients((pork, 1), (greenPepper, 1), (chili, 1), (bambooShoot, 1)),
                 static (choiceContext, player, upgraded) =>
-                    ApplyHuoBaoYaoHua(choiceContext, player, upgraded)
+                    ApplyPower<StrengthPower>(choiceContext, player, upgraded ? 6 : 4)
             ),
             Create<YangWangXingKong>(
                 2,
@@ -451,10 +450,8 @@ public static class HaaLouLingCookingRecipes
                     (leafyVegetable, 1),
                     (ancientPheromone, 1)),
                 static (choiceContext, player, upgraded) =>
-                    HaaLouLingCookingService.ChooseCommonUncommonAndRareDishEffects(
-                        choiceContext,
-                        player,
-                        upgraded)
+                    HaaLouLingCookingService.ChooseDishesToComplete(
+                        choiceContext, player, upgraded, CardRarity.Common, CardRarity.Uncommon, CardRarity.Rare)
             ),
             Create<MoYuBao>(
                 3,
@@ -524,16 +521,6 @@ public static class HaaLouLingCookingRecipes
         }
 
         await ApplyPower<ZhangYuNingMengZhiPower>(choiceContext, player, 1);
-    }
-
-    private static async Task ApplyHuoBaoYaoHua(
-        PlayerChoiceContext choiceContext,
-        Player player,
-        bool upgraded
-    )
-    {
-        await ApplyPower<StrengthPower>(choiceContext, player, upgraded ? 5 : 3);
-        await ApplyPower<HuoBaoYaoHuaPower>(choiceContext, player, 1);
     }
 
     private static async Task ApplyShengYan(

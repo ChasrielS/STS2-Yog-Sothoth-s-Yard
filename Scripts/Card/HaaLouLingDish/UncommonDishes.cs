@@ -202,7 +202,8 @@ public sealed class TingZaiZhou : HaaLouLingDishCard
     protected override string PortraitFileName => "ting_zai_zhou";
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<Mi>(), HoverTipFactory.FromCard<XiaRou>(), HoverTipFactory.FromCard<YuRou>(), HoverTipFactory.FromCard<QiGuaiDeRou>()];
     public TingZaiZhou() : base(CardType.Skill, 1, CardRarity.Uncommon) { }
-    protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 1));
+    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]
@@ -230,7 +231,7 @@ public sealed class YuXiangRouSi : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "yu_xiang_rou_si";
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<Sun>(), HoverTipFactory.FromCard<Tang>()];
-    public YuXiangRouSi() : base(CardType.Skill, 2, CardRarity.Uncommon) { }
+    public YuXiangRouSi() : base(CardType.Skill, 3, CardRarity.Uncommon) { }
     protected override void OnUpgrade() { }
 }
 
@@ -238,7 +239,7 @@ public sealed class YuXiangRouSi : HaaLouLingDishCard
 public sealed class HuoBaoYaoHua : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "huo_bao_yao_hua";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 3));
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new DynamicVar("Amount", 4));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ZhuRou>(), HoverTipFactory.FromCard<QingJiao>(), HoverTipFactory.FromCard<LaJiao>(), HoverTipFactory.FromCard<Sun>(), HoverTipFactory.FromPower<StrengthPower>()];
     public HuoBaoYaoHua() : base(CardType.Power, 2, CardRarity.Uncommon) { }
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(2);

@@ -14,7 +14,7 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     private const string PortraitRoot = "res://images/packed/card_portraits/haa_lou_ling_dish";
     private readonly int _cookingTurns;
 
-    public bool IsEffectChoice { get; set; }
+    public bool IsCompletionChoice { get; set; }
     public CookingDishSelection? CookingSelection { get; set; }
     public bool IsCookingChoice => CookingSelection != null;
     public bool IsCookingCompletion { get; set; }
@@ -39,7 +39,7 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
     }
 
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
-        HaaLouLingCookingService.GainDishEffect(context, Owner, HaaLouLingCookingRecipes.Get(Id)!, IsUpgraded);
+        HaaLouLingCookingService.ApplyDishEffect(context, Owner, HaaLouLingCookingRecipes.Get(Id)!, IsUpgraded);
 
     protected override CardLocation GetResultLocationForCardPlay() =>
         new(Owner, PileType.None, CardPilePosition.Bottom);

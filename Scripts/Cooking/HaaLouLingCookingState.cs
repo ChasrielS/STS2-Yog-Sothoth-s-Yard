@@ -12,6 +12,8 @@ public sealed class HaaLouLingCookingState
     public int IngredientsUsed { get; set; }
     public int DishesStartedThisTurn { get; set; }
     public int DishesCompletedThisTurn { get; set; }
+    public bool KnifeGainedThisTurn { get; set; }
+    public bool KnifeSpentThisTurn { get; set; }
     public event Action? RecipePreviewsChanged;
     public void RefreshRecipePreviews() => RecipePreviewsChanged?.Invoke();
     public bool ProcessingTurnStart { get; set; }

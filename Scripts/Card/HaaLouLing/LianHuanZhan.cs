@@ -1,8 +1,8 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using STS2RitsuLib.Interop.AutoRegistration;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
-using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace YogSothothsYard.Scripts;
 
@@ -10,20 +10,20 @@ namespace YogSothothsYard.Scripts;
 public sealed class LianHuanZhan : HaaLouLingCard
 {
     public LianHuanZhan() : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(8), new ExtraDamageVar(2),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card) > 0 ? 1 : 0)];
+
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Follow;
-    public override bool WantsGreenOutline => Knife > 0;
+    public override bool WantsConditionalHighlight => Knife > 0;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var eligible = Knife > 0;
-        await Attack(context, play, eligible ? 3 : 2);
-        if (eligible) await GainKnife(context, 1);
+        await Attack(context, play, hits: 2, calculated: true);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(4);
+        DynamicVars.CalculationBase.UpgradeValueBy(4);
+        DynamicVars.ExtraDamage.UpgradeValueBy(1);
     }
 }

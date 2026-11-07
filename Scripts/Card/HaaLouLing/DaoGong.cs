@@ -9,8 +9,8 @@ namespace YogSothothsYard.Scripts;
 public sealed class DaoGong : HaaLouLingCard
 {
     public DaoGong() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override bool UsesKnife => true;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         await Apply<DaoGongPower>(context, DynamicVars["Amount"].IntValue);

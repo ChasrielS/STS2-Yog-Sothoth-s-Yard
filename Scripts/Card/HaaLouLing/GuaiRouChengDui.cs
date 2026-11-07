@@ -12,7 +12,7 @@ public sealed class GuaiRouChengDui : HaaLouLingCard
 {
     public GuaiRouChengDui() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(9)];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromCard<QiGuaiDeRou>()]);
 

@@ -35,7 +35,7 @@ public sealed class HuoGuo : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "huo_guo";
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>()];
-    public HuoGuo() : base(CardType.Skill, 1) { }
+    public HuoGuo() : base(CardType.Skill, 2) { }
     protected override void OnUpgrade() { }
 }
 
@@ -49,7 +49,7 @@ public sealed class ShengYuPian : HaaLouLingDishCard
         HoverTipFactory.FromCard<YuRou>(),
         HoverTipFactory.FromPower<DexterityPower>()
     ];
-    public ShengYuPian() : base(CardType.Power, 2) { }
+    public ShengYuPian() : base(CardType.Power, 3) { }
     protected override void OnUpgrade() => DynamicVars["CookingTurns"].UpgradeValueBy(-1);
 }
 
@@ -158,7 +158,7 @@ public sealed class MaLaYu : HaaLouLingDishCard
         HoverTipFactory.FromCard<LaJiao>(),
         HoverTipFactory.FromPower<DexterityPower>()
     ];
-    public MaLaYu() : base(CardType.Power, 2) { }
+    public MaLaYu() : base(CardType.Power, 3) { }
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
 }
 

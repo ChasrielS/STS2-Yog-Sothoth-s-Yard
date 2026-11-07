@@ -12,9 +12,9 @@ namespace YogSothothsYard.Scripts;
 public sealed class YiZhanYiWu : HaaLouLingCard
 {
     public YiZhanYiWu() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(0), new ExtraDamageVar(8), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)), new IntVar("Increase", 1)];
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Finish;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(8), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card)), new IntVar("Increase", 1)];
+
     public override bool CanBeGeneratedInCombat => false;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.Static(StaticHoverTip.Fatal)]);
@@ -36,7 +36,7 @@ public sealed class YiZhanYiWu : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var fatal = play.Target!.Powers.All(power => power.ShouldOwnerDeathTriggerFatal());
-        await FinishKnife(context);
+        await SpendAllKnife(context);
         var attack = await Attack(context, play, calculated: true);
         if (fatal && attack.Results.SelectMany(hit => hit).Any(result => result.WasTargetKilled))
         {

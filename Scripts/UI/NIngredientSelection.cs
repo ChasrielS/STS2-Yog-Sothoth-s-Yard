@@ -39,11 +39,18 @@ public partial class NIngredientSelection : Node
     {
         var cards = (IReadOnlyList<CardModel>)CardsField.GetValue(_screen)!;
         if (cards.FirstOrDefault() is not HaaLouLingIngredientCard first) return;
+        if (cards.Any(card => card is not HaaLouLingIngredientCard)) return;
         var pile = Entry.FoodPile.GetPile(first.Owner);
         var owned = pile.Cards.ToHashSet();
-        if (cards.Any(card => card is not HaaLouLingIngredientCard || !owned.Contains(card))) return;
-        _groups = cards.GroupBy(card => card.Id).ToDictionary(group => group.Key, group => group.ToList());
         _grid = _screen.GetNode<NCardGrid>("%CardGrid");
+        if (cards.Any(card => !owned.Contains(card)))
+        {
+            var ownedCounts = NIngredientCountDisplay.Create(_grid, pile, groupCards: false);
+            _grid.GetNode<Control>("ScrollContainer").AddChild(ownedCounts);
+            _screen.GetNode<NPeekButton>("%PeekButton").AddTargets(ownedCounts);
+            return;
+        }
+        _groups = cards.GroupBy(card => card.Id).ToDictionary(group => group.Key, group => group.ToList());
         _confirm = _screen.GetNode<NConfirmButton>("%Confirm");
         _grid.SetCards(HaaLouLingCardSortOrder.SortIngredients(_groups.Values.Select(group => group[0])),
             PileType.None, [SortingOrders.Ascending]);

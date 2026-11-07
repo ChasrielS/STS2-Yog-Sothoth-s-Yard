@@ -10,20 +10,17 @@ namespace YogSothothsYard.Scripts;
 public sealed class XianShengDuoRen : HaaLouLingCard
 {
     public XianShengDuoRen() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Open;
-    public override bool WantsGreenOutline => OpeningReady;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var eligible = OpeningReady;
         await Attack(context, play);
-        if (eligible) await GainKnife(context, 2);
+        await GainKnife(context, 1);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(3);
+        DynamicVars.Damage.UpgradeValueBy(4);
     }
 }

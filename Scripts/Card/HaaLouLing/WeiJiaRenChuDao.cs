@@ -11,15 +11,15 @@ namespace YogSothothsYard.Scripts;
 public sealed class WeiJiaRenChuDao : HaaLouLingCard
 {
     public WeiJiaRenChuDao() : base(3, CardType.Skill, CardRarity.Rare, TargetType.AllAllies) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 4)];
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Finish;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 4)];
+
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var count = await FinishKnife(context);
+        var count = await SpendAllKnife(context);
         var turns = Math.Max(0, DynamicVars["Amount"].IntValue - count);
         if (turns > 0) await Apply<WuFaHuoDeDaoShiPower>(context, turns);
         foreach (var player in CombatState!.Players.Where(player => player.Creature.IsAlive))

@@ -23,15 +23,23 @@ public sealed class GaoTangJingHua : HaaLouLingPotion
         AssertValidForTargetedPotion(target);
         var player = target.Player!;
         var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.AvailableFor(player)
-            .Where(recipe => recipe.CreatePreviewCard().Rarity != CardRarity.Rare))
+            .Where(recipe => recipe.CreatePreviewCard().Rarity != CardRarity.Rare && HaaLouLingCookingService.CanStartRecipe(player, recipe)))
             .Select(recipe => player.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), player)).ToList();
-        foreach (var card in choices.Cast<HaaLouLingDishCard>()) card.IsEffectChoice = true;
+        if (choices.Count == 0) return;
+        var selection = new CookingDishSelection { CompleteImmediately = true };
+        foreach (var card in choices.Cast<HaaLouLingDishCard>())
+        {
+            card.IsCompletionChoice = true;
+            card.CookingSelection = selection;
+            if (HaaLouLingCookingService.HasPendingDishUpgrade(player)) card.UpgradeInternal();
+            card.BaseReplayCount = HaaLouLingCookingService.PendingDishReplayCount(player, HaaLouLingCookingRecipes.Get(card.Id)!);
+        }
 
         var selected = (await CardSelectCmd.FromSimpleGrid(context, choices, player,
-            new CardSelectorPrefs(new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_DISH_EFFECT_CHOICE_PROMPT"), 1)))
+            new CardSelectorPrefs(new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_DISH_COMPLETE_CHOICE_PROMPT"), 1)))
             .FirstOrDefault();
         if (selected != null)
-            await HaaLouLingCookingService.GainDishEffect(context, player,
-                HaaLouLingCookingRecipes.Get(selected.Id)!, selected.IsUpgraded);
+            await HaaLouLingCookingService.CompleteDishImmediately(context, player,
+                HaaLouLingCookingRecipes.Get(selected.Id)!);
     }
 }

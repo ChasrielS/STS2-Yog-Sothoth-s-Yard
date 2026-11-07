@@ -10,18 +10,15 @@ namespace YogSothothsYard.Scripts;
 public sealed class JiaDao : HaaLouLingCard
 {
     public JiaDao() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move)];
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Open;
-    public override bool WantsGreenOutline => OpeningReady;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
 
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var eligible = OpeningReady;
         await Block(play);
-        if (eligible) await GainKnife(context, 2);
+        await GainKnife(context, 1);
     }
 
     protected override void OnUpgrade()

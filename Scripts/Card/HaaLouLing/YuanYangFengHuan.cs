@@ -9,11 +9,10 @@ namespace YogSothothsYard.Scripts;
 [RegisterCard(typeof(HaaLouLingCardPool))]
 public sealed class YuanYangFengHuan : HaaLouLingCard
 {
-    public YuanYangFengHuan() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("RequiredKnife", 1)];
+    public YuanYangFengHuan() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override bool UsesKnife => true;
-    public override KnifeForm Form => KnifeForm.Turn;
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Ethereal]);
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("RequiredKnife", 2)];
+
     protected override bool ShouldGlowRedInternal => Knife < DynamicVars["RequiredKnife"].IntValue;
     private int _extraRequiredKnife;
 
@@ -25,7 +24,7 @@ public sealed class YuanYangFengHuan : HaaLouLingCard
         {
             AssertMutable();
             _extraRequiredKnife = value;
-            DynamicVars["RequiredKnife"].BaseValue = 1 + value;
+            DynamicVars["RequiredKnife"].BaseValue = (IsUpgraded ? 1 : 2) + value;
         }
     }
 
@@ -42,8 +41,8 @@ public sealed class YuanYangFengHuan : HaaLouLingCard
 
     protected override void OnUpgrade()
     {
-        RemoveKeyword(CardKeyword.Ethereal);
+        DynamicVars["RequiredKnife"].UpgradeValueBy(-1);
     }
 
-    protected override void AfterDowngraded() => DynamicVars["RequiredKnife"].BaseValue = 1 + ExtraRequiredKnife;
+    protected override void AfterDowngraded() => DynamicVars["RequiredKnife"].BaseValue = 2 + ExtraRequiredKnife;
 }

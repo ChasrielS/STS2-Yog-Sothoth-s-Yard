@@ -13,7 +13,7 @@ public sealed class DaCan : HaaLouLingCard
     public DaCan() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllAllies) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 5)];
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
-    public override IEnumerable<CardKeyword> CanonicalKeywords => FormKeywords.Concat([CardKeyword.Exhaust]);
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

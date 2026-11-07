@@ -1,7 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using YogSothothsYard.Scripts.Cooking;
 
 namespace YogSothothsYard.Scripts;
@@ -10,16 +10,16 @@ namespace YogSothothsYard.Scripts;
 public sealed class ShanLinTanSuo : HaaLouLingCard
 {
     public ShanLinTanSuo() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("UncommonFoods", 2), new CardsVar(3)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(4), new IntVar("Increase", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars["UncommonFoods"].IntValue, CardRarity.Uncommon);
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, CardRarity.Common);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue);
+        DynamicVars.Cards.BaseValue += DynamicVars["Increase"].IntValue;
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars["UncommonFoods"].UpgradeValueBy(2); DynamicVars.Cards.UpgradeValueBy(2);
+        DynamicVars["Increase"].UpgradeValueBy(1);
     }
 }

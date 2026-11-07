@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
@@ -12,6 +13,13 @@ namespace YogSothothsYard.Scripts;
 
 public static class HaaLouLingCardChoices
 {
+    public static async Task AddCurses(Player player, int count, PileType pile)
+    {
+        var cards = Enumerable.Range(0, count).Select(_ => player.Creature.CombatState!.CreateCard(ModelDb.Card<CanZhou>(), player));
+        var results = await CardPileCmd.AddGeneratedCardsToCombat(cards, pile, player);
+        CardCmd.PreviewCardPileAdd(results);
+    }
+
     private static LocString Prompt(CardModel source)
     {
         var prompt = new LocString("cards", source.Id.Entry + ".selectionScreenPrompt");
@@ -26,12 +34,11 @@ public static class HaaLouLingCardChoices
         foreach (var card in selected) CardCmd.ApplyKeyword(card, CardKeyword.Retain);
     }
     public static Task<IEnumerable<CardModel>> SelectOwnedIngredients(PlayerChoiceContext context, CardModel source,
-        int maximum, int minimum = 0, Func<CardModel, bool>? filter = null)
+        int maximum)
     {
         var pile = Entry.FoodPile.GetPile(source.Owner);
-        var cards = filter == null ? pile.Cards : pile.Cards.Where(filter).ToList();
-        return CardSelectCmd.FromSimpleGrid(context, cards, source.Owner,
-            new CardSelectorPrefs(Prompt(source), minimum, maximum) { RequireManualConfirmation = true });
+        return CardSelectCmd.FromSimpleGrid(context, pile.Cards, source.Owner,
+            new CardSelectorPrefs(Prompt(source), 0, maximum) { RequireManualConfirmation = true });
     }
 
     public static async Task TransformIngredients(PlayerChoiceContext context, CardModel source, IEnumerable<CardModel> cards)
@@ -47,17 +54,16 @@ public static class HaaLouLingCardChoices
         }
     }
     public static async Task Retrieve(PlayerChoiceContext context, CardModel source, PileType pile,
-        bool skillsOnly = false, int count = 1)
+        bool skillsOnly = false, int count = 1, PileType destination = PileType.Hand, CardPilePosition position = CardPilePosition.Bottom)
     {
         var selected = await CardSelectCmd.FromCombatPile(context, pile.GetPile(source.Owner), source.Owner,
             new CardSelectorPrefs(Prompt(source), count),
             skillsOnly ? card => card.Type == CardType.Skill : null);
-        await CardPileCmd.Add(selected, PileType.Hand);
+        await CardPileCmd.Add(selected, destination, position);
     }
-    public static async Task CookDishesChoice(PlayerChoiceContext context, CardModel source, int count, CardRarity? rarity = null)
+    public static async Task CookDishesChoice(PlayerChoiceContext context, CardModel source, int count)
     {
-        var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.AvailableFor(source.Owner)
-            .Where(recipe => rarity == null || recipe.CreatePreviewCard().Rarity == rarity))
+        var choices = HaaLouLingCardSortOrder.SortRecipes(HaaLouLingCookingRecipes.AvailableFor(source.Owner))
             .Select(recipe => source.Owner.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), source.Owner)).ToList();
         var upgraded = HaaLouLingCookingService.HasPendingDishUpgrade(source.Owner);
         var selection = new CookingDishSelection();
@@ -73,18 +79,17 @@ public static class HaaLouLingCardChoices
         foreach (var card in selected)
             await HaaLouLingCookingService.StartWithoutIngredients(context, source.Owner, HaaLouLingCookingRecipes.Get(card.Id)!);
     }
-    public static async Task AddFormCards(PlayerChoiceContext context, CardModel source)
+    public static async Task AddKnifeCards(PlayerChoiceContext context, CardModel source)
     {
         var pool = ModelDb.CardPool<HaaLouLingCardPool>().GetUnlockedCards(source.Owner.UnlockState, source.Owner.RunState.CardMultiplayerConstraint)
-            .OfType<HaaLouLingCard>().Where(card => card.CanBeGeneratedInCombat).ToList();
-        foreach (var form in new[] { KnifeForm.Open, KnifeForm.Follow, KnifeForm.Turn, KnifeForm.Finish })
+            .OfType<HaaLouLingCard>().Where(card => card.HasKnifeEffect && card.CanBeGeneratedInCombat);
+        var cards = CardFactory.GetForCombat(source.Owner, pool, 4, source.Owner.RunState.Rng.CombatCardGeneration).ToList();
+        foreach (var card in cards)
         {
-            var card = CardFactory.GetForCombat(source.Owner, pool.Where(card => card.Form == form), 1,
-                source.Owner.RunState.Rng.CombatCardGeneration).Single();
             if (source.IsUpgraded) CardCmd.Upgrade(card);
             card.EnergyCost.SetThisTurn(0);
-            var result = await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, source.Owner);
-            CardCmd.PreviewCardPileAdd(result);
         }
+        var results = await CardPileCmd.AddGeneratedCardsToCombat(cards, PileType.Hand, source.Owner);
+        CardCmd.PreviewCardPileAdd(results);
     }
 }

@@ -1,12 +1,11 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
-using MegaCrit.Sts2.Core.CardSelection;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Localization;
 using YogSothothsYard.Scripts.Cooking;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace YogSothothsYard.Scripts;
 
@@ -18,17 +17,17 @@ public sealed class ZhaoDanBeiLiao : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var firstPlay = !CombatManager.Instance.History.CardPlaysFinished.Any(entry =>
-            entry.CardPlay.Card == this && entry.HappenedThisTurn(CombatState));
-        var choices = HaaLouLingCardSortOrder.SortIngredients(HaaLouLingCookingService.Ingredients(Owner, nonRare: true))
+        var choices = HaaLouLingCardSortOrder.SortIngredients(HaaLouLingCookingService.Ingredients(Owner))
             .Select(template => CombatState!.CreateCard(template, Owner)).ToList();
         var prompt = new LocString("cards", Id.Entry + ".selectionScreenPrompt");
-        var selected = await CardSelectCmd.FromSimpleGrid(context, choices, Owner, new CardSelectorPrefs(prompt, 2));
-        var cards = selected.SelectMany(card => Enumerable.Range(0, DynamicVars["Amount"].IntValue)
-            .Select(_ => CombatState!.CreateCard(card.CanonicalInstance, Owner)));
-        await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, cards);
-        if (firstPlay) await CardPileCmd.Draw(context, 1, Owner);
+        DynamicVars.AddTo(prompt);
+        var selected = await CardSelectCmd.FromSimpleGrid(context, choices, Owner,
+            new CardSelectorPrefs(prompt, DynamicVars["Amount"].IntValue));
+        await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, selected);
     }
 
-    protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);
+    protected override void OnUpgrade()
+    {
+        DynamicVars["Amount"].UpgradeValueBy(1);
+    }
 }

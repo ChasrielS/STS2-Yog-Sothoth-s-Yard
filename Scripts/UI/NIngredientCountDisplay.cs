@@ -17,12 +17,12 @@ public partial class NIngredientCountDisplay : Control
     private readonly List<Label> _labels = [];
 
     public static NIngredientCountDisplay Create(NCardGrid grid, CardPile pile,
-        Func<ModelId, int>? selectedQuantity = null) => new()
+        Func<ModelId, int>? selectedQuantity = null, bool groupCards = true) => new()
     {
         _grid = grid,
         _pile = pile,
         _selectedQuantity = selectedQuantity,
-        _groupCards = selectedQuantity == null,
+        _groupCards = groupCards && selectedQuantity == null,
         MouseFilter = MouseFilterEnum.Ignore
     };
 

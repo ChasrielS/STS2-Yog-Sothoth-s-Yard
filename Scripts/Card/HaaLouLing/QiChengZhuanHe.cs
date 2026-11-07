@@ -8,10 +8,10 @@ namespace YogSothothsYard.Scripts;
 public sealed class QiChengZhuanHe : HaaLouLingCard
 {
     public QiChengZhuanHe() : base(3, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override bool UsesKnifeForms => true;
+    protected override bool UsesKnife => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCardChoices.AddFormCards(context, this);
+        await HaaLouLingCardChoices.AddKnifeCards(context, this);
     }
 }
