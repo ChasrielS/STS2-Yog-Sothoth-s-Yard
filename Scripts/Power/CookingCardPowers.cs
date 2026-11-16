@@ -69,29 +69,52 @@ public sealed class CaiCongXinShengPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class ShunShouTianHuoPower : HaaLouLingPower
+public class ShunShouTianHuoPower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/shun_shou_tian_huo_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/shun_shou_tian_huo_power.png";
+    protected virtual int Turns => 1;
+    public override LocString Description
+    {
+        get
+        {
+            var text = new LocString("powers", ModelDb.GetId<ShunShouTianHuoPower>().Entry + ".description");
+            text.Add("Amount", Amount);
+            text.Add("Turns", Turns);
+            return text;
+        }
+    }
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     {
         if (play.Player.Creature != Owner || play.Card.Type != CardType.Skill) return;
-        var count = CombatManager.Instance.History.CardPlaysFinished.Count(entry => entry.HappenedThisTurn(CombatState) &&
+        var first = CombatManager.Instance.History.CardPlaysStarted.FirstOrDefault(entry => entry.HappenedThisTurn(CombatState) &&
             entry.CardPlay.Player == play.Player && entry.CardPlay.Card.Type == CardType.Skill);
-        if (count != 1) return;
+        if (first?.CardPlay != play) return;
         Flash();
-        await HaaLouLingCookingService.ChangeCookingTurns(context, play.Player, -1, left: true, count: Amount);
+        await HaaLouLingCookingService.ChangeCookingTurns(context, play.Player, -Turns, left: true, count: Amount);
     }
+}
+
+[RegisterPower]
+public sealed class ShunShouTianHuoTwoTurnsPower : ShunShouTianHuoPower
+{
+    protected override int Turns => 2;
+}
+
+[RegisterPower]
+public sealed class ShunShouTianHuoThreeTurnsPower : ShunShouTianHuoPower
+{
+    protected override int Turns => 3;
 }
 
 public abstract class TianZaoBasePower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/tian_zao_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/tian_zao_power.png";
-    public async Task CheckForFullQueue(PlayerChoiceContext context)
+    internal virtual bool BeforeCooking => false;
+
+    internal async Task ExpandQueue(PlayerChoiceContext context)
     {
-        var state = HaaLouLingCookingService.GetState(Owner.Player!);
-        if (AmountOnTurnStart <= 0 || state.Slots.Count < state.Capacity) return;
         Flash();
         await PowerCmd.Apply<GuoWanPiaoPenPower>(context, Owner, AmountOnTurnStart, Owner, null);
     }
@@ -101,7 +124,35 @@ public abstract class TianZaoBasePower : HaaLouLingPower
 public sealed class TianZaoPower : TianZaoBasePower;
 
 [RegisterPower]
-public sealed class TianZaoPlusPower : TianZaoBasePower;
+public sealed class TianZaoPlusPower : TianZaoBasePower
+{
+    internal override bool BeforeCooking => true;
+}
+
+[RegisterPower]
+public sealed class TianZaoDishPower : TianZaoBasePower
+{
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+    internal override bool BeforeCooking => true;
+    internal CardRarity? Rarity { get; set; }
+    internal bool UpgradeDish { get; set; }
+    public override LocString Description
+    {
+        get
+        {
+            var text = base.Description;
+            text.Add("Uncommon", Rarity == CardRarity.Uncommon);
+            text.Add("UpgradeDish", UpgradeDish);
+            return text;
+        }
+    }
+
+    internal async Task CookAddedDishes(PlayerChoiceContext context, int count)
+    {
+        for (var i = 0; i < count; i++)
+            await HaaLouLingCookingService.StartRandomDish(context, Owner.Player!, Rarity, UpgradeDish);
+    }
+}
 
 [RegisterPower]
 public sealed class FenNiYiFenPower : HaaLouLingPower
@@ -117,10 +168,13 @@ public sealed class FenNiYiFenPower : HaaLouLingPower
         {
             var text = base.Description;
             text.Add("Amount", Amount);
-            var recipient = IsMutable ? Owner.CombatState!.Players.FirstOrDefault(player => player.NetId.ToString() == RecipientId) : null;
+            var all = IsMutable && RecipientId.Length == 0;
+            var recipient = IsMutable && !all ? Recipients.FirstOrDefault() : null;
+            text.Add("AllPlayers", all);
             text.Add("Recipient", recipient == null ? "队友" : PlatformUtil.GetPlayerName(RunManager.Instance.NetService.Platform, recipient.NetId));
             return text;
         }
     }
-    public Player? Recipient => Owner.CombatState!.Players.FirstOrDefault(player => player.NetId.ToString() == RecipientId);
+    internal IEnumerable<Player> Recipients => Owner.CombatState!.Players.Where(player => player.Creature != Owner &&
+        (RecipientId.Length == 0 || player.NetId.ToString() == RecipientId));
 }

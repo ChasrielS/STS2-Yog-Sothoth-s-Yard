@@ -11,14 +11,14 @@ public sealed class JiaDao : HaaLouLingCard
 {
     public JiaDao() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move), new IntVar("Amount", 1)];
 
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        await GainKnife(context, 1);
+        await GainKnife(context, DynamicVars["Amount"].IntValue);
     }
 
     protected override void OnUpgrade()

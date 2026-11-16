@@ -14,5 +14,6 @@ public sealed class QiGuo : HaaLouLingCard
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HaaLouLingKeywords.ImmediateCookingTip];
 
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
-        HaaLouLingCookingService.CompleteLeftmostDish(context, Owner, includeRare: IsUpgraded);
+        HaaLouLingCookingService.CompleteQueuedDishes(context, Owner, includeRare: IsUpgraded,
+            includeRightmost: ErosionRank == 2, all: ErosionRank == 3);
 }

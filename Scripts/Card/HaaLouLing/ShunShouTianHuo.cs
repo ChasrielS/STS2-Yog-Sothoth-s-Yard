@@ -9,11 +9,18 @@ namespace YogSothothsYard.Scripts;
 public sealed class ShunShouTianHuo : HaaLouLingCard
 {
     public ShunShouTianHuo() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new IntVar("Amount", 1), new IntVar("CookingAdvance", 1)];
 
-    protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
+    protected override Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await Apply<ShunShouTianHuoPower>(context, DynamicVars["Amount"].IntValue);
+        var amount = DynamicVars["Amount"].IntValue;
+        return DynamicVars["CookingAdvance"].IntValue switch
+        {
+            3 => Apply<ShunShouTianHuoThreeTurnsPower>(context, amount),
+            2 => Apply<ShunShouTianHuoTwoTurnsPower>(context, amount),
+            _ => Apply<ShunShouTianHuoPower>(context, amount)
+        };
     }
 
     protected override void OnUpgrade() => DynamicVars["Amount"].UpgradeValueBy(1);

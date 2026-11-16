@@ -15,8 +15,7 @@ public sealed class ChongXinPeiCai : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var selected = await HaaLouLingCardChoices.SelectOwnedIngredients(context, this,
-            Entry.FoodPile.GetPile(Owner).Cards.Count);
+        var selected = await HaaLouLingCardChoices.SelectOwnedNonRareIngredients(context, this);
         await HaaLouLingCardChoices.TransformIngredients(context, this, selected);
     }
 

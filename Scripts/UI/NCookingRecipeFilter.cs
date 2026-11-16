@@ -117,7 +117,7 @@ public partial class NCookingRecipeFilter : Control
             CustomMinimumSize = new Vector2(44f, 48f), IgnoreTextureSize = true,
             SizeFlagsVertical = SizeFlags.ShrinkCenter,
             StretchMode = TextureButton.StretchModeEnum.KeepAspectCentered,
-            TextureNormal = GD.Load<Texture2D>("res://images/atlases/ui_atlas.sprites/cursor_pencil.tres"),
+            TextureNormal = GD.Load<Texture2D>("res://images/ui/cooking/rename_pencil.png"),
             TooltipText = Text("PRESET_RENAME")
         };
         row.AddChild(_rename);

@@ -12,7 +12,7 @@ public sealed class LianMianBuJue : HaaLouLingCard
 {
     public LianMianBuJue() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, ValueProp.Move), new IntVar("KnifeGain", 1)];
 
     public override bool WantsConditionalHighlight => Knife > 0;
 
@@ -25,7 +25,7 @@ public sealed class LianMianBuJue : HaaLouLingCard
         if (eligible)
         {
             await CardPileCmd.Add(this, PileType.Draw, CardPilePosition.Top);
-            await GainKnife(context, 1);
+            await GainKnife(context, DynamicVars["KnifeGain"].IntValue);
         }
     }
 

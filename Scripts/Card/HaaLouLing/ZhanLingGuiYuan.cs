@@ -18,12 +18,13 @@ public sealed class ZhanLingGuiYuan : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var multiplier = await ConsumeForm<HeShiPower>();
         var spent = await SpendAllKnife(context);
         await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, spent, false);
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play).Targeting(play.Target!)
+        await CalculatedAttack(play, multiplier).FromCard(this, play).Targeting(play.Target!)
             .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, spent, false, true))
             .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
-        await GiveGuiYuan(context, play, spent * DynamicVars["Amount"].IntValue);
+        await GiveGuiYuan(context, play, spent * DynamicVars["Amount"].IntValue * multiplier);
         await HaaLouLingFinisherVfx.ImpactPause(false);
     }
 

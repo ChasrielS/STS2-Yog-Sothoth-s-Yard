@@ -12,7 +12,8 @@ public sealed class YiDaoLiWei : HaaLouLingCard
 {
     public YiDaoLiWei() : base(3, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(30, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new DamageVar(30, ValueProp.Move), new IntVar("KnifeLimit", 1), new IntVar("KnifeGain", 3)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
@@ -21,8 +22,8 @@ public sealed class YiDaoLiWei : HaaLouLingCard
             .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
         if (attack.Results.SelectMany(hit => hit).Any(result => result.WasTargetKilled))
         {
-            await Apply<DaoFaJingJinPower>(context, 1);
-            await GainKnife(context, 3);
+            await Apply<DaoFaJingJinPower>(context, DynamicVars["KnifeLimit"].IntValue);
+            await GainKnife(context, DynamicVars["KnifeGain"].IntValue);
         }
     }
 

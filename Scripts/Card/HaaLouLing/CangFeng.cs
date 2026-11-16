@@ -10,10 +10,12 @@ public sealed class CangFeng : HaaLouLingCard
 {
     public CangFeng() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1), new EnergyVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new IntVar("Amount", 1), new EnergyVar(1), new IntVar("KnifeGain", 0)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        await GainKnife(context, DynamicVars["KnifeGain"].IntValue);
         await Apply<CangFengPower>(context, DynamicVars["Amount"].IntValue);
         EnergyCost.AddThisCombat(DynamicVars.Energy.IntValue);
     }

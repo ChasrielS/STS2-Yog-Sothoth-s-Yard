@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Scaffolding.Content;
 using MegaCrit.Sts2.Core.Helpers;
+using YogSothothsYard.Scripts.Shadow;
 
 namespace YogSothothsYard.Scripts;
 
@@ -15,8 +16,8 @@ public abstract class HaaLouLingCard : ModCardTemplate
     public virtual bool WantsConditionalHighlight => false;
     protected override bool ShouldGlowGoldInternal => WantsConditionalHighlight;
     protected int Knife => Owner?.PlayerCombatState == null ? 0 : HaaLouLingCombatRules.Knife(Owner);
+    protected int ErosionRank => ShadowRanks.Of(this);
     protected virtual bool UsesKnife => false;
-    public bool HasKnifeEffect => UsesKnife;
     protected virtual bool UsesGuiYuan => false;
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: $"res://images/packed/card_portraits/haa_lou_ling/{StringHelper.SnakeCase(GetType().Name)}.png");
@@ -33,14 +34,30 @@ public abstract class HaaLouLingCard : ModCardTemplate
             if (UsesGuiYuan) yield return HaaLouLingKeywords.KeywordId("GuiYuan");
         }
     }
-    protected async Task<AttackCommand> Attack(PlayerChoiceContext context, CardPlay play, int hits = 1, bool random = false, bool calculated = false)
+    protected async Task<AttackCommand> Attack(PlayerChoiceContext context, CardPlay play, int hits = 1,
+        bool random = false, bool calculated = false, int effectMultiplier = 1)
     {
-        var command = calculated ? DamageCmd.Attack(DynamicVars.CalculatedDamage) : DamageCmd.Attack(DynamicVars.Damage.BaseValue);
+        var command = calculated
+            ? CalculatedAttack(play, effectMultiplier)
+            : DamageCmd.Attack(DynamicVars.Damage.BaseValue * effectMultiplier);
         command.FromCard(this, play).WithHitCount(hits).WithHitVfxNode(HaaLouLingStrikeSlashVfx.Create);
         if (random) command.TargetingRandomOpponents(CombatState!, true);
         else if (TargetType == TargetType.AllEnemies) command.TargetingAllOpponents(CombatState!);
         else command.Targeting(play.Target!);
         return await command.Execute(context);
+    }
+
+    protected AttackCommand CalculatedAttack(CardPlay play, int effectMultiplier) => effectMultiplier == 1
+        ? DamageCmd.Attack(DynamicVars.CalculatedDamage)
+        : DamageCmd.Attack(DynamicVars.CalculatedDamage.Calculate(play.Target) * effectMultiplier);
+
+    protected async Task<int> ConsumeForm<T>() where T : HaaLouLingPower
+    {
+        if (Owner.Creature.GetPower<T>() is not { Amount: > 0 } form) return 1;
+        var multiplier = form.Amount;
+        form.FlashEffect();
+        await PowerCmd.Remove(form);
+        return multiplier;
     }
     protected Task Block(CardPlay play) => CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     protected Task GainKnife(PlayerChoiceContext context, int amount) => HaaLouLingCombatRules.GainKnife(context, Owner, amount, this);

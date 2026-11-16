@@ -12,10 +12,8 @@ public sealed class DaoFaJingJin : HaaLouLingCard
     protected override bool UsesKnife => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 2)];
 
-    protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
-    {
-        await Apply<DaoFaJingJinPower>(context, DynamicVars["Amount"].IntValue);
-    }
+    protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
+        Apply<DaoFaJingJinPower>(context, DynamicVars["Amount"].IntValue);
 
     protected override void OnUpgrade()
     {

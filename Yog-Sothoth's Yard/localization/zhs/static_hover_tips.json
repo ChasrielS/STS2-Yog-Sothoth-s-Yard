@@ -7,5 +7,7 @@
   "YOG_SOTHOTH_S_YARD_IMMEDIATE_COOKING.title": "立刻完成",
   "YOG_SOTHOTH_S_YARD_IMMEDIATE_COOKING.description": "立刻获得效果。",
   "YOG_SOTHOTH_S_YARD_COOKING_SLOT.title": "烹饪位",
-  "YOG_SOTHOTH_S_YARD_COOKING_SLOT.description": "烹饪位决定你可以同时烹饪的菜肴数量。"
+  "YOG_SOTHOTH_S_YARD_COOKING_SLOT.description": "烹饪位决定你可以同时烹饪的菜肴数量。",
+  "YOG_SOTHOTH_S_YARD_EROSION.title": "侵蚀度",
+  "YOG_SOTHOTH_S_YARD_EROSION.description": "[color=#796770]阴影[/color]难度新增的一种全局资源。\n灵魂石可承受最高1000点[gold]侵蚀度[/gold]。"
 }

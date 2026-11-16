@@ -15,7 +15,9 @@ public sealed class ZhengZhuangZaiZhan : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await GainKnife(context, DynamicVars["Amount"].IntValue);
-        await HaaLouLingCardChoices.Retrieve(context, this, PileType.Discard, destination: PileType.Draw, position: CardPilePosition.Top);
+        await HaaLouLingCardChoices.Retrieve(context, this, PileType.Discard,
+            destination: ErosionRank > 0 ? PileType.Hand : PileType.Draw, position: CardPilePosition.Top,
+            discountThisTurn: ErosionRank == 3 ? 1 : 0);
     }
 
     protected override void OnUpgrade()

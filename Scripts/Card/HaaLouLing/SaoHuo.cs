@@ -13,7 +13,9 @@ public sealed class SaoHuo : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var cards = HaaLouLingCookingService.Ingredients(Owner).Select(card => CombatState!.CreateCard(card, Owner));
+        var copies = ErosionRank == 3 ? 2 : 1;
+        var cards = HaaLouLingCookingService.Ingredients(Owner, nonRare: true)
+            .SelectMany(card => Enumerable.Range(0, copies).Select(_ => CombatState!.CreateCard(card, Owner)));
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, cards);
     }
 

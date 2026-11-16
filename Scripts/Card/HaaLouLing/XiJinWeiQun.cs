@@ -21,6 +21,7 @@ public sealed class XiJinWeiQun : HaaLouLingCard
         var extra = WantsConditionalHighlight;
         await Block(play);
         if (extra) await Block(play);
+        if (extra && ErosionRank == 3) await Block(play);
     }
 
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(2);

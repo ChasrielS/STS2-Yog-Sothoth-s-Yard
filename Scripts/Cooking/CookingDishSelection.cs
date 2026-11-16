@@ -10,6 +10,7 @@ public sealed class CookingDishSelection
     public IReadOnlyList<HaaLouLingDishCard> Selected => _selected;
     public int Version { get; private set; }
     public bool CompleteImmediately { get; init; }
+    public bool ForceUpgrade { get; init; }
 
     public void Toggle(HaaLouLingDishCard card, bool wasSelected, bool canSelect)
     {

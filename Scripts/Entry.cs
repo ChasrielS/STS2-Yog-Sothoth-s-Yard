@@ -27,6 +27,7 @@ using STS2RitsuLib.Unlocks;
 using STS2RitsuLib.Combat.CardTargeting;
 using YogSothothsYard.Scripts.Patches;
 using YogSothothsYard.Scripts.Cooking;
+using YogSothothsYard.Scripts.Shadow;
 using YogSothothsYard.Scripts.UI;
 
 namespace YogSothothsYard.Scripts;
@@ -68,6 +69,7 @@ public class Entry
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
         YardStory.RegisterTimelineLayout();
         CookingMenuPreferences.Register();
+        ShadowModule.Register();
         ModUnlockRegistry.For(ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
             XunRenQiChengEpoch.EpochId,
             "用铁甲战士结束一局普通游戏后获得寻人启程。",
@@ -75,6 +77,7 @@ public class Entry
         ));
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
         Patcher.RegisterPatch<DishRecipeHoverTipLayoutPatch>();
+        Patcher.RegisterPatch<KnifeFormInspectLayoutPatch>();
         Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();
         Patcher.RegisterPatch<DaoShiPersistencePatch>();
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();

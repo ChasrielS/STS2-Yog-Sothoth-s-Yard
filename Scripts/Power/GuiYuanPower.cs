@@ -57,6 +57,7 @@ public abstract class GuiYuanBasePower : HaaLouLingPower
     {
         modifiedAmount = amount;
         if (target != Owner || canonicalPower is not GuiYuanBasePower) return false;
+        if (amount > 0 && HaaLouLingCombatRules.IsReceivingTransferredGuiYuan(target)) return false;
         if (amount > 0)
         {
             var gained = Amount >= 30 ? decimal.Floor(amount * (1m + 0.25m * EffectMultiplier)) : amount;

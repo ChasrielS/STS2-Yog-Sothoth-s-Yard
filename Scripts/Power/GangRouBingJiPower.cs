@@ -8,10 +8,11 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace YogSothothsYard.Scripts;
 
 [RegisterPower]
-public sealed class GangRouBingJiPower : HaaLouLingPower
+public class GangRouBingJiPower : HaaLouLingPower
 {
     public override string? CustomIconPath => "res://images/powers/gang_rou_bing_ji_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/gang_rou_bing_ji_power.png";
+    protected virtual int Energy => 1;
     private int _attacks;
     private int _skills;
     private int _triggered;
@@ -33,6 +34,12 @@ public sealed class GangRouBingJiPower : HaaLouLingPower
         _skills--;
         _triggered++;
         Flash();
-        await PlayerCmd.GainEnergy(1, play.Player);
+        await PlayerCmd.GainEnergy(Energy, play.Player);
     }
+}
+
+[RegisterPower]
+public sealed class GangRouBingJiDoublePower : GangRouBingJiPower
+{
+    protected override int Energy => 2;
 }

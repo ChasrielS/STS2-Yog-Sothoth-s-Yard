@@ -23,7 +23,7 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
                 if (creature.Player is { } player)
                 {
                     var cooking = HaaLouLingCookingService.GetState(player);
-                    cooking.IngredientsUsedThisTurn = 0;
+                    cooking.IngredientsGainedThisTurn = 0;
                     cooking.DishesStartedThisTurn = 0;
                     cooking.DishesCompletedThisTurn = 0;
                     cooking.KnifeGainedThisTurn = false;
@@ -91,7 +91,8 @@ public sealed class HaaLouLingGlobalRules : HookedSingletonModel
     {
         modifiedAmount = amount;
         // 首次施加也需要限制修正后的数量；已有归元由自身处理额外获得层数。
-        if (power is GuiYuanBasePower && HaaLouLingCombatRules.GuiYuan(target) == 0)
+        if (power is GuiYuanBasePower && HaaLouLingCombatRules.GuiYuan(target) == 0 &&
+            !HaaLouLingCombatRules.IsReceivingTransferredGuiYuan(target))
             modifiedAmount = HaaLouLingCombatRules.CanExceedGuiYuanLimit(applier)
                 ? Math.Max(0, amount) : Math.Clamp(amount, 0, 100);
         if (target.Player is { } player)

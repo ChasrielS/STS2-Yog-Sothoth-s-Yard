@@ -22,8 +22,9 @@ public sealed class DaBaShou : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var multiplier = await ConsumeForm<HeShiPower>();
         var count = await SpendAllKnife(context);
-        await PowerCmd.Apply<VigorPower>(context, play.Target!, count * DynamicVars["Amount"].IntValue, Owner.Creature, this);
+        await PowerCmd.Apply<VigorPower>(context, play.Target!, count * DynamicVars["Amount"].IntValue * multiplier, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

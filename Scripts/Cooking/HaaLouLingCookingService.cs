@@ -3,7 +3,6 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Factories;
@@ -103,6 +102,7 @@ public static class HaaLouLingCookingService
         var results = await CardPileCmd.AddGeneratedCardsToCombat(generated, Entry.FoodPile, player);
         var gained = results.Where(result => result.success).ToList();
         if (gained.Count == 0) return;
+        GetState(player).IngredientsGainedThisTurn += gained.Count;
         CardCmd.PreviewCardPileAdd(results);
         if (player.GetRelic<TongBingChaoShao>() is { } spoon) await spoon.IngredientsGained(choiceContext, gained.Count);
         var chickens = gained.Count(result => result.cardAdded is JiRou);
@@ -219,9 +219,9 @@ public static class HaaLouLingCookingService
         if (!ModelDb.AllPowers.Any(power => power.Id.Entry == powerId))
             HaaLouLingDishCompletedVfx.Show(player.Creature, recipe.CreatePreviewCard().Title);
         var shares = player.Creature.Powers.OfType<FenNiYiFenPower>().Where(power => power.Amount > 0).ToList();
-        var recipients = shares.Select(share => share.Recipient).ToList();
+        var recipients = shares.SelectMany(share => share.Recipients).Distinct().ToList();
         foreach (var share in shares) await PowerCmd.Decrement(share);
-        await TriggerDishCompleted(choiceContext, player);
+        await TriggerDishCompleted(choiceContext, player, recipe.CreatePreviewCard().Rarity);
         var card = (HaaLouLingDishCard)player.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), player);
         card.IsCookingCompletion = true;
         if (isUpgraded) card.UpgradeInternal();
@@ -230,9 +230,9 @@ public static class HaaLouLingCookingService
         await CardPileCmd.Add(card, PileType.Play, skipVisuals: true);
         await CardCmd.AutoPlay(choiceContext, card, card.TargetType == TargetType.Self ? player.Creature : null);
         foreach (var recipient in recipients)
-            if (recipient?.Creature.IsAlive == true)
+            if (recipient.Creature.IsAlive)
             {
-                var sharedContext = new BranchingPlayerChoiceContext(card, LocalContext.NetId!.Value, GameActionType.Combat, choiceContext);
+                var sharedContext = new BranchingPlayerChoiceContext(card, LocalContext.NetId!.Value, choiceContext);
                 await sharedContext.AssignTaskAndWaitForPauseOrCompletion(
                     GainSharedDishEffects(sharedContext, recipient, recipe, isUpgraded, replayCount));
             }
@@ -258,7 +258,8 @@ public static class HaaLouLingCookingService
 
     private static async Task TriggerDishCompleted(
         PlayerChoiceContext choiceContext,
-        Player player
+        Player player,
+        CardRarity rarity
     )
     {
         GetState(player).DishesCompletedThisTurn++;
@@ -268,7 +269,7 @@ public static class HaaLouLingCookingService
             {
                 case DaoGongPower { Amount: > 0 } knifeWork:
                     knifeWork.FlashEffect();
-                    await HaaLouLingCombatRules.GainKnife(choiceContext, player, knifeWork.Amount);
+                    await HaaLouLingCombatRules.GainKnife(choiceContext, player, knifeWork.GainFor(rarity));
                     break;
                 case XueHuaJiNaoPower { Amount: > 0 } snowChicken:
                     snowChicken.FlashEffect();
@@ -340,7 +341,6 @@ public static class HaaLouLingCookingService
         var chickenCount = ingredients.Count(card => card is JiRou);
         var strangeMeatCount = ingredients.Count(card => card is QiGuaiDeRou);
         var state = GetState(player);
-        state.IngredientsUsedThisTurn += ingredients.Count;
         state.IngredientsUsed += ingredients.Count;
         foreach (var power in player.Creature.Powers.ToList())
         {
@@ -701,15 +701,15 @@ public static class HaaLouLingCookingService
         recipe.GetCookingTurns(upgraded) <= 0 || GetState(player).Slots.Count < GetState(player).Capacity;
 
     public static Task<bool> StartWithoutIngredients(PlayerChoiceContext context, Player player,
-        CookingDishDefinition recipe, bool upgraded = false) =>
-        PrepareWithoutIngredients(context, player, recipe, upgraded, completeImmediately: false);
+        CookingDishDefinition recipe, bool upgraded = false, int advance = 0) =>
+        PrepareWithoutIngredients(context, player, recipe, upgraded, completeImmediately: false, advance);
 
     public static Task<bool> CompleteDishImmediately(PlayerChoiceContext context, Player player,
         CookingDishDefinition recipe, bool upgraded = false) =>
         PrepareWithoutIngredients(context, player, recipe, upgraded, completeImmediately: true);
 
     private static async Task<bool> PrepareWithoutIngredients(PlayerChoiceContext context, Player player,
-        CookingDishDefinition recipe, bool upgraded, bool completeImmediately)
+        CookingDishDefinition recipe, bool upgraded, bool completeImmediately, int advance = 0)
     {
         if (!player.Creature.IsAlive || (!completeImmediately && player.Character is not HaaLouLing) ||
             !CanStartRecipe(player, recipe)) return false;
@@ -718,12 +718,12 @@ public static class HaaLouLingCookingService
         GetState(player).CookedThisTurn.Add(recipe.DishModelId);
         if (upgraded && !player.Creature.HasPower<MoYuBaoPower>() && !player.Creature.HasPower<TingZaiZhouPower>())
             await ConsumeDishUpgrade(context, player);
-        await Enqueue(context, player, recipe, upgraded, completeImmediately);
+        await Enqueue(context, player, recipe, upgraded, completeImmediately, advance);
         return true;
     }
 
     private static async Task Enqueue(PlayerChoiceContext context, Player player, CookingDishDefinition recipe,
-        bool upgraded, bool completeImmediately = false)
+        bool upgraded, bool completeImmediately = false, int advance = 0)
     {
         var state = GetState(player);
         CookingMenuPreferences.RecordCooking(player, recipe.DishModelId);
@@ -735,7 +735,7 @@ public static class HaaLouLingCookingService
             await PowerCmd.Decrement(replayPower);
         }
         state.RefreshRecipePreviews();
-        var turns = completeImmediately ? 0 : recipe.GetCookingTurns(upgraded);
+        var turns = completeImmediately ? 0 : Math.Max(0, recipe.GetCookingTurns(upgraded) - advance);
         if (turns <= 0) await CompleteDish(context, player, recipe, upgraded, replayCount);
         else
             state.Slots.Add(new CookingSlot { DishModelId = recipe.DishModelId, RemainingTurns = turns,
@@ -747,13 +747,14 @@ public static class HaaLouLingCookingService
         }
     }
 
-    public static async Task StartRandomDish(PlayerChoiceContext context, Player player, CardRarity rarity)
+    public static async Task StartRandomDish(PlayerChoiceContext context, Player player, CardRarity? rarity, bool forceUpgrade = false)
     {
-        var upgraded = HasPendingDishUpgrade(player);
+        var upgraded = forceUpgrade || HasPendingDishUpgrade(player);
         var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => CanStartRecipe(player, recipe) &&
-            recipe.CreatePreviewCard().Rarity == rarity && CanFitRecipe(player, recipe, upgraded)).ToList();
+            (rarity.HasValue ? recipe.CreatePreviewCard().Rarity == rarity : recipe.CreatePreviewCard().Rarity != CardRarity.Rare) &&
+            CanFitRecipe(player, recipe, upgraded)).ToList();
         if (recipes.Count > 0)
-            await StartWithoutIngredients(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!);
+            await StartWithoutIngredients(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!, forceUpgrade);
     }
 
     public static async Task ChangeCookingTurns(PlayerChoiceContext context, Player player, int delta,
@@ -765,14 +766,20 @@ public static class HaaLouLingCookingService
         await FinishReady(context, player);
     }
 
-    public static Task CompleteLeftmostDish(PlayerChoiceContext context, Player player, bool includeRare)
+    public static Task CompleteQueuedDishes(PlayerChoiceContext context, Player player,
+        bool includeRare, bool includeRightmost, bool all)
     {
-        var slot = GetState(player).Slots.FirstOrDefault(slot =>
+        var slots = GetState(player).Slots.Where(slot =>
             HaaLouLingCookingRecipes.Get(slot.DishModelId) is { } recipe &&
-            (includeRare || recipe.CreatePreviewCard().Rarity != CardRarity.Rare));
-        if (slot == null) return Task.CompletedTask;
-
-        slot.RemainingTurns = 0;
+            (includeRare || recipe.CreatePreviewCard().Rarity != CardRarity.Rare)).ToList();
+        if (slots.Count == 0) return Task.CompletedTask;
+        if (all)
+            foreach (var slot in slots) slot.RemainingTurns = 0;
+        else
+        {
+            slots[0].RemainingTurns = 0;
+            if (includeRightmost) slots[^1].RemainingTurns = 0;
+        }
         return FinishReady(context, player);
     }
 
@@ -790,14 +797,14 @@ public static class HaaLouLingCookingService
     }
 
     public static async Task CompleteRandomDishes(PlayerChoiceContext context, Player player, int count,
-        CardRarity? rarity = null)
+        CardRarity? rarity = null, bool upgraded = false)
     {
         for (var i = 0; i < count && player.Creature.IsAlive; i++)
         {
             var recipes = HaaLouLingCookingRecipes.AvailableFor(player).Where(recipe => CanStartRecipe(player, recipe) &&
                 (rarity.HasValue ? recipe.CreatePreviewCard().Rarity == rarity : recipe.CreatePreviewCard().Rarity != CardRarity.Rare)).ToList();
             if (recipes.Count == 0) return;
-            await CompleteDishImmediately(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!);
+            await CompleteDishImmediately(context, player, player.RunState.Rng.CombatCardGeneration.NextItem(recipes)!, upgraded);
         }
     }
 

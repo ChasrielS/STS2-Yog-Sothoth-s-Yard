@@ -11,12 +11,12 @@ namespace YogSothothsYard.Scripts;
 public sealed class YuBo : HaaLouLingCard
 {
     public YuBo() : base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move), new IntVar("Ratio", 100)];
     protected override bool UsesGuiYuan => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var amount = HaaLouLingCombatRules.GuiYuan(play.Target);
+        var amount = (int)decimal.Floor(HaaLouLingCombatRules.GuiYuan(play.Target) * (DynamicVars["Ratio"].IntValue / 100m));
         await Attack(context, play);
         await HaaLouLingCombatRules.GiveGuiYuanGroup(context,
             CombatState!.HittableEnemies.Where(target => target != play.Target).Select(target => (target, amount)), Owner.Creature, this);

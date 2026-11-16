@@ -16,9 +16,11 @@ public sealed class DaoXiaQuCai : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, CardRarity.Common);
+        var multiplier = await ConsumeForm<HeShiPower>();
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue * multiplier, CardRarity.Common);
         var spent = await SpendAllKnife(context);
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, spent * DynamicVars["ExtraCards"].IntValue);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, spent * DynamicVars["ExtraCards"].IntValue * multiplier,
+            nonRare: true);
     }
 
     protected override void OnUpgrade()

@@ -19,8 +19,9 @@ public sealed class WeiJiaRenChuDao : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var count = await SpendAllKnife(context);
-        var turns = Math.Max(0, DynamicVars["Amount"].IntValue - count);
+        var limit = DynamicVars["Amount"].IntValue;
+        var spent = await SpendKnife(context, Math.Min(Knife, limit));
+        var turns = limit - spent;
         if (turns > 0) await Apply<WuFaHuoDeDaoShiPower>(context, turns);
         foreach (var player in CombatState!.Players.Where(player => player.Creature.IsAlive))
             await PowerCmd.Apply<MianYiPower>(context, player.Creature, 1, Owner.Creature, this);

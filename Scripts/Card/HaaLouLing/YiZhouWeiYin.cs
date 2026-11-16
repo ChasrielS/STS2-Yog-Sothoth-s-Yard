@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -13,7 +14,9 @@ public sealed class YiZhouWeiYin : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await Apply<YiZhouWeiYinPower>(context, DynamicVars["Amount"].IntValue);
+        var power = await PowerCmd.Apply<YiZhouWeiYinPower>(context, Owner.Creature, DynamicVars["Amount"].IntValue, Owner.Creature, this);
+        if (power != null && (ErosionRank == 3 || ErosionRank == 2 && IsUpgraded))
+            power.DiscardCurse = true;
     }
 
     protected override void OnUpgrade()

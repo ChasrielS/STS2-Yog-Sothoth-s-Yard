@@ -13,9 +13,11 @@ public sealed class ZaiLaiYiLan : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var nonRare = IsUpgraded || ErosionRank == 3;
+        var extraCopies = IsUpgraded && ErosionRank == 3 ? 2 : 1;
         var copies = Entry.FoodPile.GetPile(Owner).Cards
-            .Where(card => IsUpgraded ? card.Rarity != CardRarity.Rare : card.Rarity == CardRarity.Common)
-            .Select(card => card.CreateClone()).ToList();
+            .Where(card => nonRare ? card.Rarity != CardRarity.Rare : card.Rarity == CardRarity.Common)
+            .SelectMany(card => Enumerable.Range(0, extraCopies).Select(_ => card.CreateClone())).ToList();
         await HaaLouLingCookingService.AddGeneratedIngredients(context, Owner, copies);
     }
 }

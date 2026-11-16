@@ -12,6 +12,15 @@ public sealed class SuiShouZuoCai : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCookingService.StartRandomDish(context, Owner, IsUpgraded ? CardRarity.Uncommon : CardRarity.Common);
+        CardRarity? rarity = ErosionRank switch
+        {
+            0 => IsUpgraded ? null : CardRarity.Common,
+            1 => IsUpgraded ? CardRarity.Uncommon : null,
+            _ => CardRarity.Uncommon
+        };
+        var upgraded = ErosionRank == 3 || ErosionRank == 2 && IsUpgraded;
+        var count = ErosionRank == 3 && IsUpgraded ? 2 : 1;
+        for (var i = 0; i < count; i++)
+            await HaaLouLingCookingService.StartRandomDish(context, Owner, rarity, upgraded);
     }
 }

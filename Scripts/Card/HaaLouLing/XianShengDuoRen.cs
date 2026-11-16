@@ -11,12 +11,12 @@ public sealed class XianShengDuoRen : HaaLouLingCard
 {
     public XianShengDuoRen() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
     protected override bool UsesKnife => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new IntVar("Amount", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Attack(context, play);
-        await GainKnife(context, 1);
+        await GainKnife(context, DynamicVars["Amount"].IntValue);
     }
 
     protected override void OnUpgrade()

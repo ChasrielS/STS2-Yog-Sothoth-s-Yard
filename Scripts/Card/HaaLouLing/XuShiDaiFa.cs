@@ -13,7 +13,9 @@ public sealed class XuShiDaiFa : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        if (ErosionRank >= 2) await Apply<DaoFaJingJinPower>(context, ErosionRank - 1);
         await GainKnife(context, HaaLouLingCombatRules.KnifeLimit(Owner));
+        if (ErosionRank == 1) await Apply<DaoFaJingJinPower>(context, 1);
     }
 
     protected override void OnUpgrade()

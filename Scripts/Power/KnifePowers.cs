@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -72,9 +73,30 @@ public sealed class ZhouZhangPower : HaaLouLingPower
 [RegisterPower]
 public sealed class DaoGongPower : HaaLouLingPower
 {
+    internal int RareBonus { get; set; }
+    internal int UncommonBonus { get; set; }
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/dao_gong_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/dao_gong_power.png";
+
+    internal int GainFor(CardRarity rarity) => Amount + Math.Min(Amount, rarity switch
+    {
+        CardRarity.Rare => RareBonus,
+        CardRarity.Uncommon => UncommonBonus,
+        _ => 0
+    });
+
+    public override LocString Description
+    {
+        get
+        {
+            var text = base.Description;
+            text.Add("Rare", GainFor(CardRarity.Rare));
+            text.Add("Uncommon", GainFor(CardRarity.Uncommon));
+            text.Add("RaritiesDiffer", RareBonus > 0 || UncommonBonus > 0);
+            return text;
+        }
+    }
 }
 
 [RegisterPower]
@@ -149,3 +171,26 @@ public sealed class WuFaHuoDeDaoShiPower : HaaLouLingPower
         if (participants.Contains(Owner)) await PowerCmd.Decrement(this);
     }
 }
+
+public abstract class KnifeFormPower : HaaLouLingPower
+{
+    private string IconName => StringHelper.SnakeCase(GetType().Name);
+    public override string? CustomIconPath => $"res://images/powers/{IconName}_icon.png";
+    public override string? CustomBigIconPath => $"res://images/powers/{IconName}.png";
+    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
+
+    public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants) =>
+        side == CombatSide.Player && participants.Contains(Owner) ? PowerCmd.Remove(this) : Task.CompletedTask;
+}
+
+[RegisterPower]
+public sealed class QiShiPower : KnifeFormPower;
+
+[RegisterPower]
+public sealed class ChengShiPower : KnifeFormPower;
+
+[RegisterPower]
+public sealed class ZhuanShiPower : KnifeFormPower;
+
+[RegisterPower]
+public sealed class HeShiPower : KnifeFormPower;

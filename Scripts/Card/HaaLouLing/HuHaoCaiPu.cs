@@ -19,7 +19,7 @@ public sealed class HuHaoCaiPu : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
-        await HaaLouLingCardChoices.RetainFromHand(context, this, 1);
+        await HaaLouLingCardChoices.RetainFromHand(context, this, ErosionRank == 3 ? 2 : 1);
     }
 
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3);

@@ -31,7 +31,7 @@ public sealed class ShanLinTanSuo : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, nonRare: true);
         var increase = DynamicVars["Increase"].IntValue;
         AdditionalIngredients += increase;
         if (DeckVersion is ShanLinTanSuo deck) deck.AdditionalIngredients += increase;

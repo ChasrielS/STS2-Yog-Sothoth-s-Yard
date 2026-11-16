@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace YogSothothsYard.Scripts;
@@ -11,6 +12,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class ShuangCengZhengLong : HaaLouLingRelic
 {
     protected override string ImageName => "shuang_ceng_zheng_long";
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 1)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
         new HoverTip(new LocString("static_hover_tips", "YOG_SOTHOTH_S_YARD_COOKING_SLOT.title"),
@@ -20,6 +22,7 @@ public sealed class ShuangCengZhengLong : HaaLouLingRelic
     public override async Task BeforeCombatStart()
     {
         Flash();
-        await PowerCmd.Apply<GuoWanPiaoPenPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1, Owner.Creature, null);
+        await PowerCmd.Apply<GuoWanPiaoPenPower>(new ThrowingPlayerChoiceContext(), Owner.Creature,
+            DynamicVars["Amount"].IntValue, Owner.Creature, null);
     }
 }

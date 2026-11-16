@@ -14,7 +14,8 @@ public sealed class DuoXian : HaaLouLingCard
     public DuoXian() : base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new ExtraDamageVar(1),
         new CalculationBaseVar(0), new CalculationExtraVar(1),
-        new CalculatedVar("CalculatedHits").WithMultiplier(static (card, _) => HaaLouLingCookingService.GetState(card.Owner).IngredientsUsedThisTurn)];
+        new CalculatedVar("CalculatedHits").WithMultiplier(static (card, _) => card.Owner?.PlayerCombatState == null
+            ? 0 : HaaLouLingCookingService.GetState(card.Owner).IngredientsGainedThisTurn)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

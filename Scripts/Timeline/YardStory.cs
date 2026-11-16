@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Timeline;
 using MegaCrit.Sts2.Core.Saves;
@@ -31,7 +32,7 @@ public sealed class YardStory : ModStoryTemplate
 public abstract class YardEpoch : ModEpochTemplate
 {
     // 尚未开放的节点暂用现有插画，锁定时沿用原版的模糊显示。
-    private const string PortraitPath = "res://images/timeline/epoch_portraits/xun_ren_qi_cheng.png";
+    protected virtual string PortraitPath => "res://images/timeline/epoch_portraits/xun_ren_qi_cheng.png";
 
     public override string StoryId => YardStory.Key;
     public override EpochAssetProfile AssetProfile => new(
@@ -74,7 +75,13 @@ public sealed class XunRenQiChengEpoch : YardEpoch
 [RegisterStoryEpoch(typeof(YardStory), Order = 3)]
 public sealed class YinYingEpoch : YardEpoch
 {
-    public override string Id => "YOG_SOTHOTHS_YARD_YIN_YING_EPOCH";
+    public const string EpochId = "YOG_SOTHOTHS_YARD_YIN_YING_EPOCH";
+
+    public override string Id => EpochId;
+    protected override string PortraitPath => "res://images/timeline/epoch_portraits/ta_zhong_yin_ying.png";
+
+    public override void QueueUnlocks() => NTimelineScreen.Instance.QueueMiscUnlock(
+        new LocString("epochs", EpochId + ".unlock").GetFormattedText());
 }
 
 [RegisterEpoch]

@@ -78,7 +78,7 @@ public partial class NDishCookingChoiceOutline : Node
 
     private bool ApplyPreview(HaaLouLingDishCard card, PendingEffects effects, HashSet<CardModel> changed)
     {
-        var upgraded = effects.UpgradeAll || effects.Upgrades > 0;
+        var upgraded = _selection.ForceUpgrade || effects.UpgradeAll || effects.Upgrades > 0;
         if (card.IsUpgraded != upgraded)
         {
             if (upgraded) card.UpgradeInternal();

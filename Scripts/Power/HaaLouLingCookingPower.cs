@@ -26,10 +26,22 @@ public class HaaLouLingCookingPower : ModPowerTemplate
             return;
         }
 
-        if (Owner.GetPower<TianZaoPlusPower>() is { } early)
-            await early.CheckForFullQueue(choiceContext);
+        await ExpandIfFull(player, choiceContext, beforeCooking: true);
         await HaaLouLingCookingService.Advance(choiceContext, player);
-        if (Owner.GetPower<TianZaoPower>() is { } late)
-            await late.CheckForFullQueue(choiceContext);
+        await ExpandIfFull(player, choiceContext, beforeCooking: false);
+    }
+
+    private async Task ExpandIfFull(Player player, PlayerChoiceContext context, bool beforeCooking)
+    {
+        var state = HaaLouLingCookingService.GetState(player);
+        if (state.Slots.Count < state.Capacity) return;
+        var powers = Owner.Powers.OfType<TianZaoBasePower>()
+            .Where(power => power.BeforeCooking == beforeCooking && power.AmountOnTurnStart > 0).ToList();
+        foreach (var power in powers)
+        {
+            var slots = power.AmountOnTurnStart;
+            await power.ExpandQueue(context);
+            if (power is TianZaoDishPower dish) await dish.CookAddedDishes(context, slots);
+        }
     }
 }

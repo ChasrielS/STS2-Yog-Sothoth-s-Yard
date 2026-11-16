@@ -19,8 +19,10 @@ public sealed class ShouShi : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        var multiplier = await ConsumeForm<HeShiPower>();
         await SpendAllKnife(context);
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target), DynamicVars.CalculatedBlock.Props, play);
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target) * multiplier,
+            DynamicVars.CalculatedBlock.Props, play);
     }
 
     protected override void OnUpgrade()

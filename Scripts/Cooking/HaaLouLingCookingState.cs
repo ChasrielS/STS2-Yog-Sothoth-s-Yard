@@ -8,7 +8,7 @@ public sealed class HaaLouLingCookingState
     public List<CookingSlot> Slots { get; } = [];
     public int OctopusBallIngredientProgress { get; set; }
     public int ShengYanDebilitatePerTurn { get; set; }
-    public int IngredientsUsedThisTurn { get; set; }
+    public int IngredientsGainedThisTurn { get; set; }
     public int IngredientsUsed { get; set; }
     public int DishesStartedThisTurn { get; set; }
     public int DishesCompletedThisTurn { get; set; }

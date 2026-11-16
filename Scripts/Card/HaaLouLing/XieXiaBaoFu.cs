@@ -14,7 +14,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class XieXiaBaoFu : HaaLouLingCard
 {
     public XieXiaBaoFu() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move), new CardsVar(1)];
 
     public override bool GainsBlock => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(CardKeyword.Exhaust)];
@@ -22,8 +22,10 @@ public sealed class XieXiaBaoFu : HaaLouLingCard
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Block(play);
+        var prompt = new LocString("cards", Id.Entry + (ErosionRank > 0 ? ".optionalSelectionPrompt" : ".selectionScreenPrompt"));
+        var count = DynamicVars.Cards.IntValue;
         var selected = await CardSelectCmd.FromHand(context, Owner,
-            new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionScreenPrompt"), 1), null, this);
+            new CardSelectorPrefs(prompt, ErosionRank > 0 ? 0 : count, count), null, this);
         foreach (var card in selected) await CardCmd.Exhaust(context, card);
     }
 

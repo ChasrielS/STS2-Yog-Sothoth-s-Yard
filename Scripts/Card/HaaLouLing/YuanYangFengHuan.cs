@@ -23,8 +23,10 @@ public sealed class YuanYangFengHuan : HaaLouLingCard
         set
         {
             AssertMutable();
+            var increase = value - _extraRequiredKnife;
+            var requirement = DynamicVars["RequiredKnife"];
             _extraRequiredKnife = value;
-            DynamicVars["RequiredKnife"].BaseValue = (IsUpgraded ? 1 : 2) + value;
+            requirement.BaseValue += increase;
         }
     }
 
@@ -34,7 +36,10 @@ public sealed class YuanYangFengHuan : HaaLouLingCard
         if (Knife >= requirement)
         {
             await SpendKnife(context, requirement);
-            await Apply<YuanYangFengHuanPower>(context, 1);
+            if (ErosionRank == 3 || ErosionRank == 2 && IsUpgraded)
+                await Apply<YuanYangFengHuanIntentPower>(context, 1);
+            else
+                await Apply<YuanYangFengHuanPower>(context, 1);
         }
         ExtraRequiredKnife++;
     }
@@ -44,5 +49,8 @@ public sealed class YuanYangFengHuan : HaaLouLingCard
         DynamicVars["RequiredKnife"].UpgradeValueBy(-1);
     }
 
-    protected override void AfterDowngraded() => DynamicVars["RequiredKnife"].BaseValue = 2 + ExtraRequiredKnife;
+    protected override void AfterDowngraded()
+    {
+        if (ErosionRank == 0) DynamicVars["RequiredKnife"].BaseValue = 2 + ExtraRequiredKnife;
+    }
 }

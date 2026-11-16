@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -15,7 +16,8 @@ public sealed class SheZhang : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        await Apply<SheZhangPower>(context, 1);
+        var power = await PowerCmd.Apply<SheZhangPower>(context, Owner.Creature, 1, Owner.Creature, this);
+        if (power != null && ErosionRank == 3) power.DiscardPile = true;
     }
 
     protected override void OnUpgrade()

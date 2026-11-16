@@ -13,7 +13,8 @@ public sealed class SuiNiDianCai : HaaLouLingCard
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
-        await HaaLouLingCardChoices.CookDishesChoice(context, this, DynamicVars.Cards.IntValue);
+        await HaaLouLingCardChoices.CookDishesChoice(context, this, DynamicVars.Cards.IntValue,
+            forceUpgrade: ErosionRank == 3, advance: ErosionRank >= 2 ? 1 : 0);
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

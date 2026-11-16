@@ -11,6 +11,8 @@ namespace YogSothothsYard.Scripts;
 
 public static class HaaLouLingCombatRules
 {
+    private static readonly AsyncLocal<Creature?> GuiYuanTransferTarget = new();
+
     public static int Knife(Player player) => player.Creature.GetPowerAmount<DaoShiPower>();
     public static int KnifeLimit(Player player) => 3 + player.Creature.GetPowerAmount<DaoFaJingJinPower>();
 
@@ -28,6 +30,11 @@ public static class HaaLouLingCombatRules
         if (amount <= 0 || player.Creature.HasPower<WuFaHuoDeDaoShiPower>()) return Task.CompletedTask;
         if (Knife(player) >= KnifeLimit(player) && player.Creature.HasPower<TuPoPingJingPower>())
             return PowerCmd.Apply<DaoFaJingJinPower>(context, player.Creature, amount, player.Creature, source);
+        if (Knife(player) < KnifeLimit(player) && player.Creature.GetPower<QiShiPower>() is { Amount: > 0 } gain)
+        {
+            amount += gain.Amount;
+            gain.FlashEffect();
+        }
         return PowerCmd.Apply<DaoShiPower>(context, player.Creature,
             Math.Min(amount, Math.Max(0, KnifeLimit(player) - Knife(player))), player.Creature, source);
     }
@@ -47,6 +54,11 @@ public static class HaaLouLingCombatRules
         if (spent > 0) HaaLouLingCookingService.GetState(player).KnifeSpentThisTurn = true;
         if (spent > 0 && player.GetRelic<XiaLuJiaDaoPu>() is { } manual)
             await manual.KnifeSpent(context, spent, source);
+        if (spent > 0 && player.Creature.GetPower<ChengShiPower>() is { Amount: > 0 } restore)
+        {
+            restore.FlashEffect();
+            await GainKnife(context, player, restore.Amount, source);
+        }
         return spent;
     }
 
@@ -57,6 +69,24 @@ public static class HaaLouLingCombatRules
         creature.GetPowerAmount<GuiYuanPower>() + creature.GetPowerAmount<GuiYuanPlusPower>();
 
     public static bool CanExceedGuiYuanLimit(Creature? giver) => giver?.HasPower<GuiYuBenChuPower>() == true;
+    internal static bool IsReceivingTransferredGuiYuan(Creature target) => GuiYuanTransferTarget.Value == target;
+
+    internal static async Task ReceiveTransferredGuiYuan(PlayerChoiceContext context, Creature target, int amount, CardModel source)
+    {
+        if (!target.IsAlive || target.HasPower<KaiShuiBaiCaiPower>()) return;
+        var previous = GuiYuanTransferTarget.Value;
+        GuiYuanTransferTarget.Value = target;
+        try
+        {
+            var existing = target.Powers.OfType<GuiYuanBasePower>().FirstOrDefault();
+            if (existing != null) await PowerCmd.ModifyAmount(context, existing, amount, null, source);
+            else if (target.CombatState!.Players.Any(player => player.GetRelic<DaNuoGuiMian>() != null))
+                await PowerCmd.Apply<GuiYuanPlusPower>(context, target, amount, null, source);
+            else
+                await PowerCmd.Apply<GuiYuanPower>(context, target, amount, null, source);
+        }
+        finally { GuiYuanTransferTarget.Value = previous; }
+    }
 
     public static async Task GiveGuiYuan(PlayerChoiceContext context, Creature target, int amount, Creature giver, CardModel? source = null)
     {

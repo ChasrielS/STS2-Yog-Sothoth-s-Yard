@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace YogSothothsYard.Scripts;
@@ -9,10 +10,12 @@ public sealed class TuPoPingJing : HaaLouLingCard
 {
     public TuPoPingJing() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override bool UsesKnife => true;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 0)];
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await Apply<TuPoPingJingPower>(context, 1);
+        await GainKnife(context, DynamicVars["Amount"].IntValue);
     }
 
     protected override void OnUpgrade()
