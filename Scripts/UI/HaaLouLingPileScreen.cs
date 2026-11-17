@@ -61,6 +61,7 @@ public static class HaaLouLingPileScreen
     )
     {
         var grid = screen.GetNode<NCardGrid>("CardGrid");
+        AddCookingPortrait(screen, grid);
         grid.Connect(
             NCardGrid.SignalName.HolderPressed,
             Callable.From<NCardHolder>(holder => OnRecipePressed(recipePile, holder))
@@ -72,6 +73,26 @@ public static class HaaLouLingPileScreen
         }));
 
         screen.AddChild(NCookingRecipeFilter.Create(screen, recipePile));
+    }
+
+    private static void AddCookingPortrait(NCardPileScreen screen, NCardGrid grid)
+    {
+        var portrait = new TextureRect
+        {
+            Name = "CookingBackgroundPortrait",
+            Texture = GD.Load<Texture2D>("res://images/ui/cooking/haa_lou_ling_portrait.png"),
+            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+            SelfModulate = new Color(0.54f, 0.59f, 0.58f, 0.58f)
+        };
+        screen.AddChild(portrait);
+        screen.MoveChild(portrait, grid.GetIndex());
+        portrait.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomRight);
+        portrait.OffsetLeft = -662f;
+        portrait.OffsetTop = -905f;
+        portrait.OffsetRight = 243f;
+        portrait.OffsetBottom = 0f;
     }
 
     private static void OnRecipePressed(CookingRecipePile recipePile, NCardHolder holder)

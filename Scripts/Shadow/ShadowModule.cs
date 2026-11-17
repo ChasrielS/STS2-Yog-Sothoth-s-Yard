@@ -1,4 +1,5 @@
 using STS2RitsuLib.Patching.Core;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace YogSothothsYard.Scripts.Shadow;
 
@@ -11,6 +12,10 @@ internal static class ShadowModule
         ShadowCardDiscovery.Register();
         NShadowSelector.Register();
         NShadowScreenEdges.Register();
+        ExternalAssetOverrideRegistry.RegisterPowerIconTextureProvider(Entry.ModId,
+            static power => power is ShadowErosionRankPower ? ShadowErosionIcons.Small : null);
+        ExternalAssetOverrideRegistry.RegisterPowerBigIconTextureProvider(Entry.ModId,
+            static power => power is ShadowErosionRankPower ? ShadowErosionIcons.Large : null);
 
         Entry.Patcher.RegisterPatch<ShadowAscensionTextPatch>();
         Entry.Patcher.RegisterPatch<ShadowBoneTeaPatch>();
@@ -23,6 +28,10 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<ShadowErosionModelTipsPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardInspectDisplayPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardInspectPatch>();
+        Entry.Patcher.RegisterPatch<ShadowCardLibraryControlsPatch>();
+        Entry.Patcher.RegisterPatch<ShadowCardLibraryFilterPatch>();
+        Entry.Patcher.RegisterPatch<ShadowCardLibraryVisibilityPatch>();
+        Entry.Patcher.RegisterPatch<ShadowCardLibraryInspectPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardRewardsPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardSeenPatch>();
         Entry.Patcher.RegisterPatch<ShadowUnlockAllCardsPatch>();
@@ -32,6 +41,7 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<ShadowCardVisualPatch>();
         Entry.Patcher.RegisterPatch<CombinedCursePileSelectionPatch>();
         Entry.Patcher.RegisterPatch<YuanYangFengHuanIntentPatch>();
+        Entry.Patcher.RegisterPatch<ShadowCombatChoicePatch>();
         Entry.Patcher.RegisterPatch<ShadowCombatGenerationPatch>();
         Entry.Patcher.RegisterPatch<ShadowDeckAdditionPatch>();
         Entry.Patcher.RegisterPatch<ShadowDiscourtesyPatch>();
@@ -41,6 +51,7 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<ShadowDreamCatcherPatch>();
         Entry.Patcher.RegisterPatch<ShadowDreamCatcherSelectionPatch>();
         Entry.Patcher.RegisterPatch<ShadowErosionIntentVisualPatch>();
+        Entry.Patcher.RegisterPatch<ShadowErosionRankPowerPatch>();
         Entry.Patcher.RegisterPatch<ShadowErosionTipSetPatch>();
         Entry.Patcher.RegisterPatch<ShadowEventChoicePatch>();
         Entry.Patcher.RegisterPatch<ShadowEventCombatRewardsPatch>();

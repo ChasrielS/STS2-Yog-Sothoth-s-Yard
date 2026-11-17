@@ -75,14 +75,18 @@ public sealed class ShadowMonsterVisualPatch : IPatchMethod
     private static readonly StringName[] NativeTintParameters = ["h", "s", "v"];
     private static Shader? _normalShader;
     private static Shader? _additiveShader;
+    private static ShaderMaterial? _groundMist;
 
     public static string PatchId => "yog_sothoths_yard_shadow_monster_visual";
     public static ModPatchTarget[] GetTargets() => [new(typeof(NCreature), nameof(NCreature._Ready), Type.EmptyTypes)];
 
     public static void Postfix(NCreature __instance)
     {
-        if (__instance.Entity.Monster is not { } monster || ShadowMonsterRules.Rank(monster) != 1 ||
-            __instance.Visuals.SpineBody is not { } spine ||
+        if (!__instance.Entity.IsEnemy || __instance.Entity.Monster is not { } monster ||
+            ShadowMonsterRules.Rank(monster) != 1) return;
+
+        AddGroundMist(__instance.Visuals);
+        if (__instance.Visuals.SpineBody is not { } spine ||
             ShadowMonsterErosionMarks.For(monster.Id.Entry) is not { } marks) return;
 
         var normal = _normalShader ??= GD.Load<Shader>("res://shaders/shadow/monster_erosion.gdshader");
@@ -98,6 +102,34 @@ public sealed class ShadowMonsterVisualPatch : IPatchMethod
             var cocoon = new MegaSprite(cocoonNode);
             cocoon.SetNormalMaterial(CreateMaterial(normal, ShadowMonsterErosionMarks.BowlbugCocoon, cocoon.GetNormalMaterial()));
         }
+    }
+
+    private static void AddGroundMist(NCreatureVisuals visuals)
+    {
+        var bounds = visuals.Bounds;
+        var width = Mathf.Clamp(bounds.Size.X * 1.9f, 245f, 960f);
+        var height = Mathf.Clamp(width * 0.255f, 66f, 166f);
+        var centerX = bounds.Position.X + bounds.Size.X * 0.5f;
+        // The encounter places the visuals' origin on the floor, independently of the animated body.
+        var mist = new ColorRect
+        {
+            Name = "YardShadowGroundMist",
+            Position = new Vector2(centerX - width * 0.5f, -height * 0.54f),
+            Size = new Vector2(width, height),
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+            ShowBehindParent = true,
+            Material = _groundMist ??= CreateGroundMistMaterial()
+        };
+        visuals.AddChild(mist);
+        visuals.MoveChild(mist, 0);
+        mist.SetInstanceShaderParameter("phase_offset", (float)(mist.GetInstanceId() % 241) / 43f);
+    }
+
+    private static ShaderMaterial CreateGroundMistMaterial()
+    {
+        var material = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/shadow/monster_ground_mist.gdshader") };
+        material.SetShaderParameter("smoke_noise", GD.Load<Texture2D>("res://shaders/shadow/smoke_noise.tres"));
+        return material;
     }
 
     private static ShaderMaterial CreateMaterial(Shader shader, IReadOnlyList<ShadowMonsterErosionMark> marks, Material? original)

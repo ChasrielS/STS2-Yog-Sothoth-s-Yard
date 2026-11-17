@@ -84,8 +84,9 @@ internal static partial class ShadowCardRules
         Add<YiDaoLiWei>(rules, 1, D(35, 45), V("KnifeGain", 3, 4));
         Add<YiDaoLiWei>(rules, 2, D(40, 50), V("KnifeLimit", 1, 2), V("KnifeGain", 4, 5));
         Add<YiDaoLiWei>(rules, 3, D(45, 55), V("KnifeLimit", 2), V("KnifeGain", 5));
-        Add<WuWeiJuQuan>(rules, 2, Extra(2, 3));
-        Add<WuWeiJuQuan>(rules, 3, Extra(3, 4));
+        Add<WuWeiJuQuan>(rules, 1, Base(13, 16), Extra(4, 6));
+        Add<WuWeiJuQuan>(rules, 2, Base(14, 17), Extra(5, 8));
+        Add<WuWeiJuQuan>(rules, 3, Base(15, 18), Extra(7, 10));
         Add<ZaiLaiYiLan>(rules, 3);
         Add<GuoWanPiaoPen>(rules, 2, A(2, 3));
         Add<GuoWanPiaoPen>(rules, 3, A(3, 4));
@@ -224,9 +225,9 @@ internal static partial class ShadowCardRules
         Add<YuBo>(rules, 1, V("Ratio", 120));
         Add<YuBo>(rules, 2, V("Ratio", 150));
         Add<YuBo>(rules, 3, V("Ratio", 200));
-        Add<ShanLinTanSuo>(rules, 1, V("Increase", 3, 4));
-        Add<ShanLinTanSuo>(rules, 2, V("Increase", 4, 6));
-        Add<ShanLinTanSuo>(rules, 3, V("Increase", 6, 9));
+        Add<ShanLinTanSuo>(rules, 1, V("Increase", 4, 5));
+        Add<ShanLinTanSuo>(rules, 2, V("Increase", 5, 7));
+        Add<ShanLinTanSuo>(rules, 3, V("Increase", 7, 10));
         Add<LaoNiDanDai>(rules, 1, C(2, 2), V("Energy", 1, 2));
         Add<LaoNiDanDai>(rules, 2, C(2, 3), V("Energy", 2));
         Add<LaoNiDanDai>(rules, 3, C(3, 3), V("Energy", 2, 3));

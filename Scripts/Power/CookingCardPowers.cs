@@ -167,14 +167,15 @@ public sealed class FenNiYiFenPower : HaaLouLingPower
         get
         {
             var text = base.Description;
-            text.Add("Amount", Amount);
-            var all = IsMutable && RecipientId.Length == 0;
-            var recipient = IsMutable && !all ? Recipients.FirstOrDefault() : null;
-            text.Add("AllPlayers", all);
-            text.Add("Recipient", recipient == null ? "队友" : PlatformUtil.GetPlayerName(RunManager.Instance.NetService.Platform, recipient.NetId));
+            var allPlayers = IsMutable && RecipientId.Length == 0;
+            var recipient = IsMutable && !allPlayers ? Recipients.FirstOrDefault() : null;
+            text.Add("Amount", IsMutable ? Amount : 1);
+            text.Add("Recipient", recipient != null
+                ? PlatformUtil.GetPlayerName(RunManager.Instance.NetService.Platform, recipient.NetId)
+                : new LocString("powers", Id.Entry + (allPlayers ? ".allRecipients" : ".singleRecipient")).GetFormattedText());
             return text;
         }
     }
-    internal IEnumerable<Player> Recipients => Owner.CombatState!.Players.Where(player => player.Creature != Owner &&
-        (RecipientId.Length == 0 || player.NetId.ToString() == RecipientId));
+    internal IEnumerable<Player> Recipients => Owner?.CombatState?.Players.Where(player => player.Creature != Owner &&
+        (RecipientId.Length == 0 || player.NetId.ToString() == RecipientId)) ?? [];
 }

@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -17,6 +18,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Patching.Models;
 
@@ -402,6 +404,31 @@ public sealed class ShadowCombatGenerationPatch : IPatchMethod
     }
 
     public sealed record Options(Player Player, int NativeCount, int Count);
+}
+
+public sealed class ShadowCombatChoicePatch : IPatchMethod
+{
+    public static string PatchId => "yog_sothoths_yard_shadow_combat_choice";
+    public static ModPatchTarget[] GetTargets() =>
+        [new(typeof(CardSelectCmd), nameof(CardSelectCmd.FromChooseACardScreen),
+            [typeof(PlayerChoiceContext), typeof(IReadOnlyList<CardModel>), typeof(Player), typeof(bool)])];
+
+    public static bool Prefix(PlayerChoiceContext context, IReadOnlyList<CardModel> cards, Player player,
+        bool canSkip, ref Task<CardModel?> __result)
+    {
+        if (cards.Count <= 3 || ShadowCombatGenerationPatch.Current.Value?.Player != player) return true;
+        __result = ChooseFromGrid(context, cards, player, canSkip);
+        return false;
+    }
+
+    private static async Task<CardModel?> ChooseFromGrid(PlayerChoiceContext context, IReadOnlyList<CardModel> cards,
+        Player player, bool canSkip)
+    {
+        if (LocalContext.IsMe(player))
+            foreach (var card in cards) SaveManager.Instance.MarkCardAsSeen(card);
+        var prefs = new CardSelectorPrefs(NShadowSelector.Loc("CHOOSE_GENERATED_CARD"), canSkip ? 0 : 1, 1);
+        return (await CardSelectCmd.FromSimpleGrid(context, cards, player, prefs)).FirstOrDefault();
+    }
 }
 
 public sealed class ShadowGigantificationPatch : IPatchMethod

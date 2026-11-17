@@ -37,7 +37,7 @@ internal static partial class ShadowMonsterRules
         ["LEAF_SLIME_M"] = new(5, 2, 4, "CLUMP_SHOT"),
         ["TWIG_SLIME_S"] = new(5, 1, 2, "TACKLE_MOVE"),
         ["TWIG_SLIME_M"] = new(5, 2, 4, "POKEY_POUNCE_MOVE"),
-        ["FLYCONID"] = new(10, 8, 12, "VULNERABLE_SPORES_MOVE"),
+        ["FLYCONID"] = new(10, 8, 12, "SMASH_MOVE"),
         ["BRUTE_RUBY_RAIDER"] = new(10, 3, 6, "BEAT_MOVE"),
         ["ASSASSIN_RUBY_RAIDER"] = new(10, 2, 4, "KILLSHOT_MOVE"),
         ["AXE_RUBY_RAIDER"] = new(10, 5, 8, "BIG_SWING"),
@@ -47,25 +47,25 @@ internal static partial class ShadowMonsterRules
         ["EYE_WITH_TEETH"] = new(10, 0, 0),
         ["MAWLER"] = new(10, 10, 20, "RIP_AND_TEAR_MOVE"),
         ["FUZZY_WURM_CRAWLER"] = new(10, 8, 16),
-        ["INKLET"] = new(10, 5, 10, "WHIRLWIND_MOVE"),
+        ["INKLET"] = new(10, 5, 10, "PIERCING_GAZE_MOVE"),
         ["SNAPPING_JAXFRUIT"] = new(10, 3, 6, "ENERGY_ORB_MOVE"),
-        ["SLITHERING_STRANGLER"] = new(0, 5, 8, "CONSTRICT"),
+        ["SLITHERING_STRANGLER"] = new(0, 5, 8, "LASH"),
         ["VINE_SHAMBLER"] = new(10, 15, 22, "CHOMP_MOVE"),
         ["CUBEX_CONSTRUCT"] = new(10, 15, 22, "EXPEL_MOVE"),
-        ["TOADPOLE"] = new(5, 4, 8, "WHIRL_MOVE"),
+        ["TOADPOLE"] = new(5, 4, 8, "SPIKE_SPIT_MOVE"),
         ["DAMP_CULTIST"] = new(0, 3, 5, "DARK_STRIKE_MOVE"),
         ["CALCIFIED_CULTIST"] = new(10, 3, 5, "DARK_STRIKE_MOVE"),
         ["GREMLIN_MERC"] = new(5, 15, 22, "HEHE_MOVE"),
         ["FAT_GREMLIN"] = new(10, 0, 5),
         ["SNEAKY_GREMLIN"] = new(10, 5, 10, "TACKLE_MOVE"),
-        ["SEAPUNK"] = new(10, 8, 12, "BUBBLE_BURP_MOVE"),
-        ["FOSSIL_STALKER"] = new(0, 15, 22),
+        ["SEAPUNK"] = new(10, 8, 12, "SEA_KICK_MOVE"),
+        ["FOSSIL_STALKER"] = new(0, 15, 22, "LATCH_MOVE"),
         ["LIVING_FOG"] = new(10, 6, 9, "SUPER_GAS_BLAST_MOVE"),
         ["GAS_BOMB"] = new(10, 10, 15, "EXPLODE_MOVE"),
-        ["CORPSE_SLUG"] = new(0, 8, 12, "GOOP_MOVE"),
-        ["TWO_TAILED_RAT"] = new(10, 5, 10, "SCREECH_MOVE"),
+        ["CORPSE_SLUG"] = new(0, 8, 12, "GLOMP_MOVE"),
+        ["TWO_TAILED_RAT"] = new(10, 5, 10, "SCRATCH_MOVE"),
         ["SEWER_CLAM"] = new(5, 10, 20, "JET_MOVE"),
-        ["HAUNTED_SHIP"] = new(5, 6, 9, "STOMP_MOVE"),
+        ["HAUNTED_SHIP"] = new(5, 6, 9, "SWIPE_MOVE"),
         ["SLUDGE_SPINNER"] = new(10, 8, 12, "SLAM_MOVE"),
         ["PUNCH_CONSTRUCT"] = new(10, 15, 22, "STRONG_PUNCH_MOVE"),
         ["TUNNELER"] = new(10, 8, 16, "BELOW_MOVE", "FROM_BELOW_MOVE"),
@@ -207,6 +207,7 @@ internal static partial class ShadowMonsterRules
     {
         await original;
         if (creature.Monster is not { } monster || Rank(monster) is not (> 0 and var rank)) return;
+        if (creature.IsEnemy) ShadowErosionRankPower.AddTo(creature, rank);
         var stronger = creature.CombatState?.RunState.AscensionLevel >= 8;
         var context = new ThrowingPlayerChoiceContext();
         switch (monster.Id.Entry)

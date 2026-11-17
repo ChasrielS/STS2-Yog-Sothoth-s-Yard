@@ -18,9 +18,10 @@ public sealed class YardStory : ModStoryTemplate
 
     internal static void RegisterTimelineLayout()
     {
-        // 在门扉时期之后分配独立列；原版位置 0 在最下方。
+        // 在原版纪元及其预留列之后分配独立列。
+        var lastVanillaEra = Enum.GetValues<EpochEra>().Max();
         ModTimelineLayoutRegistry.RegisterAutoTimelineSlotAfterEraColumn(
-            typeof(YiTongGuiJiaEpoch), EpochEra.Invitation7, Entry.ModId);
+            typeof(YiTongGuiJiaEpoch), lastVanillaEra, Entry.ModId);
         var era = new YiTongGuiJiaEpoch().Era;
         ModTimelineLayoutRegistry.RegisterTimelineSlot(typeof(ShenZhiZhongEpoch), era, 4, Entry.ModId);
         ModTimelineLayoutRegistry.RegisterTimelineSlot(typeof(YongHengZhiWenEpoch), era, 3, Entry.ModId);

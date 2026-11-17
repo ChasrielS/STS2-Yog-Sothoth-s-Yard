@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -17,6 +18,7 @@ public sealed class ChongXinPeiCai : HaaLouLingCard
     {
         var selected = await HaaLouLingCardChoices.SelectOwnedNonRareIngredients(context, this);
         await HaaLouLingCardChoices.TransformIngredients(context, this, selected);
+        await CardPileCmd.Draw(context, 1, Owner);
     }
 
     protected override void OnUpgrade()

@@ -20,7 +20,8 @@ public sealed class ShadowCardVisualPatch : IPatchMethod
     {
         if (!__instance.IsNodeReady()) return;
         var card = __instance.Model;
-        var rank = card != null && __instance.Visibility == ModelVisibility.Visible ? ShadowRanks.Of(card) : 0;
+        var rank = card != null && __instance.Visibility is (ModelVisibility.Visible or ModelVisibility.NotSeen)
+            ? ShadowRanks.Of(card) : 0;
         if (rank == 0)
         {
             if (Visuals.TryGetValue(__instance, out var old))
@@ -36,7 +37,7 @@ public sealed class ShadowCardVisualPatch : IPatchMethod
         visual.Overlay.SetInstanceShaderParameter("erosion_rank", rank);
 
         var amount = ShadowRanks.CardCost(card!, rank);
-        visual.Icon.Visible = amount > 0;
+        visual.Icon.Visible = amount > 0 && __instance.Visibility == ModelVisibility.Visible;
         visual.Label.SetTextAutoSize(amount.ToString());
         visual.Icon.Position = visual.Energy.Position + Vector2.Down * (visual.Energy.Size.Y * 0.72f);
         visual.Icon.Size = visual.Energy.Size;
@@ -53,9 +54,6 @@ public sealed class ShadowCardVisualPatch : IPatchMethod
     {
         var frame = card.GetNode<TextureRect>("%Frame").GetRect();
         var bounds = frame.Grow(18f);
-        var text = card.GetNode<Control>("%DescriptionLabel").GetRect().Grow(2f);
-        var textStart = text.Position - frame.GetCenter();
-        var textEnd = text.End - frame.GetCenter();
         var overlay = new ColorRect
         {
             Name = "YardShadowFrame",
@@ -66,7 +64,6 @@ public sealed class ShadowCardVisualPatch : IPatchMethod
         };
         card.Body.AddChild(overlay);
         card.Body.MoveChild(overlay, card.GetNode<MegaLabel>("%TitleLabel").GetIndex());
-        overlay.SetInstanceShaderParameter("description_bounds", new Vector4(textStart.X, textStart.Y, textEnd.X, textEnd.Y));
         overlay.SetInstanceShaderParameter("phase_offset", (float)(card.GetInstanceId() % 307) / 41f);
 
         var energy = card.GetNode<TextureRect>("%EnergyIcon");

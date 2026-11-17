@@ -1,10 +1,13 @@
+using System.Runtime.CompilerServices;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.addons.mega_text;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.UI;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.Fonts;
+using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
@@ -14,6 +17,7 @@ using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
+using STS2RitsuLib.Networking.Sidecar;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
 
@@ -26,6 +30,10 @@ public partial class NShadowSelector : Control
     private const string RightArrow = "HBoxContainer/RightArrowContainer/RightArrow";
     private static readonly AccessTools.FieldRef<NAscensionPanel, bool> ArrowsVisible =
         AccessTools.FieldRefAccess<NAscensionPanel, bool>("_arrowsVisible");
+    private static readonly RitsuLibSidecarMessageDescriptor<int> PreviewMessage = new(
+        Entry.ModId, "shadow_lobby_preview", static level => [(byte)(level + 1)],
+        static data => data.Length == 1 ? data[0] - 1 : -1);
+    private static readonly ConditionalWeakTable<StartRunLobby, Preview> ReceivedPreviews = new();
 
     private NAscensionPanel _ascension = null!;
     private NAscensionPanel _panel = null!;
@@ -36,12 +44,29 @@ public partial class NShadowSelector : Control
     private bool _refreshing;
     private bool? _isClient;
     private (StartRunLobby Lobby, string Character)? _selectionOwner;
+    private readonly Dictionary<ulong, int> _sentPreviews = [];
+    private IDisposable? _previewSubscription;
+    private StartRunLobby? _hostingLobby;
+    private double _previewRetry;
+    private int _lastPreview = -1;
 
     internal static void Register() => ModNodeAttachmentRegistry.For(Entry.ModId)
         .RegisterReadyChild<NCharacterSelectScreen, NShadowSelector>(
             "shadow_difficulty", static _ => new NShadowSelector());
 
     internal static LocString Loc(string key) => new("gameplay_ui", LocPrefix + key);
+
+    internal static int LobbyPreview(StartRunLobby lobby) =>
+        ReceivedPreviews.TryGetValue(lobby, out var preview) ? preview.Level : -1;
+
+    public override void _EnterTree() =>
+        _previewSubscription = RitsuLibSidecarTypedMessageRegistry.Subscribe(PreviewMessage, ReceivePreview);
+
+    public override void _ExitTree()
+    {
+        _previewSubscription?.Dispose();
+        SetHostingLobby(null);
+    }
 
     public override void _Ready()
     {
@@ -88,6 +113,7 @@ public partial class NShadowSelector : Control
         {
             if (!_panel.IsVisibleInTree()) HideTip();
         };
+        _panel.Hide();
     }
 
     public override void _Process(double delta)
@@ -95,6 +121,7 @@ public partial class NShadowSelector : Control
         if (GetParent() is not NCharacterSelectScreen { Lobby: { } lobby } screen || !screen.IsVisibleInTree())
         {
             _selectionOwner = null;
+            SetHostingLobby(null);
             _panel.Hide();
             return;
         }
@@ -103,11 +130,15 @@ public partial class NShadowSelector : Control
         ShadowRun.SyncEligibility(lobby, eligible);
         var canSelect = ShadowRun.CanSelect(lobby);
         var isClient = lobby.NetService.Type == NetGameType.Client;
-        RestoreSelection(lobby, canSelect && !isClient);
-        var level = ShadowRun.SelectedLevel(lobby);
+        if (!isClient) RestoreSelection(lobby, canSelect);
+        var level = isClient ? LobbyPreview(lobby) : ShadowRun.SelectedLevel(lobby);
         var seenIntro = SaveManager.Instance.SeenPopup(ShadowRun.IntroPopup);
+        var show = eligible && seenIntro && (isClient ? level >= 0 : canSelect && _ascension.Visible);
 
-        if (!eligible || !seenIntro || (isClient ? level == 0 : !canSelect || !_ascension.Visible))
+        SetHostingLobby(lobby.NetService.Type == NetGameType.Host ? lobby : null);
+        if (_hostingLobby != null) SendPreview(_hostingLobby, show ? level : -1, delta);
+
+        if (!show)
         {
             _panel.Hide();
             if (eligible && !seenIntro && NModalContainer.Instance is { OpenModal: null } modal)
@@ -128,12 +159,51 @@ public partial class NShadowSelector : Control
             if (animate) _panel.AnimIn();
         }
 
-        if (!_nativeLeft.IsEnabled && !_nativeRight.IsEnabled) _panel.Disable();
+        if (isClient || (!_nativeLeft.IsEnabled && !_nativeRight.IsEnabled)) _panel.Disable();
         else
         {
             _left.Enable();
             _right.Enable();
         }
+    }
+
+    private void ReceivePreview(RitsuLibSidecarTypedDispatchContext<int> message)
+    {
+        if (message.IsHostIngest || message.Message < -1 || message.Message > ShadowRun.MaxLevel) return;
+        if (GetParent() is NCharacterSelectScreen { Lobby: { NetService: NetClientGameService { IsConnected: true } client } lobby }
+            && message.SenderNetId == client.HostNetId)
+            ReceivedPreviews.GetValue(lobby, static _ => new Preview()).Level = message.Message;
+    }
+
+    private void SetHostingLobby(StartRunLobby? lobby)
+    {
+        if (_hostingLobby == lobby) return;
+        if (_hostingLobby != null) _hostingLobby.PlayerDisconnected -= ForgetPreview;
+        _hostingLobby = lobby;
+        if (_hostingLobby != null) _hostingLobby.PlayerDisconnected += ForgetPreview;
+        _sentPreviews.Clear();
+        _previewRetry = 0;
+    }
+
+    private void ForgetPreview(StartRunLobbyPlayer player) => _sentPreviews.Remove(player.id);
+
+    private void SendPreview(StartRunLobby lobby, int level, double delta)
+    {
+        _previewRetry -= delta;
+        if (level == _lastPreview && _previewRetry > 0) return;
+        _lastPreview = level;
+        _previewRetry = 0.2;
+        foreach (var player in lobby.Players)
+        {
+            if (player.id == lobby.NetService.NetId || _sentPreviews.GetValueOrDefault(player.id, -2) == level) continue;
+            if (RitsuLibSidecarTypedMessageRegistry.SendToPeer(lobby.NetService, player.id, PreviewMessage, level))
+                _sentPreviews[player.id] = level;
+        }
+    }
+
+    private sealed class Preview
+    {
+        internal int Level = -1;
     }
 
     private void RestoreSelection(StartRunLobby lobby, bool canSelect)

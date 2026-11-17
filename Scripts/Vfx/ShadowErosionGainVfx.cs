@@ -69,8 +69,8 @@ public partial class ShadowErosionGainVfx : Node2D
     {
         var bounds = _target.Hitbox.Size;
         GlobalPosition = _target.GetBottomOfHitbox();
-        _mist.Size = bounds * new Vector2(1.25f, 1.1f);
-        _mist.Position = -_mist.Size * new Vector2(0.5f, 0.93f);
+        _mist.Size = bounds * new Vector2(1.25f, 1.45f);
+        _mist.Position = -_mist.Size * new Vector2(0.5f, 0.945f);
         _material.SetShaderParameter(Progress, _elapsed / Duration);
     }
 }

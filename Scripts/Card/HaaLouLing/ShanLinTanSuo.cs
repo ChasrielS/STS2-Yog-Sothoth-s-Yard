@@ -11,7 +11,8 @@ namespace YogSothothsYard.Scripts;
 public sealed class ShanLinTanSuo : HaaLouLingCard
 {
     public ShanLinTanSuo() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1), new IntVar("Increase", 2)];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1), new IntVar("Increase", 3)];
 
     private int _additionalIngredients;
 

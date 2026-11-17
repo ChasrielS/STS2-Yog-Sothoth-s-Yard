@@ -1,4 +1,5 @@
 using Godot;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -43,7 +44,7 @@ public partial class NShadowScreenEdges : ColorRect
         var level = GetParent() switch
         {
             NCharacterSelectScreen { Lobby: { } lobby } when lobby.LocalPlayer.character is HaaLouLing =>
-                ShadowRun.SelectedLevel(lobby),
+                lobby.NetService.Type == NetGameType.Client ? NShadowSelector.LobbyPreview(lobby) : ShadowRun.SelectedLevel(lobby),
             NMapScreen { IsOpen: true } => ShadowRun.Level(RunManager.Instance.DebugOnlyGetState()),
             _ => 0
         };

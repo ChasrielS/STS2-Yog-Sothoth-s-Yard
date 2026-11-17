@@ -1,4 +1,7 @@
 {
+  "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.title": "侵蚀{Rank}",
+  "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.description": "受[color=#796770]阴影[/color]轻度[color=#796770]侵蚀[/color]，\n数值、能力或意图得到了增强。",
+  "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.descriptionAdvanced": "受[color=#796770]阴影侵蚀[/color]，\n数值、能力或意图得到了增强。",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_TWO_TURN_ENERGY_POWER.title": "抢占先机",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_TWO_TURN_ENERGY_POWER.description": "在接下来的回合开始时获得能量。",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_TWO_TURN_ENERGY_POWER.smartDescription": "在接下来的回合开始时获得{Amount}点能量。",
@@ -83,7 +86,9 @@
   "YOG_SOTHOTH_S_YARD_POWER_GUI_YUAN_JUE_POWER.title": "归元诀",
   "YOG_SOTHOTH_S_YARD_POWER_GUI_YUAN_JUE_POWER.description": "翻[blue]{Amount}[/blue]倍你每回合第一次给予的[gold]归元[/gold]。",
   "YOG_SOTHOTH_S_YARD_POWER_FEN_NI_YI_FEN_POWER.title": "分你一份",
-  "YOG_SOTHOTH_S_YARD_POWER_FEN_NI_YI_FEN_POWER.description": "当你下[blue]{Amount}[/blue]道菜肴烹饪完成时，{AllPlayers:show:其他所有玩家|{Recipient}}也获得该菜肴的效果。",
+  "YOG_SOTHOTH_S_YARD_POWER_FEN_NI_YI_FEN_POWER.description": "当你下[blue]{Amount}[/blue]道菜肴烹饪完成时，{Recipient}也获得该菜肴的效果。",
+  "YOG_SOTHOTH_S_YARD_POWER_FEN_NI_YI_FEN_POWER.singleRecipient": "该玩家",
+  "YOG_SOTHOTH_S_YARD_POWER_FEN_NI_YI_FEN_POWER.allRecipients": "其他所有玩家",
   "YOG_SOTHOTH_S_YARD_POWER_DA_CHU_XING_TAI_POWER.title": "大厨形态",
   "YOG_SOTHOTH_S_YARD_POWER_DA_CHU_XING_TAI_POWER.description": "任一食材视为任意食材。",
   "YOG_SOTHOTH_S_YARD_POWER_SHUN_SHOU_TIAN_HUO_POWER.title": "顺手添火",
