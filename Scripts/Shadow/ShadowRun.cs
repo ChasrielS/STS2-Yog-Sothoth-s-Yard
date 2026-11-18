@@ -5,11 +5,11 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
-using MegaCrit.Sts2.Core.Platform;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib;
+using STS2RitsuLib.Content;
 using STS2RitsuLib.Data;
 using STS2RitsuLib.RunData;
 using STS2RitsuLib.Unlocks;
@@ -22,13 +22,12 @@ internal static class ShadowRun
     internal const int MaxLevel = 1;
     internal const int ErosionLimit = 1000;
     internal const string IntroPopup = "yog_sothoths_yard_shadow_unlocked";
-    private const string UnlockFlag = "yog_sothoths_yard_shadow_eligible";
+    private const string LegacyUnlockFlag = "yog_sothoths_yard_shadow_eligible";
     private const string PreferencesKey = "shadow_preferences";
     private static ModDataStore Preferences => RitsuLibFramework.GetDataStore(Entry.ModId);
 
     private static RunSavedData<ShadowSettings> _settings = null!;
     private static PlayerRunSavedData<ShadowPlayerState> _players = null!;
-    private static int? _checkedProfile;
 
     internal static void Register()
     {
@@ -37,30 +36,22 @@ internal static class ShadowRun
                 defaultFactory: static () => new ShadowPreferences(), autoCreateIfMissing: false);
         var store = RitsuLibFramework.GetRunSavedDataStore(Entry.ModId);
         var options = new RunSavedDataOptions { SyncLobbyOnChange = true };
-        _settings = store.Register("shadow", static () => new ShadowSettings(), options);
+        _settings = store.Register("shadow", static () => new ShadowSettings());
         _players = store.RegisterPerPlayer("shadow_player", static () => new ShadowPlayerState(), options);
-        RitsuLibFramework.SubscribeLifecycle<RunSavedDataPreparingEvent>(evt =>
+        RitsuLibFramework.SubscribeLifecycle<RunSavedDataLobbyStagingEvent>(evt =>
         {
-            var run = evt.RunState;
-            if (Level(run) > 0 && (run.GameMode != GameMode.Standard || run.IsCustomGame ||
-                run.Players.Any(player => player.Character is not HaaLouLing ||
-                    !_players.TryGet(run, player.NetId, out var state) || !state.Unlocked)))
-                _settings.Set(run, new ShadowSettings());
+            if (evt.Reason == RunSavedDataLobbyStagingReason.Committing && (!evt.IsMultiplayer || evt.IsHost))
+                CommitSelection(evt.Lobby);
         }, replayCurrentState: false);
         RitsuLibFramework.SubscribeLifecycle<RunLoadedEvent>(evt =>
         {
             foreach (var player in evt.RunState.Players) RestorePotions(player);
         }, replayCurrentState: false);
-        RitsuLibFramework.SubscribeLifecycle<RunEndedEvent>(evt =>
-        {
-            if (evt.IsVictory && evt.Run is { GameMode: GameMode.Standard, Ascension: 0, IsCustomGame: false } run &&
-                LocalContext.GetMe(run)?.CharacterId == ModelDb.GetId<HaaLouLing>())
-                SaveUnlock(SaveManager.Instance);
-        }, replayCurrentState: false);
+        RitsuLibFramework.SubscribeLifecycle<RunEndedEvent>(RecordVictory, replayCurrentState: false);
         ModUnlockRegistry.For(Entry.ModId).RegisterPostRunRule(PostRunEpochUnlockRule.Create(
             YinYingEpoch.EpochId,
             "以阴影1通关后获得阴影历史节点。",
-            context => context.IsVictory && context.CharacterId == ModelDb.GetId<HaaLouLing>() &&
+            context => context.IsVictory && IsYardCharacter(ModelDb.GetByIdOrNull<CharacterModel>(context.CharacterId)) &&
                 Level(RunManager.Instance.DebugOnlyGetState()) == 1));
     }
 
@@ -72,73 +63,103 @@ internal static class ShadowRun
     internal static int SelectedLevel(StartRunLobby lobby) =>
         _settings.Lobby.TryGet(lobby, out var data) ? data.Level : 0;
 
-    internal static int PreferredLevel(string character) => SaveManager.Instance.IsProfileInitialized
-        ? Preferences.Get<ShadowPreferences>(PreferencesKey).Levels.GetValueOrDefault(character) : 0;
+    internal static int PreferredLevel(StartRunLobby lobby) => SaveManager.Instance.IsProfileInitialized
+        ? Preferences.Get<ShadowPreferences>(PreferencesKey).GetPreferredLevel(SingleplayerCharacter(lobby)) : 0;
 
-    internal static void ChangeSelection(StartRunLobby lobby, int level)
+    internal static bool IsYardCharacter(CharacterModel? character) =>
+        character != null && ModContentRegistry.TryGetOwnerModId(character.GetType(), out var owner) && owner == Entry.ModId;
+
+    internal static int SyncLocalMaxLevel(StartRunLobby lobby)
     {
-        if (lobby.NetService.Type == NetGameType.Client || !CanSelect(lobby)) return;
-        level = Math.Clamp(level, 0, MaxLevel);
-        Select(lobby, level);
-        var character = lobby.LocalPlayer.character.Id.Entry;
-        if (!SaveManager.Instance.IsProfileInitialized || PreferredLevel(character) == level) return;
-        Preferences.Modify<ShadowPreferences>(PreferencesKey, preferences => preferences.Levels[character] = level);
-        Preferences.Save(PreferencesKey);
-    }
-
-    internal static bool IsLocalCharacterEligible(StartRunLobby lobby) =>
-        lobby.GameMode == GameMode.Standard && lobby.LocalPlayer.character is HaaLouLing && HasUnlocked();
-
-    internal static void SyncEligibility(StartRunLobby lobby, bool eligible)
-    {
+        var maxLevel = LocalMaxLevel(lobby);
         var id = lobby.NetService.NetId;
-        if (!_players.Lobby.TryGet(lobby, id, out var state) || state.Unlocked != eligible)
-            _players.Lobby.Set(lobby, id, new ShadowPlayerState { Unlocked = eligible });
+        if (!_players.Lobby.TryGet(lobby, id, out var state) || state.MaxLevel != maxLevel)
+            _players.Lobby.Set(lobby, id, new ShadowPlayerState { MaxLevel = maxLevel });
+        return maxLevel;
     }
 
-    internal static bool CanSelect(StartRunLobby lobby) =>
-        lobby.Players.Count > 0 && lobby.Players.All(player =>
-            player.character is HaaLouLing &&
-            _players.Lobby.TryGet(lobby, player.id, out var state) && state.Unlocked);
+    internal static int LobbyMaxLevel(StartRunLobby lobby) => SupportsShadow(lobby)
+        ? lobby.Players.Min(player => _players.Lobby.TryGet(lobby, player.id, out var state)
+            ? Math.Clamp(state.MaxLevel, 0, MaxLevel) : 0)
+        : 0;
 
     internal static void Select(StartRunLobby lobby, int level)
     {
         if (lobby.NetService.Type == NetGameType.Client) return;
-        level = CanSelect(lobby) ? Math.Clamp(level, 0, MaxLevel) : 0;
+        level = Math.Clamp(level, 0, LobbyMaxLevel(lobby));
         if (level != SelectedLevel(lobby))
             _settings.Lobby.Set(lobby, new ShadowSettings { Level = level });
     }
 
-    private static bool HasUnlocked()
+    private static bool SupportsShadow(StartRunLobby lobby) =>
+        lobby.GameMode == GameMode.Standard && !lobby.IsCustom && lobby.Players.Count > 0 &&
+        lobby.Players.All(player => IsYardCharacter(player.character));
+
+    private static string? SingleplayerCharacter(StartRunLobby lobby) =>
+        lobby.NetService.Type == NetGameType.Singleplayer ? lobby.LocalPlayer.character.Id.Entry : null;
+
+    private static int LocalMaxLevel(StartRunLobby lobby)
     {
         var save = SaveManager.Instance;
-        if (!save.IsProfileInitialized) return false;
-        if (save.SeenPopup(UnlockFlag)) return true;
-        var characterId = ModelDb.GetId<HaaLouLing>();
-        if (save.Progress.GetStatsForCharacter(characterId)?.MaxAscension > 0)
-            return true;
-        if (_checkedProfile == save.CurrentProfileId) return false;
-        _checkedProfile = save.CurrentProfileId;
-        foreach (var name in save.GetAllRunHistoryNames())
+        var character = lobby.LocalPlayer.character;
+        if (!save.IsProfileInitialized || lobby.GameMode != GameMode.Standard || lobby.IsCustom ||
+            !IsYardCharacter(character)) return 0;
+
+        var preferences = Preferences.Get<ShadowPreferences>(PreferencesKey);
+        if (preferences.HighestClearedLevel.HasValue) return UnlockedMaxLevel(preferences);
+
+        var previouslyUnlocked = save.SeenPopup(LegacyUnlockFlag) || save.SeenPopup(IntroPopup);
+        var ascension = lobby.NetService.Type == NetGameType.Singleplayer
+            ? save.Progress.GetStatsForCharacter(character.Id)?.MaxAscension ?? 0
+            : save.Progress.MaxMultiplayerAscension;
+        if (!previouslyUnlocked && ascension <= 0) return 0;
+
+        SavePreferences(data =>
         {
-            if (save.LoadRunHistory(name).SaveData is not
-                { Win: true, Ascension: 0, GameMode: GameMode.Standard, IsCustomGame: false } history)
-                continue;
-            var localId = PlatformUtil.GetLocalPlayerId(history.PlatformType);
-            if (!history.Players.Any(player => player.Character == characterId &&
-                    (history.Players.Count == 1 || player.Id == localId)))
-                continue;
-            SaveUnlock(save);
-            return true;
-        }
-        return false;
+            data.HighestClearedLevel = 0;
+            if (previouslyUnlocked)
+                data.MultiplayerLevel = data.Levels.GetValueOrDefault(ModelDb.GetId<HaaLouLing>().Entry);
+        });
+        return 1;
     }
 
-    private static void SaveUnlock(SaveManager save)
+    private static int UnlockedMaxLevel(ShadowPreferences preferences) =>
+        preferences.HighestClearedLevel is { } cleared ? Math.Clamp(cleared, 0, MaxLevel - 1) + 1 : 0;
+
+    private static void CommitSelection(StartRunLobby lobby)
     {
-        if (save.SeenPopup(UnlockFlag)) return;
-        save.MarkFtueAsComplete(UnlockFlag);
-        save.SaveProgressFile();
+        SyncLocalMaxLevel(lobby);
+        Select(lobby, SelectedLevel(lobby));
+        var selected = SelectedLevel(lobby);
+        if (!SupportsShadow(lobby) || !SaveManager.Instance.IsProfileInitialized || PreferredLevel(lobby) == selected) return;
+        SavePreferences(data => data.SetPreferredLevel(SingleplayerCharacter(lobby), selected));
+    }
+
+    private static void RecordVictory(RunEndedEvent evt)
+    {
+        var manager = RunManager.Instance;
+        if (!evt.IsVictory || !manager.ShouldSave || !SaveManager.Instance.IsProfileInitialized ||
+            manager.DebugOnlyGetState() is not { GameMode: GameMode.Standard, IsCustomGame: false } run ||
+            LocalContext.GetMe(run) is not { } player || !IsYardCharacter(player.Character)) return;
+
+        var level = Level(run);
+        var preferences = Preferences.Get<ShadowPreferences>(PreferencesKey);
+        if (level <= preferences.HighestClearedLevel.GetValueOrDefault()) return;
+
+        var previousMax = UnlockedMaxLevel(preferences);
+        var singleplayerCharacter = run.Players.Count == 1 ? player.Character.Id.Entry : null;
+        SavePreferences(data =>
+        {
+            data.HighestClearedLevel = level;
+            var max = UnlockedMaxLevel(data);
+            if (max > previousMax) data.SetPreferredLevel(singleplayerCharacter, max);
+        });
+    }
+
+    private static void SavePreferences(Action<ShadowPreferences> update)
+    {
+        Preferences.Modify(PreferencesKey, update);
+        Preferences.Save(PreferencesKey);
     }
 
     internal static int Erosion(Player player) =>
@@ -164,14 +185,15 @@ internal static class ShadowRun
         return true;
     }
 
-    internal static void SavePotions(Player player)
+    internal static Dictionary<int, ShadowPotionSave>? SavePotions(Player player)
     {
-        if (Level(player) == 0) return;
+        if (Level(player) == 0) return null;
         var ranks = new Dictionary<int, ShadowPotionSave>();
         for (var slot = 0; slot < player.PotionSlots.Count; slot++)
             if (player.PotionSlots[slot] is { } potion && ShadowRanks.Of(potion) is > 0 and var rank)
                 ranks.Add(slot, new ShadowPotionSave(potion.Id.Entry, rank));
         _players.Modify(player, state => state.Potions = ranks);
+        return ranks;
     }
 
     internal static void RestorePotions(Player player)
@@ -206,12 +228,24 @@ public sealed class ShadowSettings
 
 public sealed class ShadowPreferences
 {
+    // Null is locked. Zero means the profile has unlocked Shadow.
+    public int? HighestClearedLevel { get; set; }
     public Dictionary<string, int> Levels { get; set; } = [];
+    public int MultiplayerLevel { get; set; }
+
+    internal int GetPreferredLevel(string? singleplayerCharacter) => singleplayerCharacter == null
+        ? MultiplayerLevel : Levels.GetValueOrDefault(singleplayerCharacter);
+
+    internal void SetPreferredLevel(string? singleplayerCharacter, int level)
+    {
+        if (singleplayerCharacter == null) MultiplayerLevel = level;
+        else Levels[singleplayerCharacter] = level;
+    }
 }
 
 public sealed class ShadowPlayerState
 {
-    public bool Unlocked { get; set; }
+    public int MaxLevel { get; set; }
     public int Erosion { get; set; }
     public int StoredEnergy { get; set; }
     public int LastUnknownFloor { get; set; } = -1;

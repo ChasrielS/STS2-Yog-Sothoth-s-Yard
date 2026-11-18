@@ -5,7 +5,6 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.UI;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary;
@@ -30,12 +29,13 @@ public sealed class ShadowCardLibraryControlsPatch : IPatchMethod
     internal static int ActiveRank(NCardLibraryGrid grid) => Live.TryGetValue(grid, out var filters) ? filters.Rank : 0;
 
     public static void Prefix(NCardLibrary __instance, MethodBase __originalMethod, IRunState? ____runState,
-        NCardLibraryGrid ____grid, NLibraryStatTickbox ____viewUpgrades, NCardPoolFilter ____colorlessFilter,
-        Dictionary<CharacterModel, NCardPoolFilter> ____cardPoolFilters)
+        NCardLibraryGrid ____grid, NLibraryStatTickbox ____viewUpgrades,
+        Dictionary<NCardPoolFilter, Func<CardModel, bool>> ____poolFilters)
     {
         var show = __originalMethod.Name == "UpdateFilter" && ____runState is RunState run &&
-            ShadowRun.Level(run) > 0 && (____colorlessFilter.IsSelected ||
-                ____cardPoolFilters.Any(entry => entry.Key is HaaLouLing && entry.Value.IsSelected));
+            ShadowRun.Level(run) > 0 && ModelDb.AllCards.Any(card =>
+                card.ShouldShowInCardLibrary && ShadowCardRules.Available(card).Any() &&
+                ____poolFilters.Any(filter => filter.Key.IsSelected && filter.Value(card)));
         if (show)
             Live.GetValue(____grid, _ => new Filters(__instance, ____viewUpgrades)).SetVisible(true);
         else if (Live.TryGetValue(____grid, out var filters)) filters.SetVisible(false);
@@ -142,7 +142,7 @@ public sealed class ShadowCardLibraryFilterPatch : IPatchMethod
         var variants = new List<CardModel>();
         foreach (var card in ____allCards)
         {
-            if (card.Pool is not (HaaLouLingCardPool or ColorlessCardPool) || !ShadowCardRules.TryGet(card, rank, out _)) continue;
+            if (!ShadowCardRules.TryGet(card, rank, out _)) continue;
             var variant = (CardModel)card.MutableClone();
             ShadowRanks.Set(variant, rank);
             if (filter(variant)) variants.Add(variant);

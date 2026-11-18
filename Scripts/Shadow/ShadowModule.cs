@@ -10,6 +10,8 @@ internal static class ShadowModule
         ShadowRun.Register();
         ShadowRanks.Register();
         ShadowCardDiscovery.Register();
+        ShadowItemDiscovery.Register();
+        ShadowPotionNetwork.Register();
         NShadowSelector.Register();
         NShadowScreenEdges.Register();
         ExternalAssetOverrideRegistry.RegisterPowerIconTextureProvider(Entry.ModId,
@@ -34,7 +36,13 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<ShadowCardLibraryInspectPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardRewardsPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardSeenPatch>();
-        Entry.Patcher.RegisterPatch<ShadowUnlockAllCardsPatch>();
+        Entry.Patcher.RegisterPatch<ShadowUnlockAllVariantsPatch>();
+        Entry.Patcher.RegisterPatch<ShadowItemSeenPatch>();
+        Entry.Patcher.RegisterPatch<ShadowItemCollectionControlsPatch>();
+        Entry.Patcher.RegisterPatch<ShadowItemCollectionFocusPatch>();
+        Entry.Patcher.RegisterPatch<ShadowRelicCollectionFilterPatch>();
+        Entry.Patcher.RegisterPatch<ShadowRelicCollectionInspectPatch>();
+        Entry.Patcher.RegisterPatch<ShadowPotionLabFilterPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardTurnEndPatch>();
         Entry.Patcher.RegisterPatch<ShadowCardUpgradePatch>();
         Entry.Patcher.RegisterPatch<ShadowCardVariablesPatch>();
@@ -42,6 +50,7 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<CombinedCursePileSelectionPatch>();
         Entry.Patcher.RegisterPatch<YuanYangFengHuanIntentPatch>();
         Entry.Patcher.RegisterPatch<ShadowCombatChoicePatch>();
+        Entry.Patcher.RegisterPatch<ShadowPotionChoiceLimitPatch>();
         Entry.Patcher.RegisterPatch<ShadowCombatGenerationPatch>();
         Entry.Patcher.RegisterPatch<ShadowDeckAdditionPatch>();
         Entry.Patcher.RegisterPatch<ShadowDiscourtesyPatch>();
@@ -109,6 +118,8 @@ internal static class ShadowModule
         Entry.Patcher.RegisterPatch<ShadowPotionRestorePatch>();
         Entry.Patcher.RegisterPatch<ShadowPotionRewardClonePatch>();
         Entry.Patcher.RegisterPatch<ShadowPotionSavePatch>();
+        Entry.Patcher.RegisterPatch<ShadowPotionSyncReadPatch>();
+        Entry.Patcher.RegisterPatch<ShadowPotionSyncRelayPatch>();
         Entry.Patcher.RegisterPatch<ShadowPotionUsePatch>();
         Entry.Patcher.RegisterPatch<ShadowPotionVariablesPatch>();
         Entry.Patcher.RegisterPatch<ShadowQuestHatchPatch>();

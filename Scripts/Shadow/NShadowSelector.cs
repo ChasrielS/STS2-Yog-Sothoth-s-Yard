@@ -30,12 +30,12 @@ public partial class NShadowSelector : Control
     private const string RightArrow = "HBoxContainer/RightArrowContainer/RightArrow";
     private static readonly AccessTools.FieldRef<NAscensionPanel, bool> ArrowsVisible =
         AccessTools.FieldRefAccess<NAscensionPanel, bool>("_arrowsVisible");
-    private static readonly RitsuLibSidecarMessageDescriptor<int> PreviewMessage = new(
-        Entry.ModId, "shadow_lobby_preview", static level => [(byte)(level + 1)],
-        static data => data.Length == 1 ? data[0] - 1 : -1);
+    private static readonly RitsuLibSidecarMessageDescriptor<LobbyDifficulty> DifficultyMessage = new(
+        Entry.ModId, "shadow_lobby_difficulty",
+        static difficulty => [(byte)difficulty.Level, (byte)difficulty.MaxLevel],
+        static data => data.Length == 2 ? new LobbyDifficulty(data[0], data[1]) : new LobbyDifficulty(-1, -1));
     private static readonly ConditionalWeakTable<StartRunLobby, Preview> ReceivedPreviews = new();
 
-    private NAscensionPanel _ascension = null!;
     private NAscensionPanel _panel = null!;
     private NButton _nativeLeft = null!;
     private NButton _nativeRight = null!;
@@ -43,12 +43,14 @@ public partial class NShadowSelector : Control
     private NButton _right = null!;
     private bool _refreshing;
     private bool? _isClient;
-    private (StartRunLobby Lobby, string Character)? _selectionOwner;
-    private readonly Dictionary<ulong, int> _sentPreviews = [];
+    private int _displayedMaxLevel;
+    private (StartRunLobby Lobby, string? Character)? _selectionOwner;
+    private readonly Dictionary<(StartRunLobby Lobby, string Character), int> _singleplayerSelections = [];
+    private readonly Dictionary<ulong, LobbyDifficulty> _sentPreviews = [];
     private IDisposable? _previewSubscription;
     private StartRunLobby? _hostingLobby;
     private double _previewRetry;
-    private int _lastPreview = -1;
+    private LobbyDifficulty _lastPreview;
 
     internal static void Register() => ModNodeAttachmentRegistry.For(Entry.ModId)
         .RegisterReadyChild<NCharacterSelectScreen, NShadowSelector>(
@@ -56,11 +58,14 @@ public partial class NShadowSelector : Control
 
     internal static LocString Loc(string key) => new("gameplay_ui", LocPrefix + key);
 
-    internal static int LobbyPreview(StartRunLobby lobby) =>
-        ReceivedPreviews.TryGetValue(lobby, out var preview) ? preview.Level : -1;
+    internal static int DisplayedLobbyLevel(StartRunLobby lobby) => lobby.NetService.Type == NetGameType.Client
+        ? GetPreview(lobby).Level : ShadowRun.SelectedLevel(lobby);
+
+    private static LobbyDifficulty GetPreview(StartRunLobby lobby) =>
+        ReceivedPreviews.TryGetValue(lobby, out var preview) ? preview.Difficulty : default;
 
     public override void _EnterTree() =>
-        _previewSubscription = RitsuLibSidecarTypedMessageRegistry.Subscribe(PreviewMessage, ReceivePreview);
+        _previewSubscription = RitsuLibSidecarTypedMessageRegistry.Subscribe(DifficultyMessage, ReceivePreview);
 
     public override void _ExitTree()
     {
@@ -70,14 +75,14 @@ public partial class NShadowSelector : Control
 
     public override void _Ready()
     {
-        _ascension = GetParent().GetNode<NAscensionPanel>("%AscensionPanel");
-        _nativeLeft = _ascension.GetNode<NButton>(LeftArrow);
-        _nativeRight = _ascension.GetNode<NButton>(RightArrow);
+        var ascension = GetParent().GetNode<NAscensionPanel>("%AscensionPanel");
+        _nativeLeft = ascension.GetNode<NButton>(LeftArrow);
+        _nativeRight = ascension.GetNode<NButton>(RightArrow);
         MouseFilter = MouseFilterEnum.Ignore;
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         Callable.From(() =>
         {
-            if (IsInsideTree()) GetParent().MoveChild(this, _ascension.GetIndex());
+            if (IsInsideTree()) GetParent().MoveChild(this, ascension.GetIndex());
         }).CallDeferred();
 
         _panel = GD.Load<PackedScene>("res://scenes/screens/ascension_panel.tscn").Instantiate<NAscensionPanel>();
@@ -90,14 +95,14 @@ public partial class NShadowSelector : Control
         _panel.Initialize(MultiplayerUiMode.Client, GameMode.Standard);
         _panel.GetNode<Control>("%LeftTabIcon").Hide();
         _panel.GetNode<Control>("%RightTabIcon").Hide();
-        _panel.AnchorLeft = _ascension.AnchorLeft;
-        _panel.AnchorRight = _ascension.AnchorRight;
-        _panel.AnchorTop = _ascension.AnchorTop;
-        _panel.AnchorBottom = _ascension.AnchorBottom;
-        _panel.OffsetLeft = _ascension.OffsetLeft;
-        _panel.OffsetRight = _ascension.OffsetRight;
-        _panel.OffsetBottom = _ascension.OffsetTop - 12f;
-        _panel.OffsetTop = _panel.OffsetBottom - (_ascension.OffsetBottom - _ascension.OffsetTop);
+        _panel.AnchorLeft = ascension.AnchorLeft;
+        _panel.AnchorRight = ascension.AnchorRight;
+        _panel.AnchorTop = ascension.AnchorTop;
+        _panel.AnchorBottom = ascension.AnchorBottom;
+        _panel.OffsetLeft = ascension.OffsetLeft;
+        _panel.OffsetRight = ascension.OffsetRight;
+        _panel.OffsetBottom = ascension.OffsetTop - 12f;
+        _panel.OffsetTop = _panel.OffsetBottom - (ascension.OffsetBottom - ascension.OffsetTop);
         _panel.MouseFilter = MouseFilterEnum.Pass;
         _panel.GetNode<Control>("Background").MouseFilter = MouseFilterEnum.Ignore;
         var icon = _panel.GetNodeOrNull<TextureRect>("%AscensionIconStandard")
@@ -121,38 +126,38 @@ public partial class NShadowSelector : Control
         if (GetParent() is not NCharacterSelectScreen { Lobby: { } lobby } screen || !screen.IsVisibleInTree())
         {
             _selectionOwner = null;
+            _singleplayerSelections.Clear();
             SetHostingLobby(null);
             _panel.Hide();
             return;
         }
 
-        var eligible = ShadowRun.IsLocalCharacterEligible(lobby);
-        ShadowRun.SyncEligibility(lobby, eligible);
-        var canSelect = ShadowRun.CanSelect(lobby);
+        var localMaxLevel = ShadowRun.SyncLocalMaxLevel(lobby);
         var isClient = lobby.NetService.Type == NetGameType.Client;
-        if (!isClient) RestoreSelection(lobby, canSelect);
-        var level = isClient ? LobbyPreview(lobby) : ShadowRun.SelectedLevel(lobby);
+        var maxLevel = isClient ? GetPreview(lobby).MaxLevel : ShadowRun.LobbyMaxLevel(lobby);
+        if (!isClient) RestoreSelection(lobby, maxLevel);
+        var level = DisplayedLobbyLevel(lobby);
         var seenIntro = SaveManager.Instance.SeenPopup(ShadowRun.IntroPopup);
-        var show = eligible && seenIntro && (isClient ? level >= 0 : canSelect && _ascension.Visible);
 
         SetHostingLobby(lobby.NetService.Type == NetGameType.Host ? lobby : null);
-        if (_hostingLobby != null) SendPreview(_hostingLobby, show ? level : -1, delta);
+        if (_hostingLobby != null) SendPreview(_hostingLobby, new LobbyDifficulty(level, maxLevel), delta);
 
-        if (!show)
+        if (localMaxLevel == 0 || maxLevel == 0 || !seenIntro)
         {
             _panel.Hide();
-            if (eligible && !seenIntro && NModalContainer.Instance is { OpenModal: null } modal)
+            if (localMaxLevel > 0 && !seenIntro && NModalContainer.Instance is { OpenModal: null } modal)
                 ShadowUnlockPopup.Show(modal);
             return;
         }
 
-        if (!_panel.Visible || _panel.Ascension != level || _isClient != isClient)
+        if (!_panel.Visible || _panel.Ascension != level || _displayedMaxLevel != maxLevel || _isClient != isClient)
         {
             var animate = !_panel.Visible;
             _refreshing = true;
             _isClient = isClient;
+            _displayedMaxLevel = maxLevel;
             ArrowsVisible(_panel) = !isClient;
-            _panel.SetMaxAscension(ShadowRun.MaxLevel);
+            _panel.SetMaxAscension(maxLevel);
             _panel.SetAscensionLevel(level);
             _refreshing = false;
             HideTip();
@@ -167,12 +172,14 @@ public partial class NShadowSelector : Control
         }
     }
 
-    private void ReceivePreview(RitsuLibSidecarTypedDispatchContext<int> message)
+    private void ReceivePreview(RitsuLibSidecarTypedDispatchContext<LobbyDifficulty> message)
     {
-        if (message.IsHostIngest || message.Message < -1 || message.Message > ShadowRun.MaxLevel) return;
+        var difficulty = message.Message;
+        if (message.IsHostIngest || difficulty.Level < 0 || difficulty.Level > difficulty.MaxLevel ||
+            difficulty.MaxLevel > ShadowRun.MaxLevel) return;
         if (GetParent() is NCharacterSelectScreen { Lobby: { NetService: NetClientGameService { IsConnected: true } client } lobby }
             && message.SenderNetId == client.HostNetId)
-            ReceivedPreviews.GetValue(lobby, static _ => new Preview()).Level = message.Message;
+            ReceivedPreviews.GetValue(lobby, static _ => new Preview()).Difficulty = difficulty;
     }
 
     private void SetHostingLobby(StartRunLobby? lobby)
@@ -187,44 +194,60 @@ public partial class NShadowSelector : Control
 
     private void ForgetPreview(StartRunLobbyPlayer player) => _sentPreviews.Remove(player.id);
 
-    private void SendPreview(StartRunLobby lobby, int level, double delta)
+    private void SendPreview(StartRunLobby lobby, LobbyDifficulty difficulty, double delta)
     {
         _previewRetry -= delta;
-        if (level == _lastPreview && _previewRetry > 0) return;
-        _lastPreview = level;
+        if (difficulty == _lastPreview && _previewRetry > 0) return;
+        _lastPreview = difficulty;
         _previewRetry = 0.2;
         foreach (var player in lobby.Players)
         {
-            if (player.id == lobby.NetService.NetId || _sentPreviews.GetValueOrDefault(player.id, -2) == level) continue;
-            if (RitsuLibSidecarTypedMessageRegistry.SendToPeer(lobby.NetService, player.id, PreviewMessage, level))
-                _sentPreviews[player.id] = level;
+            if (player.id == lobby.NetService.NetId ||
+                (_sentPreviews.TryGetValue(player.id, out var sent) && sent == difficulty)) continue;
+            if (RitsuLibSidecarTypedMessageRegistry.SendToPeer(lobby.NetService, player.id, DifficultyMessage, difficulty))
+                _sentPreviews[player.id] = difficulty;
         }
     }
+
+    private readonly record struct LobbyDifficulty(int Level, int MaxLevel);
 
     private sealed class Preview
     {
-        internal int Level = -1;
+        internal LobbyDifficulty Difficulty;
     }
 
-    private void RestoreSelection(StartRunLobby lobby, bool canSelect)
+    private void RestoreSelection(StartRunLobby lobby, int maxLevel)
     {
-        if (!canSelect)
-        {
-            _selectionOwner = null;
-            ShadowRun.Select(lobby, 0);
-            return;
-        }
-        var character = lobby.LocalPlayer.character.Id.Entry;
+        var character = lobby.NetService.Type == NetGameType.Singleplayer ? lobby.LocalPlayer.character?.Id.Entry : null;
         var owner = (lobby, character);
-        if (_selectionOwner == owner) return;
-        _selectionOwner = owner;
-        ShadowRun.Select(lobby, ShadowRun.PreferredLevel(character));
+        if (_selectionOwner != owner)
+        {
+            if (maxLevel == 0)
+            {
+                _selectionOwner = null;
+                if (ShadowRun.SelectedLevel(lobby) > 0) ShadowRun.Select(lobby, 0);
+                return;
+            }
+
+            _selectionOwner = owner;
+            var preferred = character != null && _singleplayerSelections.TryGetValue((lobby, character), out var selection)
+                ? selection : ShadowRun.PreferredLevel(lobby);
+            ShadowRun.Select(lobby, preferred);
+        }
+        else if (ShadowRun.SelectedLevel(lobby) > maxLevel)
+        {
+            ShadowRun.Select(lobby, maxLevel);
+        }
     }
 
     private void OnLevelChanged()
     {
         if (!_refreshing && GetParent() is NCharacterSelectScreen { Lobby: { } lobby })
-            ShadowRun.ChangeSelection(lobby, _panel.Ascension);
+        {
+            ShadowRun.Select(lobby, _panel.Ascension);
+            if (lobby.NetService.Type == NetGameType.Singleplayer)
+                _singleplayerSelections[(lobby, lobby.LocalPlayer.character.Id.Entry)] = ShadowRun.SelectedLevel(lobby);
+        }
         HideTip();
     }
 

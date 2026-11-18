@@ -14,7 +14,11 @@ public sealed class ShadowPotionSavePatch : IPatchMethod
 {
     public static string PatchId => "yog_sothoths_yard_shadow_potion_save";
     public static ModPatchTarget[] GetTargets() => [new(typeof(Player), nameof(Player.ToSerializable), Type.EmptyTypes)];
-    public static void Prefix(Player __instance) => ShadowRun.SavePotions(__instance);
+    public static void Postfix(Player __instance, SerializablePlayer __result)
+    {
+        if (ShadowRun.SavePotions(__instance) is { Count: > 0 } ranks)
+            ShadowPotionNetwork.Capture(__result, ranks);
+    }
 }
 
 public sealed class ShadowPotionRestorePatch : IPatchMethod
@@ -22,8 +26,18 @@ public sealed class ShadowPotionRestorePatch : IPatchMethod
     public static string PatchId => "yog_sothoths_yard_shadow_potion_restore";
     public static ModPatchTarget[] GetTargets() =>
         [new(typeof(Player), nameof(Player.SyncWithSerializedPlayer), [typeof(SerializablePlayer)])];
-    public static void Prefix(Player __instance) => ShadowRun.SavePotions(__instance);
-    public static void Postfix(Player __instance) => ShadowRun.RestorePotions(__instance);
+
+    public static void Postfix(Player __instance, SerializablePlayer player)
+    {
+        if (!ShadowPotionNetwork.TryGetRanks(player, out var ranks)) return;
+        for (var i = 0; i < ranks.Length; i++)
+        {
+            var slot = player.Potions[i].SlotIndex;
+            if (ranks[i] is > 0 and <= 3 and var rank && __instance.PotionSlots[slot] is { } potion &&
+                ShadowPotionRules.Supports(potion, rank))
+                ShadowRanks.Set(potion, rank);
+        }
+    }
 }
 
 public sealed class ShadowRewardSendPatch : IPatchMethod

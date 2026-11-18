@@ -77,7 +77,7 @@ internal static partial class ShadowEvents
         if (offeredRelic is FragrantMushroom)
         {
             var possibleHpLoss = RewardRanks(choice, EventRelicTier(offeredRelic, choice))
-                .Select(rank => CreateRelicPreview(offeredRelic, ResolveRelicRank(offeredRelic, rank)).DynamicVars.HpLoss.IntValue);
+                .Select(rank => ShadowRelicRules.CreatePreview(offeredRelic, ResolveRelicRank(offeredRelic, rank)).DynamicVars.HpLoss.IntValue);
             option.ThatDoesDamage(possibleHpLoss.Min());
         }
         option.HoverTips = tips;
@@ -111,20 +111,12 @@ internal static partial class ShadowEvents
     private static IEnumerable<int> RewardRanks(Choice choice, int tier) => choice.Rank > 0
         ? [choice.Rank] : ShadowChances.PossibleRanks(ShadowRun.Level(choice.Player), tier);
 
-    private static RelicModel CreateRelicPreview(RelicModel relic, int rank)
-    {
-        var preview = relic.ToMutable();
-        ShadowRanks.Set(preview, rank);
-        if (preview is EmberTea tea && rank > 0) tea.CombatsLeft = rank == 1 ? 6 : 8;
-        return preview;
-    }
-
     private static void AddRelicPreviews(List<IHoverTip> tips, RelicModel relic, Choice choice)
     {
         var ranks = RewardRanks(choice, EventRelicTier(relic, choice)).Select(rank => ResolveRelicRank(relic, rank));
         foreach (var rank in ranks.Distinct().Order())
         {
-            var preview = CreateRelicPreview(relic, rank);
+            var preview = ShadowRelicRules.CreatePreview(relic, rank);
             tips.Add(RelicTip(relic, preview.DynamicDescription));
             tips.AddRange(preview.HoverTipsExcludingRelic);
         }

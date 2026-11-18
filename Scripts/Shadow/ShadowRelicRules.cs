@@ -300,6 +300,15 @@ internal static class ShadowRelicRules
     };
 
     internal static bool Supports(RelicModel relic, int rank) => Rules.ContainsKey((relic.GetType(), rank));
+
+    internal static RelicModel CreatePreview(RelicModel relic, int rank)
+    {
+        var preview = relic.ToMutable();
+        ShadowRanks.Set(preview, rank);
+        if (preview is EmberTea tea && rank > 0) tea.CombatsLeft = rank == 1 ? 6 : 8;
+        return preview;
+    }
+
     internal static bool TryGet(RelicModel relic, out Rule rule) =>
         Rules.TryGetValue((relic.GetType(), ShadowRanks.Of(relic)), out rule);
 

@@ -68,7 +68,7 @@ public sealed class ShadowCardSeenPatch : IPatchMethod
     }
 }
 
-public sealed class ShadowUnlockAllCardsPatch : IPatchMethod
+public sealed class ShadowUnlockAllVariantsPatch : IPatchMethod
 {
     public static string PatchId => "yog_sothoths_yard_shadow_unlock_all";
     public static ModPatchTarget[] GetTargets() =>
@@ -76,6 +76,8 @@ public sealed class ShadowUnlockAllCardsPatch : IPatchMethod
 
     public static void Postfix(string[] args, CmdResult __result)
     {
-        if (__result.success && args.Length > 0 && args[0] == "all") ShadowCardDiscovery.UnlockAll();
+        if (!__result.success || args.Length == 0 || args[0] != "all") return;
+        ShadowCardDiscovery.UnlockAll();
+        ShadowItemDiscovery.UnlockAll();
     }
 }

@@ -1,5 +1,7 @@
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
@@ -196,7 +198,8 @@ public sealed class ShadowPotionUsePatch : IPatchMethod
         switch (__instance)
         {
             case AttackPotion or SkillPotion or PowerPotion or ColorlessPotion:
-                ShadowCombatGenerationPatch.Current.Value = new ShadowCombatGenerationPatch.Options(player, 3, 4);
+                ShadowCombatGenerationPatch.Current.Value = new ShadowCombatGenerationPatch.Options(player, 3, 4,
+                    UseNativeChoice: true);
                 return true;
             case Fortifier:
                 __result = CreatureCmd.GainBlock(target, target.Block * 3, ValueProp.Unpowered, null);
@@ -403,7 +406,7 @@ public sealed class ShadowCombatGenerationPatch : IPatchMethod
             count = options.Count;
     }
 
-    public sealed record Options(Player Player, int NativeCount, int Count);
+    public sealed record Options(Player Player, int NativeCount, int Count, bool UseNativeChoice = false);
 }
 
 public sealed class ShadowCombatChoicePatch : IPatchMethod
@@ -416,7 +419,8 @@ public sealed class ShadowCombatChoicePatch : IPatchMethod
     public static bool Prefix(PlayerChoiceContext context, IReadOnlyList<CardModel> cards, Player player,
         bool canSkip, ref Task<CardModel?> __result)
     {
-        if (cards.Count <= 3 || ShadowCombatGenerationPatch.Current.Value?.Player != player) return true;
+        if (cards.Count <= 3 || ShadowCombatGenerationPatch.Current.Value is not { UseNativeChoice: false } options ||
+            options.Player != player) return true;
         __result = ChooseFromGrid(context, cards, player, canSkip);
         return false;
     }
@@ -429,6 +433,28 @@ public sealed class ShadowCombatChoicePatch : IPatchMethod
         var prefs = new CardSelectorPrefs(NShadowSelector.Loc("CHOOSE_GENERATED_CARD"), canSkip ? 0 : 1, 1);
         return (await CardSelectCmd.FromSimpleGrid(context, cards, player, prefs)).FirstOrDefault();
     }
+}
+
+public sealed class ShadowPotionChoiceLimitPatch : IPatchMethod
+{
+    public static string PatchId => "yog_sothoths_yard_shadow_potion_choice_limit";
+    public static ModPatchTarget[] GetTargets() =>
+        [new(typeof(CardSelectCmd), nameof(CardSelectCmd.FromChooseACardScreen),
+            [typeof(PlayerChoiceContext), typeof(IReadOnlyList<CardModel>), typeof(Player), typeof(bool)], MethodType.Async)];
+
+    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        var count = AccessTools.PropertyGetter(typeof(IReadOnlyCollection<CardModel>), nameof(IReadOnlyCollection<CardModel>.Count));
+        return new CodeMatcher(instructions)
+            .MatchStartForward(new CodeMatch(OpCodes.Callvirt, count), new CodeMatch(OpCodes.Ldc_I4_3))
+            .ThrowIfInvalid("Could not find the card selection size limit.")
+            .Advance(1)
+            .Set(OpCodes.Call, AccessTools.DeclaredMethod(typeof(ShadowPotionChoiceLimitPatch), nameof(ChoiceLimit)))
+            .InstructionEnumeration();
+    }
+
+    private static int ChoiceLimit() =>
+        ShadowCombatGenerationPatch.Current.Value is { UseNativeChoice: true } options ? options.Count : 3;
 }
 
 public sealed class ShadowGigantificationPatch : IPatchMethod

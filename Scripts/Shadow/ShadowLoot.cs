@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Merchant;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -104,6 +105,7 @@ public sealed class ShadowTreasureRelicsPatch : IPatchMethod
             {
                 ShadowTreasureRelicClonePatch.MarkPreview(preview);
                 relics[i] = preview;
+                ShadowItemDiscovery.Observe(preview);
             }
         }
     }
@@ -212,9 +214,21 @@ public sealed class ShadowMerchantStockPatch : IPatchMethod
     public static void Postfix(Player player, MerchantInventory __result)
     {
         foreach (var entry in __result.RelicEntries)
-            if (entry.Model is { } relic) ShadowLoot.RollRelic(relic, player);
+            if (entry.Model is { } relic) RollStock(relic, player);
         foreach (var entry in __result.PotionEntries)
-            if (entry.Model is { } potion) ShadowLoot.RollPotion(potion, player);
+            if (entry.Model is { } potion) RollStock(potion, player);
+    }
+
+    internal static void RollStock(RelicModel relic, Player player)
+    {
+        ShadowLoot.RollRelic(relic, player);
+        if (LocalContext.IsMe(player)) ShadowItemDiscovery.Observe(relic);
+    }
+
+    internal static void RollStock(PotionModel potion, Player player)
+    {
+        ShadowLoot.RollPotion(potion, player);
+        if (LocalContext.IsMe(player)) ShadowItemDiscovery.Observe(potion);
     }
 }
 
@@ -231,8 +245,8 @@ public sealed class ShadowMerchantRestockPatch : IPatchMethod
     {
         switch (__instance)
         {
-            case MerchantRelicEntry { Model: { } relic }: ShadowLoot.RollRelic(relic, ____player); break;
-            case MerchantPotionEntry { Model: { } potion }: ShadowLoot.RollPotion(potion, ____player); break;
+            case MerchantRelicEntry { Model: { } relic }: ShadowMerchantStockPatch.RollStock(relic, ____player); break;
+            case MerchantPotionEntry { Model: { } potion }: ShadowMerchantStockPatch.RollStock(potion, ____player); break;
         }
     }
 }

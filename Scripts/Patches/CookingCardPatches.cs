@@ -1,9 +1,14 @@
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Afflictions;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using STS2RitsuLib.Patching.Models;
 using YogSothothsYard.Scripts.Card.HaaLouLingDish;
 
@@ -37,6 +42,29 @@ public sealed class CookingRecipePreviewPilePatch : IPatchMethod
         if (__instance is not HaaLouLingDishCard { IsRecipePreview: true }) return true;
         __result = null;
         return false;
+    }
+}
+
+public sealed class CookingRecipeOverlayPatch : IPatchMethod
+{
+    public static string PatchId => "yog_sothoths_yard_cooking_recipe_overlay";
+    public static ModPatchTarget[] GetTargets() => [new(typeof(NCard), "ReloadOverlay", Type.EmptyTypes)];
+
+    public static void Postfix(NCard __instance, ref Control? ____cardOverlay)
+    {
+        if (____cardOverlay != null || __instance.Model is not HaaLouLingDishCard { IsRecipePreview: true } dish ||
+            dish.Owner?.Creature.CombatState is not { } combat) return;
+
+        AfflictionModel? affliction = dish.Type switch
+        {
+            CardType.Skill when combat.Enemies.Any(enemy => enemy.HasPower<VitalSparkPower>()) => ModelDb.Affliction<Tainted>(),
+            CardType.Power when combat.Enemies.Any(enemy => enemy.HasPower<GalvanicPower>()) => ModelDb.Affliction<Galvanized>(),
+            _ => null
+        };
+        if (affliction == null) return;
+
+        ____cardOverlay = affliction.CreateOverlay();
+        __instance.OverlayContainer.AddChildSafely(____cardOverlay);
     }
 }
 

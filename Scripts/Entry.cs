@@ -85,6 +85,7 @@ public class Entry
         Patcher.RegisterPatch<CookingCardPlayPermissionPatch>();
         Patcher.RegisterPatch<IngredientHookListenersPatch>();
         Patcher.RegisterPatch<CookingRecipePreviewPilePatch>();
+        Patcher.RegisterPatch<CookingRecipeOverlayPatch>();
         Patcher.RegisterPatch<CookingCardPileAddPatch>();
         Patcher.RegisterPatch<CookingCardPileInternalAddPatch>();
         Patcher.RegisterPatch<CookingCardExhaustPatch>();

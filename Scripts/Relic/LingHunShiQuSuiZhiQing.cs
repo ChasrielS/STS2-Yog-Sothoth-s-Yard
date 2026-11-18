@@ -43,7 +43,8 @@ public sealed class LingHunShiQuSuiZhiQing : HaaLouLingRelic, IShadowSoulstone
             ? ShadowRun.AddErosion(Owner, rule.ExhaustErosion, context) : Task.CompletedTask;
 
     public override Task AfterPotionUsed(PotionModel potion, Creature? target) =>
-        potion.Owner == Owner ? ShadowRun.AddErosion(Owner, ShadowRanks.PotionCost(potion)) : Task.CompletedTask;
+        (target?.Player ?? potion.Owner) == Owner
+            ? ShadowRun.AddErosion(Owner, ShadowRanks.PotionCost(potion)) : Task.CompletedTask;
 
     public override Task AfterPlayerTurnStart(PlayerChoiceContext context, Player player) =>
         player == Owner ? ShadowRelicRules.ChargeTriggers(Owner, "TurnStart", context) : Task.CompletedTask;
