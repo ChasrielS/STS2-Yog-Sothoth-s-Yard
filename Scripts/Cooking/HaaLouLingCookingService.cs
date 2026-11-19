@@ -104,7 +104,6 @@ public static class HaaLouLingCookingService
         if (gained.Count == 0) return;
         GetState(player).IngredientsGainedThisTurn += gained.Count;
         CardCmd.PreviewCardPileAdd(results);
-        if (player.GetRelic<TongBingChaoShao>() is { } spoon) await spoon.IngredientsGained(choiceContext, gained.Count);
         var chickens = gained.Count(result => result.cardAdded is JiRou);
         if (chickens > 0) await TriggerChickenGained(choiceContext, player, chickens);
     }
@@ -163,7 +162,7 @@ public static class HaaLouLingCookingService
         foreach (var card in choices.Cast<HaaLouLingDishCard>())
         {
             card.IsCompletionChoice = true;
-            if (upgraded || HasPendingDishUpgrade(player)) card.UpgradeInternal();
+            card.SetCookingUpgrade(upgraded || HasPendingDishUpgrade(player));
             card.BaseReplayCount = PendingDishReplayCount(player, HaaLouLingCookingRecipes.Get(card.Id)!);
         }
         var selected = await CardSelectCmd.FromChooseACardScreen(context, choices, player, canSkip: true);
@@ -224,7 +223,7 @@ public static class HaaLouLingCookingService
         await TriggerDishCompleted(choiceContext, player, recipe.CreatePreviewCard().Rarity);
         var card = (HaaLouLingDishCard)player.Creature.CombatState!.CreateCard(recipe.CreatePreviewCard(), player);
         card.IsCookingCompletion = true;
-        if (isUpgraded) card.UpgradeInternal();
+        card.SetCookingUpgrade(isUpgraded);
         card.BaseReplayCount = replayCount;
         // 先触发原版新卡入场，让昏眩、烟雾等限制附上侵蚀，再检查能否打出。
         await CardPileCmd.Add(card, PileType.Play, skipVisuals: true);
@@ -342,6 +341,8 @@ public static class HaaLouLingCookingService
         var strangeMeatCount = ingredients.Count(card => card is QiGuaiDeRou);
         var state = GetState(player);
         state.IngredientsUsed += ingredients.Count;
+        if (player.GetRelic<TongBingChaoShao>() is { } spoon)
+            await spoon.IngredientsUsed(choiceContext, ingredients.Count);
         foreach (var power in player.Creature.Powers.ToList())
         {
             switch (power)

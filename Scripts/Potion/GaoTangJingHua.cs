@@ -38,7 +38,7 @@ public sealed class GaoTangJingHua : HaaLouLingPotion
         {
             card.IsCompletionChoice = true;
             card.CookingSelection = selection;
-            if (HaaLouLingCookingService.HasPendingDishUpgrade(player)) card.UpgradeInternal();
+            card.SetCookingUpgrade(HaaLouLingCookingService.HasPendingDishUpgrade(player));
             card.BaseReplayCount = HaaLouLingCookingService.PendingDishReplayCount(player, HaaLouLingCookingRecipes.Get(card.Id)!);
         }
 

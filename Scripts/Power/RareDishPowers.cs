@@ -50,7 +50,7 @@ public sealed class YangWangXingKongPower : RareDishPower
             .ToList();
         foreach (var target in targets)
         {
-            var poison = target.CurrentHp * amount / 100;
+            var poison = (int)Math.Ceiling(target.CurrentHp * (amount / 100m));
             if (poison <= 0)
             {
                 continue;

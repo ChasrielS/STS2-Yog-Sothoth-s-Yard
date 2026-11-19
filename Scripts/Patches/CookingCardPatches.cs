@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Afflictions;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Screens;
 using STS2RitsuLib.Patching.Models;
 using YogSothothsYard.Scripts.Card.HaaLouLingDish;
 
@@ -65,6 +66,25 @@ public sealed class CookingRecipeOverlayPatch : IPatchMethod
 
         ____cardOverlay = affliction.CreateOverlay();
         __instance.OverlayContainer.AddChildSafely(____cardOverlay);
+    }
+}
+
+public sealed class DishInspectUpgradePatch : IPatchMethod
+{
+    public static string PatchId => "yog_sothoths_yard_dish_inspect_upgrade";
+    public static ModPatchTarget[] GetTargets() => [PatchTarget.Method<NCard>(nameof(NCard.ShowUpgradePreview))];
+
+    public static void Prefix(NCard __instance)
+    {
+        if (__instance.GetParent() is not NInspectCardScreen || __instance.Model is not HaaLouLingDishCard
+            { IsUpgraded: true, UpgradePreviewType: CardUpgradePreviewType.None } dish) return;
+
+        // An already upgraded dish has no pending upgrade flags on the inspect screen's clone.
+        var upgraded = ModelDb.GetById<CardModel>(dish.Id).ToMutable();
+        upgraded.UpgradeInternal();
+        foreach (var (name, variable) in upgraded.DynamicVars)
+            if (variable.WasJustUpgraded && dish.DynamicVars.TryGetValue(name, out var value))
+                value.UpgradeValueBy(0);
     }
 }
 

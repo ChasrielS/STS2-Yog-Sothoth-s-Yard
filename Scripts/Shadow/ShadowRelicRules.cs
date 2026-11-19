@@ -287,14 +287,15 @@ internal static class ShadowRelicRules
         [(typeof(JiuShiZhenLingFu), 1)] = new(3, "BeforeCombatStart", [("Amount", 15m)]),
         [(typeof(JiuShiZhenLingFu), 2)] = new(4, "BeforeCombatStart", [("Amount", 20m)]),
         [(typeof(JiuShiZhenLingFu), 3)] = new(5, "BeforeCombatStart", [("Amount", 30m)]),
-        [(typeof(TongBingChaoShao), 1)] = new(1, "Manual", [("Damage", 8m)]),
-        [(typeof(TongBingChaoShao), 2)] = new(2, "Manual", [("Threshold", 10m), ("Damage", 10m)]),
-        [(typeof(TongBingChaoShao), 3)] = new(2, "Manual", [("Threshold", 8m), ("Damage", 12m)]),
-        [(typeof(SuiShenCaiLan), 1)] = new(4, "BeforeCombatStart", [("Amount", 4m)]),
-        [(typeof(SuiShenCaiLan), 2)] = new(6, "BeforeCombatStart", [("Amount", 5m)]),
-        [(typeof(SuiShenCaiLan), 3)] = new(8, "BeforeCombatStart", [("Amount", 7m)]),
-        [(typeof(TangDaoJiuQiao), 3)] = new(10, "BeforeCombatStart", [("Amount", 2m)]),
-        [(typeof(ShuangCengZhengLong), 3)] = new(10, "BeforeCombatStart", [("Amount", 2m)]),
+        [(typeof(TongBingChaoShao), 1)] = new(2, "Manual", [("Block", 6m)]),
+        [(typeof(TongBingChaoShao), 2)] = new(2, "Manual", [("Block", 8m)]),
+        [(typeof(TongBingChaoShao), 3)] = new(3, "Manual", [("Threshold", 8m), ("Block", 10m)]),
+        [(typeof(SuiShenCaiLan), 2)] = new(1, "Manual", [("Amount", 3m)]),
+        [(typeof(SuiShenCaiLan), 3)] = new(2, "Manual", [("Amount", 5m)]),
+        [(typeof(LaoZhenBan), 2)] = new(7, "BeforeCombatStart", [("Slots", 2m)]),
+        [(typeof(LaoZhenBan), 3)] = new(10, "BeforeCombatStart", [("Slots", 2m), ("KnifeCap", 2m)]),
+        [(typeof(ShuangMianZhouYin), 3)] = new(7, "Manual", [("Uses", 2m)]),
+        [(typeof(XiaLuJiaDaoPu), 1)] = new(2, "Manual", [("Threshold", 3m)]),
         [(typeof(XiaLuJiaDaoPu), 2)] = new(2, "Manual", [("Threshold", 2m)]),
         [(typeof(XiaLuJiaDaoPu), 3)] = new(3, "Manual", [("Threshold", 2m), ("Amount", 2m)]),
     };
@@ -483,7 +484,7 @@ public sealed class ShadowRelicDescriptionPatch : IPatchMethod
                 "Unknown" => "RELIC_UNKNOWN",
                 "TurnStart" => "RELIC_TURN_START",
                 _ when __instance is BathTowel or Anchor or BronzeScales or Gorget or FestivePopper or Akabeko or
-                    JiuShiZhenLingFu or SuiShenCaiLan or TangDaoJiuQiao or ShuangCengZhengLong or SwordOfJade or RoyalPoison => "RELIC_START",
+                    JiuShiZhenLingFu or LaoZhenBan or SwordOfJade or RoyalPoison => "RELIC_START",
                 _ => "RELIC_TRIGGER"
             };
             description = NShadowSelector.Loc(timing);

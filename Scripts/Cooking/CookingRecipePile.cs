@@ -42,10 +42,7 @@ public sealed class CookingRecipePile : CardPile
         {
             var previewCard = (HaaLouLingDishCard)recipe.CreatePreviewCard().ToMutable();
             previewCard.IsRecipePreview = true;
-            if (upgradeNextDish)
-            {
-                previewCard.UpgradeInternal();
-            }
+            previewCard.SetCookingUpgrade(upgradeNextDish);
 
             previewCard.Owner = Player;
             previewCard.BaseReplayCount = HaaLouLingCookingService.PendingDishReplayCount(Player, recipe);
@@ -66,8 +63,7 @@ public sealed class CookingRecipePile : CardPile
         {
             if (card.IsUpgraded != upgraded)
             {
-                if (upgraded) card.UpgradeInternal();
-                else card.DowngradeInternal();
+                ((HaaLouLingDishCard)card).SetCookingUpgrade(upgraded);
                 changed = true;
             }
             var replays = HaaLouLingCookingService.PendingDishReplayCount(Player, _recipesByCard[card]);

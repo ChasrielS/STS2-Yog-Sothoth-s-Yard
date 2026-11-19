@@ -272,10 +272,7 @@ public partial class NCookingQueueDisplay : Control
         var card = (HaaLouLingDishCard)recipe.CreatePreviewCard().ToMutable();
         card.IsCookingCompletion = true;
         card.BaseReplayCount = slot.ReplayCount;
-        if (slot.IsUpgraded)
-        {
-            card.UpgradeInternal();
-        }
+        card.SetCookingUpgrade(slot.IsUpgraded);
 
         var description = card.GetDescriptionForPile(MegaCrit.Sts2.Core.Entities.Cards.PileType.None);
         var title = new LocString("gameplay_ui", "YOG_SOTHOTH_S_YARD_COOKING_SLOT_HOVER.title");

@@ -13,7 +13,7 @@ public sealed class XiaLuJiaDaoPu : HaaLouLingRelic
 {
     protected override string ImageName => "xia_lu_jia_dao_pu";
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Threshold", 3), new IntVar("Amount", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Threshold", 4), new IntVar("Amount", 1)];
     public override RelicRarity Rarity => RelicRarity.Rare;
     [SavedProperty]
     public int Progress { get; set; }

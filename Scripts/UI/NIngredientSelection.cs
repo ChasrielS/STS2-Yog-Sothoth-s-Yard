@@ -94,15 +94,9 @@ public partial class NIngredientSelection : Node
         var panel = new MarginContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         _screen.AddChild(panel);
         panel.SetAnchorsAndOffsetsPreset(left ? Control.LayoutPreset.BottomLeft : Control.LayoutPreset.BottomRight);
-        panel.OffsetLeft = left ? 30f : -24f;
-        panel.OffsetRight = left ? 350f : -24f;
-        panel.OffsetTop = left ? -105f : -20f;
+        panel.GrowHorizontal = left ? Control.GrowDirection.End : Control.GrowDirection.Begin;
+        panel.GrowVertical = Control.GrowDirection.Begin;
         panel.OffsetBottom = -20f;
-        if (!left)
-        {
-            panel.GrowHorizontal = Control.GrowDirection.Begin;
-            panel.GrowVertical = Control.GrowDirection.Begin;
-        }
         panel.AddChild(new ColorRect { Color = new Color(0f, 0f, 0f, 0.753f), MouseFilter = Control.MouseFilterEnum.Ignore });
         var margin = new MarginContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         foreach (var edge in new[] { "left", "right" }) margin.AddThemeConstantOverride("margin_" + edge, 16);
@@ -118,12 +112,15 @@ public partial class NIngredientSelection : Node
         label.AddThemeFontSizeOverride("font_size", 24);
         label.AddThemeColorOverride("font_color", new Color(1f, 0.965f, 0.886f));
         margin.AddChild(label);
-        if (!left) panel.MinimumSizeChanged += () =>
+        void FitHint()
         {
             var size = panel.GetCombinedMinimumSize();
-            panel.OffsetLeft = -24f - size.X;
+            panel.OffsetLeft = left ? 30f : -24f - size.X;
+            panel.OffsetRight = left ? 30f + size.X : -24f;
             panel.OffsetTop = -20f - size.Y;
-        };
+        }
+        panel.MinimumSizeChanged += FitHint;
+        FitHint();
         return panel;
     }
 }

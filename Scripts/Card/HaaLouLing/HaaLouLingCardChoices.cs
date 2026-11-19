@@ -102,7 +102,7 @@ public static class HaaLouLingCardChoices
         foreach (var card in choices.Cast<HaaLouLingDishCard>())
         {
             card.CookingSelection = selection;
-            if (upgraded) card.UpgradeInternal();
+            card.SetCookingUpgrade(upgraded);
             if (advance > 0)
             {
                 var turns = card.DynamicVars["CookingTurns"];

@@ -112,7 +112,7 @@ internal static partial class ShadowEvents
         {
             erosion = model.DynamicVars["HpLoss"].IntValue * 5;
             option.ThatWillKillPlayerIf(player => ShadowRun.Erosion(player) >= ShadowRun.ErosionLimit &&
-                player.Creature.CurrentHp + player.Creature.Block <= erosion);
+                player.Creature.CurrentHp <= erosion);
         }
         text.Add("Erosion", erosion);
         model.DynamicVars.AddTo(text);

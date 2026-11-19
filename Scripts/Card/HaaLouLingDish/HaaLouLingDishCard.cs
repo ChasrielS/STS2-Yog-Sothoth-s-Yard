@@ -38,6 +38,17 @@ public abstract class HaaLouLingDishCard : ModCardTemplate, IHaaLouLingDishCard
         description.Add("ShowCookingTurns", !IsCookingCompletion);
     }
 
+    internal void SetCookingUpgrade(bool upgraded)
+    {
+        if (upgraded == IsUpgraded) return;
+        if (upgraded)
+        {
+            UpgradeInternal();
+            FinalizeUpgradeInternal();
+        }
+        else DowngradeInternal();
+    }
+
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play) =>
         HaaLouLingCookingService.ApplyDishEffect(context, Owner, HaaLouLingCookingRecipes.Get(Id)!, IsUpgraded);
 

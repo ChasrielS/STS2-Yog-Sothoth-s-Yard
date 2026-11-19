@@ -1,6 +1,6 @@
 {
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.title": "侵蚀{Rank}",
-  "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.description": "受[color=#796770]阴影[/color]轻度[color=#796770]侵蚀[/color]，\n数值、能力或意图得到了增强。",
+  "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.description": "受[color=#796770]阴影[/color]轻度[color=#796770]侵蚀[/color]，数值、能力或意图得到了增强。",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_EROSION_RANK_POWER.descriptionAdvanced": "受[color=#796770]阴影侵蚀[/color]，\n数值、能力或意图得到了增强。",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_TWO_TURN_ENERGY_POWER.title": "抢占先机",
   "YOG_SOTHOTH_S_YARD_POWER_SHADOW_TWO_TURN_ENERGY_POWER.description": "在接下来的回合开始时获得能量。",
@@ -46,7 +46,7 @@
   "YOG_SOTHOTH_S_YARD_POWER_ZHU_DU_JI_POWER.title": "猪肚鸡",
   "YOG_SOTHOTH_S_YARD_POWER_ZHU_DU_JI_POWER.description": "每当你获得一张[gold]鸡肉[/gold]，就获得[blue]{Amount}[/blue]张随机食材。",
   "YOG_SOTHOTH_S_YARD_POWER_YANG_WANG_XING_KONG_POWER.title": "仰望星空",
-  "YOG_SOTHOTH_S_YARD_POWER_YANG_WANG_XING_KONG_POWER.description": "在你的回合开始时，给予所有玩家和敌人各自当前生命值[blue]{Amount}[/blue]%层数的[gold]中毒[/gold]。",
+  "YOG_SOTHOTH_S_YARD_POWER_YANG_WANG_XING_KONG_POWER.description": "在你的回合开始时，给予所有玩家和敌人各自当前生命值[blue]{Amount}[/blue]%层数的[gold]中毒[/gold]（向上取整）。",
   "YOG_SOTHOTH_S_YARD_POWER_ZHANG_YU_WAN_ZI_POWER.title": "章鱼丸子",
   "YOG_SOTHOTH_S_YARD_POWER_ZHANG_YU_WAN_ZI_POWER.description": "每当你使用8张食材进行烹饪，就随机获得[blue]{Amount}[/blue]张食材。\n当前已累计使用[blue]{Progress}[/blue]张。",
   "YOG_SOTHOTH_S_YARD_POWER_BAO_ZAI_FAN_POWER.title": "煲仔饭",

@@ -81,8 +81,7 @@ public partial class NDishCookingChoiceOutline : Node
         var upgraded = _selection.ForceUpgrade || effects.UpgradeAll || effects.Upgrades > 0;
         if (card.IsUpgraded != upgraded)
         {
-            if (upgraded) card.UpgradeInternal();
-            else card.DowngradeInternal();
+            card.SetCookingUpgrade(upgraded);
             changed.Add(card);
         }
         var replays = effects.ReplayCount(card.Rarity);

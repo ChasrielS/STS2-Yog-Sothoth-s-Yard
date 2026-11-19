@@ -217,7 +217,7 @@ internal static class ShadowRun
             return;
         }
         await CreatureCmd.Damage(context ?? new ThrowingPlayerChoiceContext(), player.Creature,
-            (decimal)amount, ValueProp.Unpowered, null, null);
+            (decimal)amount, ValueProp.Unblockable | ValueProp.Unpowered, null, null);
     }
 }
 

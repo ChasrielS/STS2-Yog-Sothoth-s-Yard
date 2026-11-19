@@ -77,7 +77,7 @@ public class Entry
         ));
         Patcher.RegisterPatch<FoodPileRightClickPatch>();
         Patcher.RegisterPatch<DishRecipeHoverTipLayoutPatch>();
-        Patcher.RegisterPatch<KnifeFormInspectLayoutPatch>();
+        Patcher.RegisterPatch<CardInspectPreviewLayoutPatch>();
         Patcher.RegisterPatch<AncientGlimpseRemovalPatch>();
         Patcher.RegisterPatch<DaoShiPersistencePatch>();
         Patcher.RegisterPatch<HaaLouLingPotionLargeImagePatch>();
@@ -86,6 +86,7 @@ public class Entry
         Patcher.RegisterPatch<IngredientHookListenersPatch>();
         Patcher.RegisterPatch<CookingRecipePreviewPilePatch>();
         Patcher.RegisterPatch<CookingRecipeOverlayPatch>();
+        Patcher.RegisterPatch<DishInspectUpgradePatch>();
         Patcher.RegisterPatch<CookingCardPileAddPatch>();
         Patcher.RegisterPatch<CookingCardPileInternalAddPatch>();
         Patcher.RegisterPatch<CookingCardExhaustPatch>();
