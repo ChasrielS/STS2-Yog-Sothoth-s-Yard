@@ -514,8 +514,8 @@ public static class HaaLouLingCookingRecipes
         bool upgraded
     )
     {
-        var requiredTurns = upgraded ? 4 : 8;
-        if (HaaLouLingCookingService.GetRemainingCookingTurnsTotal(player) != requiredTurns)
+        var remaining = HaaLouLingCookingService.GetRemainingCookingTurnsTotal(player);
+        if (remaining != 8 && !(upgraded && remaining == 4))
         {
             return;
         }

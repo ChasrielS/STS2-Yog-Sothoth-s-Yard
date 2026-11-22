@@ -18,6 +18,7 @@ public abstract class HaaLouLingCard : ModCardTemplate
     protected int Knife => Owner?.PlayerCombatState == null ? 0 : HaaLouLingCombatRules.Knife(Owner);
     protected int ErosionRank => ShadowRanks.Of(this);
     protected virtual bool UsesKnife => false;
+    internal virtual bool SpendsAllKnife => false;
     protected virtual bool UsesGuiYuan => false;
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: $"res://images/packed/card_portraits/haa_lou_ling/{StringHelper.SnakeCase(GetType().Name)}.png");
@@ -35,11 +36,11 @@ public abstract class HaaLouLingCard : ModCardTemplate
         }
     }
     protected async Task<AttackCommand> Attack(PlayerChoiceContext context, CardPlay play, int hits = 1,
-        bool random = false, bool calculated = false, int effectMultiplier = 1)
+        bool random = false, bool calculated = false)
     {
         var command = calculated
-            ? CalculatedAttack(play, effectMultiplier)
-            : DamageCmd.Attack(DynamicVars.Damage.BaseValue * effectMultiplier);
+            ? DamageCmd.Attack(DynamicVars.CalculatedDamage)
+            : DamageCmd.Attack(DynamicVars.Damage.BaseValue);
         command.FromCard(this, play).WithHitCount(hits).WithHitVfxNode(HaaLouLingStrikeSlashVfx.Create);
         if (random) command.TargetingRandomOpponents(CombatState!, true);
         else if (TargetType == TargetType.AllEnemies) command.TargetingAllOpponents(CombatState!);
@@ -47,22 +48,11 @@ public abstract class HaaLouLingCard : ModCardTemplate
         return await command.Execute(context);
     }
 
-    protected AttackCommand CalculatedAttack(CardPlay play, int effectMultiplier) => effectMultiplier == 1
-        ? DamageCmd.Attack(DynamicVars.CalculatedDamage)
-        : DamageCmd.Attack(DynamicVars.CalculatedDamage.Calculate(play.Target) * effectMultiplier);
-
-    protected async Task<int> ConsumeForm<T>() where T : HaaLouLingPower
-    {
-        if (Owner.Creature.GetPower<T>() is not { Amount: > 0 } form) return 1;
-        var multiplier = form.Amount;
-        form.FlashEffect();
-        await PowerCmd.Remove(form);
-        return multiplier;
-    }
     protected Task Block(CardPlay play) => CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     protected Task GainKnife(PlayerChoiceContext context, int amount) => HaaLouLingCombatRules.GainKnife(context, Owner, amount, this);
     protected Task<int> SpendKnife(PlayerChoiceContext context, int amount) => HaaLouLingCombatRules.SpendKnife(context, Owner, amount, this);
-    protected Task<int> SpendAllKnife(PlayerChoiceContext context) => HaaLouLingCombatRules.SpendAllKnife(context, Owner, this);
+    protected Task<int> SpendAllKnife(PlayerChoiceContext context, CardPlay play) =>
+        HaaLouLingCombatRules.SpendAllKnife(context, play);
     protected Task GiveGuiYuan(PlayerChoiceContext context, CardPlay play, int amount) =>
         HaaLouLingCombatRules.GiveGuiYuan(context, play.Target!, amount, Owner.Creature, this);
     protected Task Apply<T>(PlayerChoiceContext context, int amount) where T : PowerModel =>

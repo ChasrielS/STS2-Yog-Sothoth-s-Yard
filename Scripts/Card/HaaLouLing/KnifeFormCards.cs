@@ -23,7 +23,7 @@ public sealed class QiShi() : KnifeFormCard<QiShiPower>(1);
 public sealed class ChengShi() : KnifeFormCard<ChengShiPower>(1);
 
 [RegisterCard(typeof(TokenCardPool))]
-public sealed class ZhuanShi() : KnifeFormCard<ZhuanShiPower>(2);
+public sealed class ZhuanShi() : KnifeFormCard<ZhuanShiPower>(1);
 
 [RegisterCard(typeof(TokenCardPool))]
-public sealed class HeShi() : KnifeFormCard<HeShiPower>(2);
+public sealed class HeShi() : KnifeFormCard<HeShiPower>(1);

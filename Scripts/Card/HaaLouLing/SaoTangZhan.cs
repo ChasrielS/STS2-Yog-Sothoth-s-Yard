@@ -18,9 +18,8 @@ public sealed class SaoTangZhan : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<ZhuanShiPower>();
         if (Knife > 0) await SpendKnife(context, 1);
-        await Attack(context, play, calculated: true, effectMultiplier: multiplier);
+        await Attack(context, play, calculated: true);
     }
 
     protected override void OnUpgrade()

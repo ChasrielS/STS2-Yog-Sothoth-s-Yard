@@ -79,10 +79,10 @@ public sealed class YanJuJi : HaaLouLingDishCard
 public sealed class ZhangYuNingMengZhi : HaaLouLingDishCard
 {
     protected override string PortraitFileName => "zhang_yu_ning_meng_zhi";
-    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat([new DynamicVar("Threshold", 8), new EnergyVar(1)]);
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Append(new EnergyVar(1));
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<QiGuaiDeRou>(), HoverTipFactory.FromCard<Tang>()];
     public ZhangYuNingMengZhi() : base(CardType.Skill, 0, CardRarity.Uncommon) { }
-    protected override void OnUpgrade() => DynamicVars["Threshold"].UpgradeValueBy(-4);
+    protected override void OnUpgrade() { }
 }
 
 [RegisterCard(typeof(HaaLouLingFoodPool))]

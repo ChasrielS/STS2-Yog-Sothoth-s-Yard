@@ -194,13 +194,14 @@ internal static partial class ShadowCardRules
         Add<TianZao>(rules, 1);
         Add<TianZao>(rules, 2);
         Add<TianZao>(rules, 3);
-        Add<LuHuoChunQing>(rules, 3, Extra(2, 2));
+        Add<LuHuoChunQing>(rules, 2, Extra(3, 3));
+        Add<LuHuoChunQing>(rules, 3, Extra(4, 4));
         Add<DaoGong>(rules, 1);
         Add<DaoGong>(rules, 2);
         Add<DaoGong>(rules, 3, A(2, 2));
-        Add<CangFeng>(rules, 1, V("KnifeGain", 1));
-        Add<CangFeng>(rules, 2, V("KnifeGain", 2));
-        Add<CangFeng>(rules, 3, V("KnifeGain", 2), A(2, 2));
+        Add<ZhenBenShi>(rules, 1, V("BonusStrength", 1, 2));
+        Add<ZhenBenShi>(rules, 2, V("BonusStrength", 2, 3));
+        Add<ZhenBenShi>(rules, 3, V("BonusStrength", 3, 5));
         Add<TuPoPingJing>(rules, 1, A(1, 1));
         Add<TuPoPingJing>(rules, 2, A(2, 2));
         Add<TuPoPingJing>(rules, 3, A(3, 3));
@@ -248,7 +249,7 @@ internal static partial class ShadowCardRules
         rules.Add((typeof(CanZhou), 3), new Rule(DrawErosion: 3));
         Add<QiShi>(rules, 3, A(2, 2));
         Add<ChengShi>(rules, 3, A(2, 2));
-        Add<ZhuanShi>(rules, 3, A(3, 3));
-        Add<HeShi>(rules, 3, A(3, 3));
+        Add<ZhuanShi>(rules, 3, A(2, 2));
+        Add<HeShi>(rules, 3, A(2, 2));
     }
 }

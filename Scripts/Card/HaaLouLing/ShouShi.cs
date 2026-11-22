@@ -13,15 +13,15 @@ public sealed class ShouShi : HaaLouLingCard
 {
     public ShouShi() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     protected override bool UsesKnife => true;
+    internal override bool SpendsAllKnife => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(7), new CalculationExtraVar(5), new CalculatedBlockVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
 
     public override bool GainsBlock => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<HeShiPower>();
-        await SpendAllKnife(context);
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target) * multiplier,
+        await SpendAllKnife(context, play);
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target),
             DynamicVars.CalculatedBlock.Props, play);
     }
 

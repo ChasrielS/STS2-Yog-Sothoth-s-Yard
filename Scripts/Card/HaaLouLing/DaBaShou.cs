@@ -14,6 +14,7 @@ public sealed class DaBaShou : HaaLouLingCard
 {
     public DaBaShou() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
     protected override bool UsesKnife => true;
+    internal override bool SpendsAllKnife => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Amount", 4)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         base.AdditionalHoverTips.Concat([HoverTipFactory.FromPower<VigorPower>()]);
@@ -22,9 +23,8 @@ public sealed class DaBaShou : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<HeShiPower>();
-        var count = await SpendAllKnife(context);
-        await PowerCmd.Apply<VigorPower>(context, play.Target!, count * DynamicVars["Amount"].IntValue * multiplier, Owner.Creature, this);
+        var count = await SpendAllKnife(context, play);
+        await PowerCmd.Apply<VigorPower>(context, play.Target!, count * DynamicVars["Amount"].IntValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

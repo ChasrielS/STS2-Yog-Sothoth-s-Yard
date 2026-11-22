@@ -14,6 +14,7 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 {
     public ZhanLingGuiYuanPoWang() : base(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy) { }
     protected override bool UsesKnife => true;
+    internal override bool SpendsAllKnife => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(10), new ExtraDamageVar(7),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesGuiYuan => true;
@@ -24,10 +25,9 @@ public sealed class ZhanLingGuiYuanPoWang : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<HeShiPower>();
-        var knife = await SpendAllKnife(context);
+        var knife = await SpendAllKnife(context, play);
         await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, knife, true);
-        var attack = await CalculatedAttack(play, multiplier).FromCard(this, play)
+        var attack = await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play)
             .TargetingAllOpponents(CombatState!)
             .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, knife, true, target == play.Target))
             .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);

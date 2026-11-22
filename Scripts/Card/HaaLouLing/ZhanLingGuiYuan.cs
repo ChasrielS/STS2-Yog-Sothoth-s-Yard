@@ -13,18 +13,18 @@ public sealed class ZhanLingGuiYuan : HaaLouLingCard
 {
     public ZhanLingGuiYuan() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
     protected override bool UsesKnife => true;
+    internal override bool SpendsAllKnife => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(8), new ExtraDamageVar(6), new IntVar("Amount", 5), new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => HaaLouLingCombatRules.KnifeForCard(card))];
     protected override bool UsesGuiYuan => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<HeShiPower>();
-        var spent = await SpendAllKnife(context);
+        var spent = await SpendAllKnife(context, play);
         await HaaLouLingFinisherVfx.Anticipate(Owner.Creature, spent, false);
-        await CalculatedAttack(play, multiplier).FromCard(this, play).Targeting(play.Target!)
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, play).Targeting(play.Target!)
             .WithHitVfxNode(target => HaaLouLingFinisherVfx.CreateImpact(target, spent, false, true))
             .WithHitFx(null, null, "blunt_attack.mp3").Execute(context);
-        await GiveGuiYuan(context, play, spent * DynamicVars["Amount"].IntValue * multiplier);
+        await GiveGuiYuan(context, play, spent * DynamicVars["Amount"].IntValue);
         await HaaLouLingFinisherVfx.ImpactPause(false);
     }
 

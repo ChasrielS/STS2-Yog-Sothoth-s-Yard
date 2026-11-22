@@ -13,13 +13,13 @@ public sealed class DaoXiaQuCai : HaaLouLingCard
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(5), new IntVar("ExtraCards", 3)];
 
     protected override bool UsesKnife => true;
+    internal override bool SpendsAllKnife => true;
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<HeShiPower>();
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue * multiplier, CardRarity.Common);
-        var spent = await SpendAllKnife(context);
-        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, spent * DynamicVars["ExtraCards"].IntValue * multiplier,
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, DynamicVars.Cards.IntValue, CardRarity.Common);
+        var spent = await SpendAllKnife(context, play);
+        await HaaLouLingCookingService.AddRandomIngredients(context, Owner, spent * DynamicVars["ExtraCards"].IntValue,
             nonRare: true);
     }
 

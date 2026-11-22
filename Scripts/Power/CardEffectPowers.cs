@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -18,19 +19,31 @@ namespace YogSothothsYard.Scripts;
 [RegisterPower]
 public sealed class LiuYiShouPower : HaaLouLingPower
 {
+    private bool _checkingUndiscountedCost;
     protected override bool IncludeEnergyHoverTip => true;
     public override string? CustomIconPath => "res://images/powers/liu_yi_shou_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/liu_yi_shou_power.png";
 
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal original, out decimal modified)
     {
-        modified = card.Owner.Creature == Owner && card.Type == CardType.Power &&
-            card.Pile?.Type is PileType.Hand or PileType.Play ? Math.Max(0, original - Amount) : original;
+        modified = !_checkingUndiscountedCost && original >= 1 && AppliesTo(card)
+            ? Math.Max(0, original - Amount) : original;
         return modified != original;
     }
 
-    public override Task BeforeCardPlayed(CardPlay play) => play.Player.Creature == Owner && play.Card.Type == CardType.Power
-        ? PowerCmd.Remove(this) : Task.CompletedTask;
+    public override Task AfterEnergySpent(CardModel card, int amount) =>
+        AppliesTo(card) && GetCostBeforeDiscount(card) >= 1 ? PowerCmd.Remove(this) : Task.CompletedTask;
+
+    private int GetCostBeforeDiscount(CardModel card)
+    {
+        _checkingUndiscountedCost = true;
+        try { return card.EnergyCost.GetWithModifiers(CostModifiers.All); }
+        finally { _checkingUndiscountedCost = false; }
+    }
+
+    private bool AppliesTo(CardModel card) =>
+        card.Owner.Creature == Owner && card.Type == CardType.Power && !card.EnergyCost.CostsX &&
+        card.Pile?.Type is PileType.Hand or PileType.Play;
 }
 
 [RegisterPower]
@@ -144,7 +157,6 @@ public sealed class TuPoPingJingPower : HaaLouLingPower
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
     public override string? CustomIconPath => "res://images/powers/tu_po_ping_jing_power_icon.png";
     public override string? CustomBigIconPath => "res://images/powers/tu_po_ping_jing_power.png";
-    public override PowerStackType StackType => PowerStackType.Single;
 }
 
 [RegisterPower]
@@ -184,6 +196,7 @@ public sealed class SheZhangPower : HaaLouLingPower
         {
             var text = base.Description;
             text.Add("DiscardPile", DiscardPile);
+            text.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
             return text;
         }
     }

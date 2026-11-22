@@ -19,9 +19,8 @@ public sealed class WenZhuZhenJiao : HaaLouLingCard
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var multiplier = await ConsumeForm<ZhuanShiPower>();
         if (Knife > 0) await SpendKnife(context, 1);
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target) * multiplier,
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.CalculatedBlock.Calculate(play.Target),
             DynamicVars.CalculatedBlock.Props, play);
     }
 

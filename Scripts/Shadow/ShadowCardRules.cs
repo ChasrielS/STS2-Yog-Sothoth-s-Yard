@@ -40,7 +40,7 @@ internal static partial class ShadowCardRules
         return Available(card).FirstOrDefault(rank => rank > current, current);
     }
 
-    internal static void Apply(CardModel card, DynamicVarSet variables, bool upgrading = false)
+    internal static void Apply(CardModel card, DynamicVarSet variables, Dictionary<string, decimal>? beforeUpgrade = null)
     {
         var rank = ShadowRanks.Of(card);
         if (rank == 0) return;
@@ -50,7 +50,7 @@ internal static partial class ShadowCardRules
             return;
         }
         if (!TryGet(card, rank, out var rule) || rule.Values is not { Length: > 0 } values) return;
-        if (!upgrading && Applied.TryGetValue(variables, out var previous) &&
+        if (beforeUpgrade == null && Applied.TryGetValue(variables, out var previous) &&
             previous.Rank == rank && previous.Upgrade == card.CurrentUpgradeLevel)
             return;
         Applied.Remove(variables);
@@ -67,8 +67,12 @@ internal static partial class ShadowCardRules
             }
             if (card is TheBall ball && value.Name == "Damage") desired += BallDamage(ball);
             if (card is YuanYangFengHuan reflection && value.Name == "RequiredKnife") desired += reflection.ExtraRequiredKnife;
-            if (upgrading) variable.UpgradeValueBy(desired - variable.BaseValue);
-            else variable.BaseValue = desired;
+            variable.BaseValue = desired;
+            if (beforeUpgrade != null && beforeUpgrade.TryGetValue(variable.Name, out var before))
+            {
+                if (before != desired) variable.UpgradeValueBy(0);
+                else variable.FinalizeUpgrade();
+            }
         }
         if (card is Stack)
             Multiplier(variables.CalculatedBlock) = static (model, _) =>
@@ -116,10 +120,17 @@ public sealed class ShadowCardUpgradePatch : IPatchMethod
     public static ModPatchTarget[] GetTargets() =>
         [new(typeof(CardModel), nameof(CardModel.UpgradeInternal), Type.EmptyTypes)];
 
-    public static void Postfix(CardModel __instance)
+    public static void Prefix(CardModel __instance, out Dictionary<string, decimal>? __state)
+    {
+        __state = ShadowCardRules.TryGet(__instance, ShadowRanks.Of(__instance), out var rule) && rule.Values is { Length: > 0 }
+            ? __instance.DynamicVars.ToDictionary(entry => entry.Key, entry => entry.Value.BaseValue)
+            : null;
+    }
+
+    public static void Postfix(CardModel __instance, Dictionary<string, decimal>? __state)
     {
         ShadowEvents.TagUpgrade(__instance);
         if (ShadowCardRules.IsEroded(__instance))
-            ShadowCardRules.Apply(__instance, __instance.DynamicVars, upgrading: true);
+            ShadowCardRules.Apply(__instance, __instance.DynamicVars, __state);
     }
 }

@@ -25,18 +25,24 @@ public static class HaaLouLingCombatRules
         return Knife(card.Owner);
     }
 
-    public static Task GainKnife(PlayerChoiceContext context, Player player, int amount, CardModel? source = null)
+    public static async Task GainKnife(PlayerChoiceContext context, Player player, int amount, CardModel? source = null)
     {
-        if (amount <= 0 || player.Creature.HasPower<WuFaHuoDeDaoShiPower>()) return Task.CompletedTask;
-        if (Knife(player) >= KnifeLimit(player) && player.Creature.HasPower<TuPoPingJingPower>())
-            return PowerCmd.Apply<DaoFaJingJinPower>(context, player.Creature, amount, player.Creature, source);
-        if (Knife(player) < KnifeLimit(player) && player.Creature.GetPower<QiShiPower>() is { Amount: > 0 } gain)
+        var creature = player.Creature;
+        if (amount <= 0 || creature.HasPower<WuFaHuoDeDaoShiPower>()) return;
+        var room = Math.Max(0, KnifeLimit(player) - Knife(player));
+        if (room > 0 && creature.GetPower<QiShiPower>() is { Amount: > 0 } gain)
         {
             amount += gain.Amount;
             gain.FlashEffect();
         }
-        return PowerCmd.Apply<DaoShiPower>(context, player.Creature,
-            Math.Min(amount, Math.Max(0, KnifeLimit(player) - Knife(player))), player.Creature, source);
+        var gained = Math.Min(amount, room);
+        var overflow = amount - gained;
+        if (gained > 0) await PowerCmd.Apply<DaoShiPower>(context, creature, gained, creature, source);
+        if (overflow > 0 && creature.GetPower<TuPoPingJingPower>() is { Amount: > 0 } breakthrough)
+        {
+            breakthrough.FlashEffect();
+            await PowerCmd.Apply<DaoFaJingJinPower>(context, creature, overflow * (decimal)breakthrough.Amount, creature, source);
+        }
     }
 
     public static async Task<int> SpendKnife(PlayerChoiceContext context, Player player, int amount, CardModel source)
@@ -44,11 +50,6 @@ public static class HaaLouLingCombatRules
         var power = player.Creature.GetPower<DaoShiPower>();
         if (power == null || amount <= 0) return 0;
         var before = power.Amount;
-        if (player.Creature.GetPower<CangFengPower>() is { } preserve)
-        {
-            await PowerCmd.Decrement(preserve);
-            return Math.Min(amount, before);
-        }
         await PowerCmd.ModifyAmount(context, power, -Math.Min(amount, before), player.Creature, source);
         var spent = before - Knife(player);
         if (spent > 0) HaaLouLingCookingService.GetState(player).KnifeSpentThisTurn = true;
@@ -62,8 +63,18 @@ public static class HaaLouLingCombatRules
         return spent;
     }
 
-    public static Task<int> SpendAllKnife(PlayerChoiceContext context, Player player, CardModel source) =>
-        SpendKnife(context, player, Knife(player), source);
+    internal static async Task<int> SpendAllKnife(PlayerChoiceContext context, CardPlay play)
+    {
+        var player = play.Player;
+        var amount = Knife(player);
+        if (play.IsFirstInSeries && player.Creature.GetPower<ZhuanShiPower>() is { Amount: > 0 } form)
+        {
+            form.FlashEffect();
+            await PowerCmd.Decrement(form);
+            return amount;
+        }
+        return await SpendKnife(context, player, amount, play.Card);
+    }
 
     public static int GuiYuan(Creature? creature) => creature == null ? 0 :
         creature.GetPowerAmount<GuiYuanPower>() + creature.GetPowerAmount<GuiYuanPlusPower>();

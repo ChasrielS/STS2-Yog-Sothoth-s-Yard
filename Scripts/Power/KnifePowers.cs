@@ -114,14 +114,6 @@ public sealed class WenXiDaoFaPower : HaaLouLingPower
 }
 
 [RegisterPower]
-public sealed class CangFengPower : HaaLouLingPower
-{
-    protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("DaoShi")];
-    public override string? CustomIconPath => "res://images/powers/cang_feng_power_icon.png";
-    public override string? CustomBigIconPath => "res://images/powers/cang_feng_power.png";
-}
-
-[RegisterPower]
 public sealed class GuiYuanJuePower : HaaLouLingPower
 {
     protected override IEnumerable<string> RegisteredKeywordIds => [HaaLouLingKeywords.KeywordId("GuiYuan")];
@@ -193,4 +185,14 @@ public sealed class ChengShiPower : KnifeFormPower;
 public sealed class ZhuanShiPower : KnifeFormPower;
 
 [RegisterPower]
-public sealed class HeShiPower : KnifeFormPower;
+public sealed class HeShiPower : KnifeFormPower
+{
+    public override int ModifyCardPlayCount(CardModel card, Creature? target, int playCount) =>
+        card.Owner.Creature == Owner && card is HaaLouLingCard { SpendsAllKnife: true } ? playCount + Amount : playCount;
+
+    public override Task AfterModifyingCardPlayCount(CardModel card)
+    {
+        FlashEffect();
+        return PowerCmd.Remove(this);
+    }
+}

@@ -11,7 +11,7 @@ namespace YogSothothsYard.Scripts;
 public sealed class LuHuoChunQing : HaaLouLingCard
 {
     public LuHuoChunQing() : base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(1), new ExtraDamageVar(1),
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(1), new ExtraDamageVar(2),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => card.Owner?.PlayerCombatState == null
             ? 0 : HaaLouLingCookingService.GetState(card.Owner).IngredientsUsed)];
 
